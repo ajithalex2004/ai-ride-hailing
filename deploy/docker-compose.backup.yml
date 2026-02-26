@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  # Database Backup Sidecar
+  db-backup:
+    image: postgres:15-alpine
+    volumes:
+      - ./backups:/backups
+      - ./scripts/db_backup.sh:/usr/local/bin/db_backup.sh:ro
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+    entrypoint: |
+      /bin/sh -c '
+      chmod +x /usr/local/bin/db_backup.sh;
+      echo "54 23 * * * /usr/local/bin/db_backup.sh" > /etc/crontabs/root;
+      crond -f -l 8'

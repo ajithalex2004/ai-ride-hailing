@@ -1,0 +1,41 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Build and Test Services
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        service: [auth, ride, dispatch, payment, fraud, location, reporting, fleet, notification, predictive, pricing, corporate]
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.21'
+        cache: true
+
+    - name: Install dependencies
+      run: |
+        cd services/${{ matrix.service }}
+        go mod download
+
+    - name: Run Tests
+      run: |
+        cd services/${{ matrix.service }}
+        go test ./... -v
+
+    - name: Build
+      run: |
+        cd services/${{ matrix.service }}
+        go build -o service-bin ./cmd/${{ matrix.service }}/main.go

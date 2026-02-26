@@ -1,0 +1,52 @@
+# AI Ride Hailing Project Tasks
+
+- [ ] Project Initialization [/]
+    - [x] Create project directory
+    - [x] Create implementation plan
+    - [x] Select technology stack
+- [x] Initial Project Setup [x]
+    - [x] Initialize Next.js Web App
+    - [x] Initialize Expo Mobile App
+    - [x] Initialize Go Backend (Boilerplate created)
+    - [x] Configure Neon Database (Serverless Postgres)
+- [ ] Phase 1: MVP Core Development [/]
+    - [x] Set up Monorepo (TurboRepo/Service Structure)
+    - [x] Identity Service: MFA (OTP via SMS/Email)
+    - [x] Ride Service: Taxi vs Limo State Machine
+    - [x] Dispatch Engine: Basic ETA Matching
+    - [x] Location Service: Real-time WebSockets
+    - [x] Notification Service: Push/SMS/Email
+    - [x] Multi-Tenant Fleet Management (Independent Operators)
+    - [x] Payment Service: Stripe & Digital Wallet
+    - [x] Passenger App: Core Booking Flow
+    - [x] Passenger App: Real-time Map & Tracking
+    - [x] Passenger App: Ride Category Selection (Economy/Luxury)
+    - [x] Testing: Conduct a final comprehensive stress test (Dispatch, Fraud AI, GPS Spoofing, Subsidy Engine).
+- [x] Performance: Deep-dive into SQL query optimization (Indexing, N+1 prevention).
+- [x] Deployment: Setup Automated Load Balancing configuration (Nginx Gateway).
+- [x] Reliability: Conduct Chaos Engineering simulations (Service Failover, Latency Injection).
+- [x] Review: Final System Architecture Review & Executive Summary.
+- [x] Deployment: Setup basic CI/CD pipeline configuration (GitHub Actions).
+- [x] Documentation: Generate Final API Documentation (REST & WebSocket).
+    - [x] Passenger App: Digital Wallet & Payment Integration
+    - [x] Passenger App: Real-time Trip Tracking (Live Map)
+    - [x] Passenger App: Ride Receipt & Rating UI
+    - [x] Driver App: Dual Mode Integration
+    - [x] Admin Portal: Basic Fleet Management
+    - [x] Admin Portal: Security & Fraud Dashboard
+    - [x] Fleet Operator Dashboard
+- [ ] Phase 2: AI & Optimization [/]
+    - [x] Surge Pricing AI
+    - [x] Dispatch by ETA Optimization
+    - [x] Corporate Portal Integration (Wallet & Budget Management)
+    - [x] Corporate Security & Compliance Portal
+    - [x] Corporate Employee Onboarding Flow
+    - [x] Corporate Reporting & PDF Export Flow
+    - [x] Reporting & Analytics Service (Business Intelligence)
+- [ ] Phase 3: Advanced Intelligence [x]
+    - [x] Predictive Demand Engine
+    - [x] Fraud Detection AI
+  - [x] Final Deployment & Handover [x]
+    - [x] Consolidate all 12 Microservices
+    - [x] Technical Architecture Blueprint (System Design)
+    - [x] Final Handover Report & Documentation

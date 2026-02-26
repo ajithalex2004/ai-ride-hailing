@@ -1,0 +1,40 @@
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+.pnpm-debug.log
+
+# Expo
+.expo/
+dist/
+web-build/
+
+# Next.js
+.next/
+out/
+
+# Go
+bin/
+*.exe
+*.test
+vendor/
+
+# Environment
+.env
+.env.local
+.env.*.local
+*.env
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backups
+backups/
+documentation/*.png
