@@ -24,6 +24,8 @@ func (h *RideHandler) CreateRide(c *gin.Context) {
 		Pickup        models.Location     `json:"pickup" binding:"required"`
 		Dropoff       models.Location     `json:"dropoff" binding:"required"`
 		ScheduledTime *time.Time          `json:"scheduled_time"`
+		Domain        string              `json:"domain"`   // TRANSPORT or EMERGENCY
+		Priority      string              `json:"priority"` // P1, P2, P3, STANDARD
 	}
 
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -31,7 +33,7 @@ func (h *RideHandler) CreateRide(c *gin.Context) {
 		return
 	}
 
-	ride, err := h.rideService.CreateRide(input.PassengerID, input.Category, input.Pickup, input.Dropoff, input.ScheduledTime)
+	ride, err := h.rideService.CreateRide(input.PassengerID, input.Category, input.Pickup, input.Dropoff, input.ScheduledTime, input.Domain, input.Priority)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

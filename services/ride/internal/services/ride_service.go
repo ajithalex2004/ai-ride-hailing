@@ -16,7 +16,7 @@ func NewRideService(db *gorm.DB) *RideService {
 	return &RideService{db: db}
 }
 
-func (s *RideService) CreateRide(passengerID uint, category models.RideCategory, pickup, dropoff models.Location, scheduledTime *time.Time) (*models.Ride, error) {
+func (s *RideService) CreateRide(passengerID uint, category models.RideCategory, pickup, dropoff models.Location, scheduledTime *time.Time, domain, priority string) (*models.Ride, error) {
 	ride := &models.Ride{
 		PassengerID:    passengerID,
 		Category:       category,
@@ -27,6 +27,8 @@ func (s *RideService) CreateRide(passengerID uint, category models.RideCategory,
 		DropoffLng:     dropoff.Lng,
 		DropoffAddress: dropoff.Address,
 		Status:         models.StatusSearching,
+		Domain:         domain,
+		Priority:       priority,
 	}
 
 	// Limo-Specific logic

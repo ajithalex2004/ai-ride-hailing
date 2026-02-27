@@ -40,6 +40,8 @@ type Ride struct {
 	Category          RideCategory `gorm:"type:string;index;not null" json:"category"`
 	Status            RideStatus   `gorm:"type:string;index;default:'SEARCHING_DRIVER'" json:"status"`
 	FleetID           *uint        `gorm:"index" json:"fleet_id"` // Fulfilling operator
+	Domain            string       `gorm:"type:string;index;default:'TRANSPORT'" json:"domain"` // TRANSPORT or EMERGENCY
+	Priority          string       `gorm:"type:string;index;default:'STANDARD'" json:"priority"` // P1, P2, P3, STANDARD
 	
 	// Locations
 	PickupLat         float64      `json:"pickup_lat"`

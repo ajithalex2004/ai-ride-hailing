@@ -46,6 +46,7 @@ func main() {
 				Lat      float64 `json:"lat" binding:"required"`
 				Lng      float64 `json:"lng" binding:"required"`
 				Category string  `json:"category" binding:"required"`
+				Priority string  `json:"priority"` // Optional, defaults to STANDARD
 			}
 			if err := c.ShouldBindJSON(&input); err != nil {
 				c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -53,7 +54,12 @@ func main() {
 			}
 
 			rideID, _ := uuid.Parse(input.RideID)
-			match, err := dispatchService.FindBestDriver(rideID, input.Lat, input.Lng, input.Category)
+			priority := models.PriorityLevel(input.Priority)
+			if priority == "" {
+				priority = models.PriorityStandard
+			}
+
+			match, err := dispatchService.FindBestDriver(rideID, input.Lat, input.Lng, input.Category, priority, input.Domain)
 			if err != nil {
 				c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 				return
