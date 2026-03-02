@@ -7,7 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	"github.com/user/ai-ride-hailing/monolith/internal/models"
+	"github.com/user/ai-ride-hailing/monolith/models"
 	"github.com/user/ai-ride-hailing/monolith/emergency/internal/modules"
 	"github.com/user/ai-ride-hailing/monolith/internal/modules/workforce"
 	"github.com/user/ai-ride-hailing/monolith/internal/modules/telemetry"

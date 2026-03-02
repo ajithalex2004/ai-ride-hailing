@@ -6,7 +6,7 @@ import (
 	"io"
 	"time"
 
-	"github.com/user/ai-ride-hailing/backend/internal/models"
+	"github.com/user/ai-ride-hailing/services/auth/internal/models"
 	"gorm.io/gorm"
 )
 

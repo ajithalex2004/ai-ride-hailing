@@ -1,0 +1,17 @@
+go 1.25.0
+
+use (
+	.
+	./services/auth
+	./services/corporate
+	./services/dispatch
+	./services/fleet
+	./services/fraud
+	./services/location
+	./services/notification
+	./services/payment
+	./services/predictive
+	./services/pricing
+	./services/reporting
+	./services/ride
+)

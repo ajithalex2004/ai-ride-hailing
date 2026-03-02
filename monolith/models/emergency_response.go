@@ -23,9 +23,12 @@ type Hospital struct {
 	Lng             float64   `json:"lng"`
 	TotalBeds       int       `json:"total_beds"`
 	AvailableBeds   int       `json:"available_beds"`
+	TotalERBeds     int       `json:"total_er_beds"`
+	AvailableERBeds int       `json:"available_er_beds"`
 	Specialties     string    `json:"specialties"` // "CARDIAC,TRAUMA,BURN,PEDIATRIC"
 	ERWaitTimeMins  int       `json:"er_wait_time_mins"`
 	IsLevel1Trauma  bool      `json:"is_level_1_trauma"`
+	Status          string    `json:"status"`      // "ON_DIVERSION", "NORMAL"
 }
 
 type CrewMember struct {

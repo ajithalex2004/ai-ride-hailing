@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 	"bytes"
-	"github.com/user/ai-ride-hailing/monolith/internal/models"
+	"github.com/user/ai-ride-hailing/monolith/models"
 	"gorm.io/gorm"
 )
 
