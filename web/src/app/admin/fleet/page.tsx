@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from 'react';
 import {
@@ -20,26 +20,26 @@ export default function FleetAdminPage() {
     const [selectedAsset, setSelectedAsset] = useState<any>(null);
 
     return (
-        <div className="min-h-screen bg-[#060608] text-white p-8 font-sans selection:bg-neon-blue/30">
+        <div className="min-h-screen bg-[var(--t-bg)] text-white p-8 selection:bg-[var(--t-accent)]/30" style={{fontFamily:"var(--font-sans)"}}>
             {/* Header */}
             <div className="flex justify-between items-end mb-10">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 rounded-full bg-pulse-orange animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-grey">Fleet_Asset_Intelligence</span>
+                        <div className="w-2 h-2 rounded-full bg-[var(--t-orange)] animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--t-text-muted)]">Fleet_Asset_Intelligence</span>
                     </div>
                     <h1 className="text-4xl font-black tracking-tighter italic">ASSET_LIFECYCLE_CORE</h1>
                 </div>
 
                 <div className="flex gap-4">
-                    <div className="bg-white/[0.03] border border-white/5 px-6 py-4 rounded-2xl flex items-center gap-3">
+                    <div className="bg-[var(--t-surface)] border border-[var(--t-border)] px-6 py-4 rounded-2xl flex items-center gap-3">
                         <div className="text-right">
-                            <div className="text-[8px] font-bold text-muted-grey uppercase">Fleet_Health_Index</div>
+                            <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase">Fleet_Health_Index</div>
                             <div className="text-xl font-mono font-black text-green-400">92%</div>
                         </div>
                         <Activity size={24} className="text-green-400" />
                     </div>
-                    <button className="bg-white text-black px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-tighter flex items-center gap-2 hover:bg-neon-blue hover:text-black transition-all">
+                    <button className="bg-white text-black px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-tighter flex items-center gap-2 hover:bg-[var(--t-accent)] hover:text-black transition-all">
                         <Search size={18} strokeWidth={3} />
                         SCAN_VIN_DATA
                     </button>
@@ -51,28 +51,28 @@ export default function FleetAdminPage() {
 
                 {/* Left Stats Console */}
                 <div className="col-span-4 space-y-6">
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8">
-                        <h3 className="text-[10px] font-black uppercase text-muted-grey mb-8 tracking-[0.3em]">Lifecycle_Summary</h3>
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
+                        <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] mb-8 tracking-[0.3em]">Lifecycle_Summary</h3>
 
                         <div className="space-y-8">
                             <StatItem label="Active_Procurement" value="$2.4M" sub="12 Vehicles pending" icon={Car} />
-                            <StatItem label="Averge_Depreciation" value="14.2%" sub="Year-over-year avg" icon={TrendingDown} color="text-pulse-orange" />
+                            <StatItem label="Averge_Depreciation" value="14.2%" sub="Year-over-year avg" icon={TrendingDown} color="text-[var(--t-orange)]" />
                             <StatItem label="Fuel_Anomaly_Alerts" value="04" sub="Last 24 hours" icon={AlertOctagon} color="text-red-500" />
                         </div>
 
-                        <div className="mt-12 p-6 bg-neon-blue/5 border border-neon-blue/10 rounded-2xl">
-                            <div className="flex items-center gap-2 mb-2 text-neon-blue">
+                        <div className="mt-12 p-6 bg-[var(--t-accent)]/5 border border-[var(--t-cyan)]/10 rounded-2xl">
+                            <div className="flex items-center gap-2 mb-2 text-[var(--t-cyan)]">
                                 <Zap size={14} />
                                 <span className="text-[9px] font-black uppercase">Resale_Valuation_AI</span>
                             </div>
-                            <div className="text-xs text-muted-grey leading-relaxed">
-                                Market trends indicate a <span className="text-white font-bold">5.2% increase</span> in resale value for 2024 Toyota HiAce models in the MENA region.
+                            <div className="text-xs text-[var(--t-text-muted)] leading-relaxed">
+                                Market trends indicate a <span className="text-[var(--t-text)] font-bold">5.2% increase</span> in resale value for 2024 Toyota HiAce models in the MENA region.
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8">
-                        <h3 className="text-[10px] font-black uppercase text-muted-grey mb-8 tracking-[0.3em]">Critical_Spare_Parts</h3>
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
+                        <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] mb-8 tracking-[0.3em]">Critical_Spare_Parts</h3>
                         <div className="space-y-4">
                             <PartHealth label="Brake Pads (DXB-442)" health={12} status="Replace" />
                             <PartHealth label="Front Left Tire (DXB-881)" health={28} status="Warning" />
@@ -83,10 +83,10 @@ export default function FleetAdminPage() {
 
                 {/* Right Asset List & Details */}
                 <div className="col-span-8 space-y-6">
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden">
-                        <div className="p-8 border-b border-white/5 flex justify-between items-center">
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl overflow-hidden">
+                        <div className="p-8 border-b border-[var(--t-border)] flex justify-between items-center">
                             <h2 className="text-xl font-black italic tracking-tight uppercase">Active_Asset_Inventory</h2>
-                            <button className="text-muted-grey hover:text-white transition-colors">
+                            <button className="text-[var(--t-text-muted)] hover:text-white transition-colors">
                                 <Download size={20} />
                             </button>
                         </div>
@@ -94,7 +94,7 @@ export default function FleetAdminPage() {
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead>
-                                    <tr className="text-[9px] font-black text-muted-grey uppercase tracking-widest border-b border-white/5">
+                                    <tr className="text-[9px] font-black text-[var(--t-text-muted)] uppercase tracking-widest border-b border-[var(--t-border)]">
                                         <th className="p-8">VEHICLE_VIN</th>
                                         <th className="p-8">MODEL_CLASS</th>
                                         <th className="p-8">FUEL_EFFICIENCY</th>
@@ -114,17 +114,17 @@ export default function FleetAdminPage() {
                     </div>
 
                     {/* AI Optimization Alert */}
-                    <div className="bg-pulse-orange/5 border border-pulse-orange/20 p-8 rounded-3xl flex items-center justify-between">
+                    <div className="bg-[var(--t-orange)]/5 border border-[var(--t-orange)]/20 p-8 rounded-3xl flex items-center justify-between">
                         <div className="flex gap-6 items-center">
-                            <div className="p-4 bg-pulse-orange/10 rounded-2xl text-pulse-orange">
+                            <div className="p-4 bg-[var(--t-orange)]/10 rounded-2xl text-[var(--t-orange)]">
                                 <Gauge size={32} />
                             </div>
                             <div>
                                 <h4 className="text-lg font-black italic tracking-tight mb-1">DRIVER_VEHICLE_OPTIMIZATION</h4>
-                                <p className="text-xs text-muted-grey">Assign <span className="text-white font-bold text-xs underline">Top_Gun_Driver #442</span> to Mercedes DXB-881 for 18% lower brake wear forecast.</p>
+                                <p className="text-xs text-[var(--t-text-muted)]">Assign <span className="text-[var(--t-text)] font-bold text-xs underline">Top_Gun_Driver #442</span> to Mercedes DXB-881 for 18% lower brake wear forecast.</p>
                             </div>
                         </div>
-                        <button className="bg-pulse-orange text-black px-6 py-3 rounded-xl font-black text-[10px] uppercase">ACTIVATE_OPTIMIZATION</button>
+                        <button className="bg-[var(--t-orange)] text-black px-6 py-3 rounded-xl font-black text-[10px] uppercase">ACTIVATE_OPTIMIZATION</button>
                     </div>
                 </div>
 
@@ -133,16 +133,16 @@ export default function FleetAdminPage() {
     );
 }
 
-function StatItem({ label, value, sub, icon: Icon, color = "text-neon-blue" }: any) {
+function StatItem({ label, value, sub, icon: Icon, color = "text-[var(--t-cyan)]" }: any) {
     return (
         <div className="flex items-center gap-5">
-            <div className={`p-4 bg-white/[0.03] rounded-2xl ${color}`}>
+            <div className={`p-4 bg-[var(--t-surface)] rounded-2xl ${color}`}>
                 <Icon size={24} />
             </div>
             <div>
-                <div className="text-[9px] font-bold text-muted-grey uppercase mb-1">{label}</div>
+                <div className="text-[9px] font-bold text-[var(--t-text-muted)] uppercase mb-1">{label}</div>
                 <div className="text-2xl font-black font-mono leading-none mb-1">{value}</div>
-                <div className="text-[9px] font-medium text-muted-grey tracking-wider uppercase">{sub}</div>
+                <div className="text-[9px] font-medium text-[var(--t-text-muted)] tracking-wider uppercase">{sub}</div>
             </div>
         </div>
     );
@@ -154,10 +154,10 @@ function PartHealth({ label, health, status }: any) {
         <div className="space-y-2">
             <div className="flex justify-between items-end">
                 <span className="text-[10px] font-bold text-white uppercase">{label}</span>
-                <span className={`text-[8px] font-black uppercase ${isRed ? 'text-red-500' : 'text-muted-grey'}`}>{status}</span>
+                <span className={`text-[8px] font-black uppercase ${isRed ? 'text-red-500' : 'text-[var(--t-text-muted)]'}`}>{status}</span>
             </div>
             <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                <div className={`h-full rounded-full ${isRed ? 'bg-red-500' : health < 40 ? 'bg-pulse-orange' : 'bg-neon-blue'}`} style={{ width: `${health}%` }} />
+                <div className={`h-full rounded-full ${isRed ? 'bg-red-500' : health < 40 ? 'bg-[var(--t-orange)]' : 'bg-[var(--t-accent)]'}`} style={{ width: `${health}%` }} />
             </div>
         </div>
     );
@@ -165,16 +165,16 @@ function PartHealth({ label, health, status }: any) {
 
 function AssetRow({ vin, model, fuel, value, status, health, highlight = false }: any) {
     return (
-        <tr className={`border-b border-white/5 group hover:bg-white/[0.01] transition-all ${highlight ? 'bg-red-500/[0.03]' : ''}`}>
+        <tr className={`border-b border-[var(--t-border)] group hover:bg-white/[0.01] transition-all ${highlight ? 'bg-red-500/[0.03]' : ''}`}>
             <td className="p-8">
-                <div className="text-[10px] font-mono font-bold text-muted-grey mb-1">{vin}</div>
+                <div className="text-[10px] font-mono font-bold text-[var(--t-text-muted)] mb-1">{vin}</div>
                 <div className="text-xs font-black text-white italic tracking-tighter">{model}</div>
             </td>
             <td className="p-8">
-                <span className="text-[9px] px-2 py-1 bg-white/5 rounded-md text-white font-black">VAN_HEAVY</span>
+                <span className="text-[9px] px-2 py-1 bg-white/5 rounded-md text-[var(--t-text)] font-black">VAN_HEAVY</span>
             </td>
             <td className="p-8">
-                <div className={`text-xs font-mono font-black ${highlight ? 'text-red-500 animate-pulse' : 'text-neon-blue'}`}>{fuel}</div>
+                <div className={`text-xs font-mono font-black ${highlight ? 'text-red-500 animate-pulse' : 'text-[var(--t-cyan)]'}`}>{fuel}</div>
                 {highlight && <div className="text-[7px] font-black text-red-500 uppercase mt-1">AnomalyDetected</div>}
             </td>
             <td className="p-8 font-mono font-black text-xs">{value}</td>
@@ -183,12 +183,13 @@ function AssetRow({ vin, model, fuel, value, status, health, highlight = false }
                     <div className="w-12 h-1 bg-white/5 rounded-full overflow-hidden">
                         <div className="h-full bg-green-400" style={{ width: `${health}%` }} />
                     </div>
-                    <span className="text-[8px] font-black text-muted-grey uppercase">{health}%</span>
+                    <span className="text-[8px] font-black text-[var(--t-text-muted)] uppercase">{health}%</span>
                 </div>
             </td>
             <td className="p-8 text-right">
-                <ChevronRight size={16} className="text-muted-grey group-hover:text-neon-blue transition-colors cursor-pointer" />
+                <ChevronRight size={16} className="text-[var(--t-text-muted)] group-hover:text-[var(--t-cyan)] transition-colors cursor-pointer" />
             </td>
         </tr>
     );
 }
+

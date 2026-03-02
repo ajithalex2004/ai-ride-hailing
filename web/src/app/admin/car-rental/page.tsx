@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from 'react';
 import {
@@ -21,13 +21,13 @@ export default function CarRentalDashboard() {
     const [activeTab, setActiveTab] = useState('FLEET');
 
     return (
-        <div className="min-h-screen bg-[#050507] text-white p-8 font-sans selection:bg-neon-blue/30 selection:text-white">
+        <div className="min-h-screen bg-[#050507] text-white p-8 selection:bg-[var(--t-accent)]/30 selection:text-white" style={{fontFamily:"var(--font-sans)"}}>
             {/* City-Scale Header */}
             <div className="flex justify-between items-end mb-16 px-4">
                 <div>
                     <div className="flex items-center gap-2 mb-3">
-                        <div className="w-2 h-2 rounded-full bg-neon-blue animate-pulse shadow-[0_0_10px_#00A3FF]" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-grey">Mobility_Asset_Governance_V3</span>
+                        <div className="w-2 h-2 rounded-full bg-[var(--t-accent)] animate-pulse shadow-[0_0_10px_#00A3FF]" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[var(--t-text-muted)]">Mobility_Asset_Governance_V3</span>
                     </div>
                     <h1 className="text-5xl font-black tracking-tighter italic uppercase text-white drop-shadow-2xl">RENTAL_ECOSYSTEM_HQ</h1>
                 </div>
@@ -38,7 +38,7 @@ export default function CarRentalDashboard() {
             </div>
 
             {/* Domain Navigation Rails */}
-            <div className="flex gap-12 mb-16 border-b border-white/5 px-4 relative">
+            <div className="flex gap-12 mb-16 border-b border-[var(--t-border)] px-4 relative">
                 <NavRail active={activeTab === 'FLEET'} onClick={() => setActiveTab('FLEET')} label="FLEET_CALENDAR" />
                 <NavRail active={activeTab === 'CONTRACTS'} onClick={() => setActiveTab('CONTRACTS')} label="DIGITAL_CONTRACTS" />
                 <NavRail active={activeTab === 'MAINTENANCE'} onClick={() => setActiveTab('MAINTENANCE')} label="ASSET_HEALTH" />
@@ -53,9 +53,9 @@ export default function CarRentalDashboard() {
                     {activeTab === 'FLEET' && (
                         <div className="space-y-8">
                             {/* Search & Filter Bar */}
-                            <div className="flex gap-4 bg-white/[0.02] border border-white/5 p-6 rounded-[32px] items-center">
-                                <Search className="text-muted-grey" size={20} />
-                                <input className="bg-transparent border-none outline-none text-sm font-bold flex-1 placeholder:text-muted-grey uppercase" placeholder="Search by Plate, Model, or ID..." />
+                            <div className="flex gap-4 bg-[var(--t-card)] border border-[var(--t-border)] p-6 rounded-[32px] items-center">
+                                <Search className="text-[var(--t-text-muted)]" size={20} />
+                                <input className="bg-transparent border-none outline-none text-sm font-bold flex-1 placeholder:text-[var(--t-text-muted)] uppercase" placeholder="Search by Plate, Model, or ID..." />
                                 <div className="flex gap-2">
                                     <FilterBadge label="ECONOMY" active />
                                     <FilterBadge label="LUXURY" />
@@ -92,7 +92,7 @@ export default function CarRentalDashboard() {
                     )}
 
                     {activeTab === 'CONTRACTS' && (
-                        <div className="bg-white/[0.02] border border-white/5 rounded-[48px] p-10 space-y-10">
+                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-[48px] p-10 space-y-10">
                             <div className="flex justify-between items-center">
                                 <h2 className="text-2xl font-black uppercase italic tracking-tighter">Active_Digital_Contracts</h2>
                                 <FileText size={24} className="text-white/20" />
@@ -110,30 +110,30 @@ export default function CarRentalDashboard() {
                 {/* Strategic Intelligence Sidebar */}
                 <div className="col-span-12 lg:col-span-4 space-y-8">
 
-                    <div className="bg-white/[0.02] border border-white/5 rounded-[48px] p-10 relative overflow-hidden group">
-                        <div className="absolute -top-12 -right-12 w-48 h-48 bg-neon-blue/10 blur-[90px] rounded-full group-hover:bg-neon-blue/20 transition-all duration-700" />
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-[48px] p-10 relative overflow-hidden group">
+                        <div className="absolute -top-12 -right-12 w-48 h-48 bg-[var(--t-accent)]/10 blur-[90px] rounded-full group-hover:bg-[var(--t-accent)]/20 transition-all duration-700" />
                         <div className="flex justify-between items-center mb-12">
-                            <h3 className="text-[11px] font-black uppercase text-muted-grey tracking-[0.4em]">ASSET_LIFECYCLE_AI</h3>
-                            <TrendingUp size={18} className="text-neon-blue" />
+                            <h3 className="text-[11px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.4em]">ASSET_LIFECYCLE_AI</h3>
+                            <TrendingUp size={18} className="text-[var(--t-cyan)]" />
                         </div>
                         <div className="space-y-12">
                             <LifecycleStat label="Total_Fleet_Value" value="$3.8M" sub="Residual Prediction: -2% YoY" />
-                            <div className="p-6 bg-neon-blue/5 border border-neon-blue/20 rounded-3xl">
+                            <div className="p-6 bg-[var(--t-accent)]/5 border border-[var(--t-cyan)]/20 rounded-3xl">
                                 <div className="flex items-center gap-4 mb-4">
-                                    <Shield size={16} className="text-neon-blue" />
+                                    <Shield size={16} className="text-[var(--t-cyan)]" />
                                     <span className="text-[10px] font-black uppercase tracking-widest text-white">Utilization_AI_Forecast</span>
                                 </div>
-                                <div className="text-4xl font-black italic tracking-tighter text-white mb-2">88% <span className="text-[10px] text-neon-blue uppercase">Peak Expected</span></div>
-                                <p className="text-[10px] font-bold text-muted-grey uppercase leading-relaxed tracking-widest">
+                                <div className="text-4xl font-black italic tracking-tighter text-white mb-2">88% <span className="text-[10px] text-[var(--t-cyan)] uppercase">Peak Expected</span></div>
+                                <p className="text-[10px] font-bold text-[var(--t-text-muted)] uppercase leading-relaxed tracking-widest">
                                     Increased Demand for SUVs during Ramadan Season Predicted. Add 4 units to Economy Cluster.
                                 </p>
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white/[0.02] border border-white/5 rounded-[48px] p-10">
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-[48px] p-10">
                         <div className="flex justify-between items-center mb-12">
-                            <h3 className="text-[11px] font-black uppercase text-muted-grey tracking-[0.4em]">MAINTENANCE_LOGS</h3>
+                            <h3 className="text-[11px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.4em]">MAINTENANCE_LOGS</h3>
                             <Activity size={18} className="text-green-400" />
                         </div>
                         <div className="space-y-8">
@@ -142,12 +142,12 @@ export default function CarRentalDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-neon-blue/10 border border-neon-blue/20 p-10 rounded-[48px] group cursor-pointer hover:bg-neon-blue/15 transition-all">
+                    <div className="bg-[var(--t-accent)]/10 border border-[var(--t-cyan)]/20 p-10 rounded-[48px] group cursor-pointer hover:bg-[var(--t-accent)]/15 transition-all">
                         <div className="flex items-center justify-between mb-8">
-                            <div className="p-4 bg-neon-blue/20 rounded-2xl text-neon-blue animate-pulse">
+                            <div className="p-4 bg-[var(--t-accent)]/20 rounded-2xl text-[var(--t-cyan)] animate-pulse">
                                 <DollarSign size={24} />
                             </div>
-                            <span className="text-[10px] font-black uppercase text-muted-grey">Monthly_Revenue</span>
+                            <span className="text-[10px] font-black uppercase text-[var(--t-text-muted)]">Monthly_Revenue</span>
                         </div>
                         <div className="text-5xl font-black italic tracking-tighter text-white mb-4">$214,500</div>
                         <div className="flex items-center gap-3 text-[10px] font-black text-green-400 italic">
@@ -170,21 +170,21 @@ function NavRail({ active, label, onClick }: any) {
             className={`pb-6 px-2 text-[11px] font-black uppercase tracking-[0.3em] transition-all relative ${active ? 'text-white italic' : 'text-white/20 hover:text-white/60'
                 }`}>
             {label}
-            {active && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-neon-blue shadow-[0_0_15px_#00A3FF]" />}
+            {active && <div className="absolute bottom-0 left-0 right-0 h-[3px] bg-[var(--t-accent)] shadow-[0_0_15px_#00A3FF]" />}
         </button>
     );
 }
 
 function RentalProfile({ name, tier }: any) {
     return (
-        <div className="flex bg-white/[0.03] border border-white/10 px-8 py-5 rounded-[28px] items-center gap-8 shadow-2xl">
+        <div className="flex bg-[var(--t-surface)] border border-[var(--t-border)] px-8 py-5 rounded-[28px] items-center gap-8 shadow-2xl">
             <div className="flex items-center gap-4">
-                <Key size={24} className="text-neon-blue" />
+                <Key size={24} className="text-[var(--t-cyan)]" />
                 <div className="text-sm font-black tracking-tighter uppercase italic">{name}</div>
             </div>
             <div className="w-[1px] h-8 bg-white/10" />
             <div>
-                <div className="text-[9px] font-black uppercase text-muted-grey tracking-widest mb-0.5">Tier_Access</div>
+                <div className="text-[9px] font-black uppercase text-[var(--t-text-muted)] tracking-widest mb-0.5">Tier_Access</div>
                 <div className="text-[11px] font-black text-white italic tracking-tighter">{tier}</div>
             </div>
         </div>
@@ -193,7 +193,7 @@ function RentalProfile({ name, tier }: any) {
 
 function FilterBadge({ label, active }: any) {
     return (
-        <div className={`px-5 py-2 rounded-xl text-[10px] font-black tracking-widest cursor-pointer transition-all ${active ? 'bg-neon-blue text-black italic' : 'bg-white/5 text-muted-grey hover:bg-white/10'
+        <div className={`px-5 py-2 rounded-xl text-[10px] font-black tracking-widest cursor-pointer transition-all ${active ? 'bg-[var(--t-accent)] text-black italic' : 'bg-white/5 text-[var(--t-text-muted)] hover:bg-white/10'
             }`}>
             {label}
         </div>
@@ -202,10 +202,10 @@ function FilterBadge({ label, active }: any) {
 
 function VehicleCard({ plate, model, status, utilization, returnDate, customer, price, issue }: any) {
     return (
-        <div className="bg-white/[0.02] border border-white/5 p-10 rounded-[48px] group hover:border-white/10 transition-all cursor-pointer relative overflow-hidden">
+        <div className="bg-[var(--t-card)] border border-[var(--t-border)] p-10 rounded-[48px] group hover:border-[var(--t-border)] transition-all cursor-pointer relative overflow-hidden">
             <div className="flex justify-between items-start mb-10">
                 <div>
-                    <div className="text-[10px] font-black uppercase text-muted-grey tracking-[0.2em] mb-3">{plate}</div>
+                    <div className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.2em] mb-3">{plate}</div>
                     <div className="text-2xl font-black italic tracking-tighter uppercase text-white group-hover:translate-x-1 transition-transform">{model}</div>
                 </div>
                 <StatusBadge status={status} />
@@ -214,12 +214,12 @@ function VehicleCard({ plate, model, status, utilization, returnDate, customer, 
             {status === 'RENTED' && (
                 <div className="space-y-6">
                     <div className="flex justify-between items-end">
-                        <span className="text-[10px] font-black uppercase text-muted-grey tracking-widest">Active_Tenant</span>
+                        <span className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-widest">Active_Tenant</span>
                         <span className="text-sm font-black italic">{customer}</span>
                     </div>
                     <div className="flex justify-between items-end">
-                        <span className="text-[10px] font-black uppercase text-muted-grey tracking-widest">Return_Date</span>
-                        <span className="text-sm font-black italic text-neon-blue">{returnDate}</span>
+                        <span className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-widest">Return_Date</span>
+                        <span className="text-sm font-black italic text-[var(--t-cyan)]">{returnDate}</span>
                     </div>
                 </div>
             )}
@@ -227,10 +227,10 @@ function VehicleCard({ plate, model, status, utilization, returnDate, customer, 
             {status === 'AVAILABLE' && (
                 <div className="space-y-6">
                     <div className="flex justify-between items-end">
-                        <span className="text-[10px] font-black uppercase text-muted-grey tracking-widest">Daily_Price</span>
+                        <span className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-widest">Daily_Price</span>
                         <span className="text-2xl font-black italic text-white">{price}</span>
                     </div>
-                    <button className="w-full py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">Instant_Reserve</button>
+                    <button className="w-full py-4 bg-white/5 border border-[var(--t-border)] rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">Instant_Reserve</button>
                 </div>
             )}
 
@@ -241,8 +241,8 @@ function VehicleCard({ plate, model, status, utilization, returnDate, customer, 
                 </div>
             )}
 
-            <div className="mt-10 border-t border-white/5 pt-6 flex justify-between items-center">
-                <span className="text-[9px] font-black uppercase text-muted-grey tracking-widest">Historical_Utilization</span>
+            <div className="mt-10 border-t border-[var(--t-border)] pt-6 flex justify-between items-center">
+                <span className="text-[9px] font-black uppercase text-[var(--t-text-muted)] tracking-widest">Historical_Utilization</span>
                 <span className="text-[10px] font-black font-mono italic text-white/40">{utilization}%</span>
             </div>
         </div>
@@ -252,11 +252,11 @@ function VehicleCard({ plate, model, status, utilization, returnDate, customer, 
 function StatusBadge({ status }: any) {
     const colors: any = {
         'AVAILABLE': 'bg-green-400',
-        'RENTED': 'bg-neon-blue',
+        'RENTED': 'bg-[var(--t-accent)]',
         'MAINTENANCE': 'bg-red-400'
     };
     return (
-        <div className={`flex items-center gap-3 px-4 py-2 bg-black/40 border border-white/10 rounded-xl`}>
+        <div className={`flex items-center gap-3 px-4 py-2 bg-[var(--t-surface)] border border-[var(--t-border)] rounded-xl`}>
             <div className={`w-1.5 h-1.5 rounded-full ${colors[status]}`} />
             <span className="text-[9px] font-black uppercase italic tracking-widest">{status}</span>
         </div>
@@ -265,7 +265,7 @@ function StatusBadge({ status }: any) {
 
 function ActionCard({ label, icon }: any) {
     return (
-        <div className="bg-white/[0.02] border border-white/5 border-dashed rounded-[48px] flex flex-col items-center justify-center gap-6 p-10 cursor-pointer hover:bg-white/[0.04] transition-all text-muted-grey hover:text-white">
+        <div className="bg-[var(--t-card)] border border-[var(--t-border)] border-dashed rounded-[48px] flex flex-col items-center justify-center gap-6 p-10 cursor-pointer hover:bg-[var(--t-card-hover)] transition-all text-[var(--t-text-muted)] hover:text-white">
             <div className="p-6 bg-white/5 rounded-[32px]">
                 {icon}
             </div>
@@ -276,14 +276,14 @@ function ActionCard({ label, icon }: any) {
 
 function ContractItem({ id, customer, product, status, date, alert }: any) {
     return (
-        <div className="flex justify-between items-center bg-white/5 p-8 rounded-[32px] hover:bg-white/[0.08] transition-all cursor-pointer border border-transparent hover:border-white/10">
+        <div className="flex justify-between items-center bg-white/5 p-8 rounded-[32px] hover:bg-white/[0.08] transition-all cursor-pointer border border-transparent hover:border-[var(--t-border)]">
             <div className="flex items-center gap-8">
-                <div className={`p-4 rounded-2xl ${alert ? 'bg-red-400/10 text-red-400' : 'bg-neon-blue/10 text-neon-blue'}`}>
+                <div className={`p-4 rounded-2xl ${alert ? 'bg-red-400/10 text-red-400' : 'bg-[var(--t-accent)]/10 text-[var(--t-cyan)]'}`}>
                     <FileText size={24} />
                 </div>
                 <div>
                     <div className="text-lg font-black italic tracking-tighter uppercase mb-1">{customer}</div>
-                    <div className="flex items-center gap-3 text-[10px] font-bold text-muted-grey tracking-widest uppercase">
+                    <div className="flex items-center gap-3 text-[10px] font-bold text-[var(--t-text-muted)] tracking-widest uppercase">
                         <span>{id}</span>
                         <span className="opacity-20">|</span>
                         <span>{product}</span>
@@ -291,7 +291,7 @@ function ContractItem({ id, customer, product, status, date, alert }: any) {
                 </div>
             </div>
             <div className="text-right">
-                <div className={`text-[10px] font-black uppercase italic px-4 py-2 rounded-xl mb-2 ${alert ? 'bg-red-400/10 text-red-400' : 'bg-neon-blue/10 text-neon-blue'}`}>
+                <div className={`text-[10px] font-black uppercase italic px-4 py-2 rounded-xl mb-2 ${alert ? 'bg-red-400/10 text-red-400' : 'bg-[var(--t-accent)]/10 text-[var(--t-cyan)]'}`}>
                     {status}
                 </div>
                 <div className="text-[9px] font-mono font-black text-white/20 italic">{date}</div>
@@ -305,7 +305,7 @@ function LifecycleStat({ label, value, sub }: any) {
         <div className="space-y-4">
             <div className="text-[10px] font-black uppercase text-white/40 tracking-[0.2em]">{label}</div>
             <div className="text-5xl font-black italic tracking-tighter">{value}</div>
-            <div className="text-[10px] font-bold text-muted-grey uppercase tracking-widest italic">{sub}</div>
+            <div className="text-[10px] font-bold text-[var(--t-text-muted)] uppercase tracking-widest italic">{sub}</div>
         </div>
     );
 }
@@ -316,7 +316,7 @@ function HealthItem({ vehicle, mileage, health, warn }: any) {
             <div className="flex justify-between items-end">
                 <div>
                     <div className="text-[12px] font-black uppercase italic tracking-tighter text-white mb-1">{vehicle}</div>
-                    <div className="text-[9px] font-bold text-muted-grey uppercase tracking-widest">{mileage}</div>
+                    <div className="text-[9px] font-bold text-[var(--t-text-muted)] uppercase tracking-widest">{mileage}</div>
                 </div>
                 <div className={`text-xl font-black font-mono ${warn ? 'text-red-400' : 'text-green-400'}`}>{health}%</div>
             </div>
@@ -326,3 +326,4 @@ function HealthItem({ vehicle, mileage, health, warn }: any) {
         </div>
     );
 }
+

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from 'react';
 import {
@@ -22,13 +22,13 @@ export default function ComplianceDashboard() {
     const [activeTab, setActiveTab] = useState('KPIS');
 
     return (
-        <div className="min-h-screen bg-[#060608] text-white p-8 font-sans selection:bg-neon-blue/30">
+        <div className="min-h-screen bg-[var(--t-bg)] text-white p-8 selection:bg-[var(--t-accent)]/30" style={{fontFamily:"var(--font-sans)"}}>
             {/* Header */}
             <div className="flex justify-between items-end mb-12">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
                         <div className="w-2 h-2 rounded-full bg-green-400" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-grey">Governance_Audit_OS</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--t-text-muted)]">Governance_Audit_OS</span>
                     </div>
                     <h1 className="text-4xl font-black tracking-tighter italic uppercase">COMPLIANCE_&_KPIS</h1>
                 </div>
@@ -39,7 +39,7 @@ export default function ComplianceDashboard() {
             </div>
 
             {/* Navigation Tabs */}
-            <div className="flex gap-8 mb-12 border-b border-white/5">
+            <div className="flex gap-8 mb-12 border-b border-[var(--t-border)]">
                 <NavTab active={activeTab === 'KPIS'} onClick={() => setActiveTab('KPIS')} label="PERFORMANCE_KPIs" />
                 <NavTab active={activeTab === 'AUDIT'} onClick={() => setActiveTab('AUDIT')} label="AUDIT_TIMELINE" />
                 <NavTab active={activeTab === 'LEGAL'} onClick={() => setActiveTab('LEGAL')} label="LEGAL_EXPORTS" />
@@ -58,10 +58,10 @@ export default function ComplianceDashboard() {
                                 <KPICard label="Fleet Readiness" value="88.2" unit="%" trend="STABLE" icon={<Activity size={20} />} />
                             </div>
 
-                            <div className="bg-white/[0.02] border border-white/5 rounded-[40px] p-10">
+                            <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-[40px] p-10">
                                 <div className="flex justify-between items-center mb-12">
-                                    <h3 className="text-[12px] font-black uppercase text-muted-grey tracking-[0.4em]">SURVIVAL_WINDOW_ANALYTICS</h3>
-                                    <TrendingUp size={16} className="text-neon-blue" />
+                                    <h3 className="text-[12px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.4em]">SURVIVAL_WINDOW_ANALYTICS</h3>
+                                    <TrendingUp size={16} className="text-[var(--t-cyan)]" />
                                 </div>
                                 <div className="h-[400px] flex items-end gap-6">
                                     <AnalyticsBar label="Mon" value={82} />
@@ -77,12 +77,12 @@ export default function ComplianceDashboard() {
                     )}
 
                     {activeTab === 'AUDIT' && (
-                        <div className="bg-white/[0.02] border border-white/5 rounded-[40px] p-8">
+                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-[40px] p-8">
                             <div className="flex justify-between items-center mb-12">
-                                <h3 className="text-[12px] font-black uppercase text-muted-grey tracking-[0.4em]">INCIDENT_TIMELINE_RECONSTRUCTION</h3>
+                                <h3 className="text-[12px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.4em]">INCIDENT_TIMELINE_RECONSTRUCTION</h3>
                                 <div className="flex gap-4">
-                                    <div className="px-4 py-2 bg-white/5 border border-white/10 rounded-xl flex items-center gap-3">
-                                        <Search size={14} className="text-muted-grey" />
+                                    <div className="px-4 py-2 bg-white/5 border border-[var(--t-border)] rounded-xl flex items-center gap-3">
+                                        <Search size={14} className="text-[var(--t-text-muted)]" />
                                         <input className="bg-transparent text-[10px] font-bold outline-none uppercase tracking-widest placeholder:text-white/20" placeholder="INCIDENT_ID..." />
                                     </div>
                                 </div>
@@ -102,8 +102,8 @@ export default function ComplianceDashboard() {
 
                 {/* Right Sidebar: Compliance Stats */}
                 <div className="col-span-12 lg:col-span-3 space-y-6">
-                    <div className="bg-white/[0.02] border border-white/5 rounded-[40px] p-8">
-                        <h3 className="text-[10px] font-black uppercase text-muted-grey mb-10 tracking-[0.3em]">COMPLIANCE_VITALS</h3>
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-[40px] p-8">
+                        <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] mb-10 tracking-[0.3em]">COMPLIANCE_VITALS</h3>
                         <div className="space-y-8">
                             <ComplianceVital label="Data Retention" value="100%" status="HEALTHY" />
                             <AuditHealth label="Audit Integrity" value="VERIFIED" status="HEALTHY" />
@@ -111,14 +111,14 @@ export default function ComplianceDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-neon-blue/5 border border-neon-blue/20 p-8 rounded-[40px]">
+                    <div className="bg-[var(--t-accent)]/5 border border-[var(--t-cyan)]/20 p-8 rounded-[40px]">
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="p-3 bg-neon-blue/10 rounded-2xl text-neon-blue">
+                            <div className="p-3 bg-[var(--t-accent)]/10 rounded-2xl text-[var(--t-cyan)]">
                                 <Scale size={20} />
                             </div>
                             <div className="text-[10px] font-black uppercase tracking-widest">Legal_Shield_V1</div>
                         </div>
-                        <p className="text-[10px] font-bold text-muted-grey uppercase leading-relaxed tracking-widest">
+                        <p className="text-[10px] font-bold text-[var(--t-text-muted)] uppercase leading-relaxed tracking-widest">
                             All telemetry, voice logs, and AI decisions are cryptographically hashed for chain-of-custody verification.
                         </p>
                     </div>
@@ -135,24 +135,24 @@ function NavTab({ active, label, onClick }: any) {
     return (
         <button
             onClick={onClick}
-            className={`pb-4 px-2 text-[10px] font-black uppercase tracking-widest transition-all relative ${active ? 'text-white italic' : 'text-muted-grey hover:text-white/40'
+            className={`pb-4 px-2 text-[10px] font-black uppercase tracking-widest transition-all relative ${active ? 'text-white italic' : 'text-[var(--t-text-muted)] hover:text-white/40'
                 }`}>
             {label}
-            {active && <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-neon-blue" />}
+            {active && <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--t-accent)]" />}
         </button>
     );
 }
 
 function KPICard({ label, value, unit, trend, icon }: any) {
     return (
-        <div className="bg-white/[0.02] border border-white/5 p-8 rounded-[32px] group hover:border-white/10 transition-all">
+        <div className="bg-[var(--t-card)] border border-[var(--t-border)] p-8 rounded-[32px] group hover:border-[var(--t-border)] transition-all">
             <div className="flex justify-between items-center mb-8">
-                <div className="p-3 bg-white/5 rounded-2xl text-white/40 group-hover:text-neon-blue group-hover:bg-neon-blue/10 transition-all">
+                <div className="p-3 bg-white/5 rounded-2xl text-white/40 group-hover:text-[var(--t-cyan)] group-hover:bg-[var(--t-accent)]/10 transition-all">
                     {icon}
                 </div>
-                <div className={`text-[9px] font-black italic ${trend.includes('+') ? 'text-green-400' : trend === 'STABLE' ? 'text-muted-grey' : 'text-red-500'}`}>{trend}</div>
+                <div className={`text-[9px] font-black italic ${trend.includes('+') ? 'text-green-400' : trend === 'STABLE' ? 'text-[var(--t-text-muted)]' : 'text-red-500'}`}>{trend}</div>
             </div>
-            <div className="text-[10px] font-black uppercase text-muted-grey tracking-widest mb-2">{label}</div>
+            <div className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-widest mb-2">{label}</div>
             <div className="flex items-end gap-2">
                 <span className="text-4xl font-black italic tracking-tighter">{value}</span>
                 <span className="text-xs font-black text-white/20 uppercase mb-1">{unit}</span>
@@ -165,11 +165,11 @@ function AnalyticsBar({ label, value, active, warn, peak }: any) {
     return (
         <div className="flex-1 flex flex-col items-center gap-4 group">
             <div className="flex-1 w-full bg-white/5 rounded-2xl relative flex flex-col justify-end overflow-hidden">
-                <div className={`w-full transition-all duration-1000 group-hover:brightness-125 ${warn ? 'bg-red-500' : active ? 'bg-neon-blue shadow-[0_0_20px_rgba(0,163,255,0.4)]' : 'bg-white/10'
+                <div className={`w-full transition-all duration-1000 group-hover:brightness-125 ${warn ? 'bg-red-500' : active ? 'bg-[var(--t-accent)] shadow-[0_0_20px_rgba(0,163,255,0.4)]' : 'bg-white/10'
                     }`} style={{ height: `${value}%` }} />
                 <div className="absolute top-4 left-0 right-0 text-center text-[10px] font-black font-mono opacity-0 group-hover:opacity-100 transition-opacity">{value}%</div>
             </div>
-            <span className={`text-[10px] font-black uppercase tracking-tighter ${active ? 'text-white' : 'text-muted-grey'}`}>{label}</span>
+            <span className={`text-[10px] font-black uppercase tracking-tighter ${active ? 'text-white' : 'text-[var(--t-text-muted)]'}`}>{label}</span>
         </div>
     );
 }
@@ -177,14 +177,14 @@ function AnalyticsBar({ label, value, active, warn, peak }: any) {
 function AuditEntry({ time, action, user, details }: any) {
     return (
         <div className="flex gap-8 group">
-            <div className="w-24 text-[10px] font-black font-mono text-muted-grey italic pt-1">{time}</div>
-            <div className="flex-1 pb-8 border-l border-white/5 pl-8 relative">
-                <div className="absolute -left-1 top-2 w-2 h-2 rounded-full bg-white/10 group-hover:bg-neon-blue transition-colors shadow-[0_0_10px_transparent] group-hover:shadow-neon-blue/40" />
+            <div className="w-24 text-[10px] font-black font-mono text-[var(--t-text-muted)] italic pt-1">{time}</div>
+            <div className="flex-1 pb-8 border-l border-[var(--t-border)] pl-8 relative">
+                <div className="absolute -left-1 top-2 w-2 h-2 rounded-full bg-white/10 group-hover:bg-[var(--t-accent)] transition-colors shadow-[0_0_10px_transparent] group-hover:shadow-neon-blue/40" />
                 <div className="flex justify-between items-center mb-2">
                     <div className="text-[10px] font-black uppercase tracking-widest text-white italic">{action}</div>
-                    <div className="text-[8px] font-bold text-muted-grey uppercase tracking-widest">BY: {user}</div>
+                    <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase tracking-widest">BY: {user}</div>
                 </div>
-                <p className="text-[10px] font-bold text-muted-grey uppercase tracking-widest italic leading-relaxed">{details}</p>
+                <p className="text-[10px] font-bold text-[var(--t-text-muted)] uppercase tracking-widest italic leading-relaxed">{details}</p>
             </div>
         </div>
     );
@@ -192,7 +192,7 @@ function AuditEntry({ time, action, user, details }: any) {
 
 function ExportButton() {
     return (
-        <div className="flex bg-white/[0.03] border border-white/10 p-1 rounded-2xl">
+        <div className="flex bg-[var(--t-surface)] border border-[var(--t-border)] p-1 rounded-2xl">
             <button className="px-6 py-3 bg-white text-black text-[10px] font-black uppercase tracking-widest italic rounded-xl flex items-center gap-3">
                 <Download size={14} />
                 Export_Report
@@ -224,3 +224,4 @@ function AuditHealth({ label, status }: any) {
         </div>
     );
 }
+

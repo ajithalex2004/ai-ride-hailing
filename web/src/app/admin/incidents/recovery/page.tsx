@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from 'react';
 import {
@@ -19,13 +19,13 @@ export default function TrafficImpactDashboard() {
     const [activeLayer, setActiveLayer] = useState('HEATMAP');
 
     return (
-        <div className="min-h-screen bg-[#060608] text-white p-8 font-sans selection:bg-pulse-orange/30">
+        <div className="min-h-screen bg-[var(--t-bg)] text-white p-8 selection:bg-[var(--t-orange)]/30" style={{fontFamily:"var(--font-sans)"}}>
             {/* Header */}
             <div className="flex justify-between items-end mb-12">
                 <div>
                     <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 rounded-full bg-pulse-orange animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-grey">Traffic_Recovery_OS</span>
+                        <div className="w-2 h-2 rounded-full bg-[var(--t-orange)] animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--t-text-muted)]">Traffic_Recovery_OS</span>
                     </div>
                     <h1 className="text-4xl font-black tracking-tighter italic uppercase">TRAFFIC_RECOVERY_HUB</h1>
                 </div>
@@ -41,7 +41,7 @@ export default function TrafficImpactDashboard() {
 
                 {/* Left: Interactive Map Layer */}
                 <div className="col-span-8 space-y-6">
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 h-[650px] relative overflow-hidden group">
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8 h-[650px] relative overflow-hidden group">
                         {/* Map Mask Mockup */}
                         <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/55.3,25.2,12/1000x800?access_token=mock')] bg-cover filter saturate-0" />
 
@@ -62,41 +62,41 @@ export default function TrafficImpactDashboard() {
                         </div>
 
                         <div className="absolute bottom-8 left-8">
-                            <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-6 rounded-2xl flex items-center gap-6">
+                            <div className="bg-black/80 backdrop-blur-xl border border-[var(--t-border)] p-6 rounded-2xl flex items-center gap-6">
                                 <div>
-                                    <div className="text-[8px] font-black uppercase text-muted-grey tracking-widest mb-1">Impact_Radius</div>
+                                    <div className="text-[8px] font-black uppercase text-[var(--t-text-muted)] tracking-widest mb-1">Impact_Radius</div>
                                     <div className="text-xl font-black font-mono tracking-tighter">4.2km</div>
                                 </div>
                                 <div className="w-[1px] h-8 bg-white/10" />
                                 <div>
-                                    <div className="text-[8px] font-black uppercase text-muted-grey tracking-widest mb-1">Avg_Delay</div>
-                                    <div className="text-xl font-black font-mono tracking-tighter text-pulse-orange">+24m</div>
+                                    <div className="text-[8px] font-black uppercase text-[var(--t-text-muted)] tracking-widest mb-1">Avg_Delay</div>
+                                    <div className="text-xl font-black font-mono tracking-tighter text-[var(--t-orange)]">+24m</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">
-                        <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8">
+                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-[10px] font-black uppercase text-muted-grey tracking-[0.3em]">AI_Clearance_Estimation</h3>
-                                <Clock size={16} className="text-pulse-orange" />
+                                <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]">AI_Clearance_Estimation</h3>
+                                <Clock size={16} className="text-[var(--t-orange)]" />
                             </div>
                             <div className="space-y-4">
                                 <EstimationItem label="Heavy Tow Dispatch" time="14m" status="COMPLETED" />
                                 <EstimationItem label="Scene Investigation" time="22m" status="IN_PROGRESS" />
                                 <EstimationItem label="Final Recovery" time="18m" status="PENDING" />
-                                <div className="pt-4 border-t border-white/5 flex justify-between items-end">
+                                <div className="pt-4 border-t border-[var(--t-border)] flex justify-between items-end">
                                     <div className="text-[10px] font-black uppercase italic">Total_Clearance_ETA</div>
-                                    <div className="text-3xl font-black font-mono italic text-pulse-orange">38m</div>
+                                    <div className="text-3xl font-black font-mono italic text-[var(--t-orange)]">38m</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8">
+                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-[10px] font-black uppercase text-muted-grey tracking-[0.3em]">Suggested_Diversions</h3>
-                                <Navigation size={16} className="text-neon-blue" />
+                                <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]">Suggested_Diversions</h3>
+                                <Navigation size={16} className="text-[var(--t-cyan)]" />
                             </div>
                             <div className="space-y-3">
                                 <DiversionItem route="D71 (Al Khail)" impact="Light" gain="-12m" />
@@ -109,9 +109,9 @@ export default function TrafficImpactDashboard() {
 
                 {/* Right: Blackspot Analysis & Safety Index */}
                 <div className="col-span-4 space-y-6">
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8">
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
                         <div className="flex justify-between items-center mb-12">
-                            <h3 className="text-[10px] font-black uppercase text-muted-grey tracking-[0.3em]">Safety_Blackspot_AI</h3>
+                            <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]">Safety_Blackspot_AI</h3>
                             <ShieldAlert size={16} className="text-red-500" />
                         </div>
                         <div className="space-y-6">
@@ -121,23 +121,23 @@ export default function TrafficImpactDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-pulse-orange/5 border border-pulse-orange/20 p-8 rounded-3xl">
+                    <div className="bg-[var(--t-orange)]/5 border border-[var(--t-orange)]/20 p-8 rounded-3xl">
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="p-3 bg-pulse-orange/10 rounded-2xl text-pulse-orange">
+                            <div className="p-3 bg-[var(--t-orange)]/10 rounded-2xl text-[var(--t-orange)]">
                                 <TrendingDown size={24} />
                             </div>
                             <div>
                                 <div className="text-[10px] font-black uppercase tracking-tight text-white mb-1">Recovery_Impact</div>
-                                <div className="text-[8px] font-bold text-muted-grey uppercase tracking-wider italic">Congestion Shielded: 2.1k Cars</div>
+                                <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase tracking-wider italic">Congestion Shielded: 2.1k Cars</div>
                             </div>
                         </div>
-                        <p className="text-[10px] font-bold text-muted-grey uppercase leading-relaxed tracking-widest">
+                        <p className="text-[10px] font-bold text-[var(--t-text-muted)] uppercase leading-relaxed tracking-widest">
                             AI Route Diversion broadcasts have effectively redirected 64% of approaching traffic, preventing a total standstill on E11.
                         </p>
                     </div>
 
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8">
-                        <h3 className="text-[10px] font-black uppercase text-muted-grey mb-8 tracking-[0.3em]">Live_Recovery_Status</h3>
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
+                        <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] mb-8 tracking-[0.3em]">Live_Recovery_Status</h3>
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
                                 <span className="text-[10px] font-black italic uppercase">Lane 1 & 2 Blocked</span>
@@ -163,9 +163,9 @@ function EstimationItem({ label, time, status }: any) {
     return (
         <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
-                <div className={`w-1.5 h-1.5 rounded-full ${status === 'COMPLETED' ? 'bg-green-400' : status === 'IN_PROGRESS' ? 'bg-pulse-orange animate-pulse' : 'bg-white/20'
+                <div className={`w-1.5 h-1.5 rounded-full ${status === 'COMPLETED' ? 'bg-green-400' : status === 'IN_PROGRESS' ? 'bg-[var(--t-orange)] animate-pulse' : 'bg-white/20'
                     }`} />
-                <span className="text-[10px] font-bold text-muted-grey uppercase tracking-tight">{label}</span>
+                <span className="text-[10px] font-bold text-[var(--t-text-muted)] uppercase tracking-tight">{label}</span>
             </div>
             <span className="text-[10px] font-mono font-black">{time}</span>
         </div>
@@ -174,15 +174,15 @@ function EstimationItem({ label, time, status }: any) {
 
 function DiversionItem({ route, impact, gain, active, warning }: any) {
     return (
-        <div className={`p-4 rounded-xl border transition-all cursor-pointer ${active ? 'bg-neon-blue/10 border-neon-blue/40' : 'bg-black/40 border-white/5'
+        <div className={`p-4 rounded-xl border transition-all cursor-pointer ${active ? 'bg-[var(--t-accent)]/10 border-[var(--t-cyan)]/40' : 'bg-[var(--t-surface)] border-[var(--t-border)]'
             } ${warning ? 'border-red-500/20' : ''}`}>
             <div className="flex justify-between items-center mb-2">
                 <div className="text-[10px] font-black uppercase italic tracking-tight">{route}</div>
-                <div className={`text-[8px] font-black px-1.5 py-0.5 rounded border uppercase ${active ? 'bg-neon-blue text-black border-neon-blue' : 'bg-white/5 border-white/10'
+                <div className={`text-[8px] font-black px-1.5 py-0.5 rounded border uppercase ${active ? 'bg-[var(--t-accent)] text-black border-[var(--t-cyan)]' : 'bg-white/5 border-[var(--t-border)]'
                     }`}>{active ? 'SELECTED' : impact}</div>
             </div>
             <div className="flex justify-between items-center text-[9px] font-bold">
-                <span className="text-muted-grey uppercase">Est. Saving</span>
+                <span className="text-[var(--t-text-muted)] uppercase">Est. Saving</span>
                 <span className="text-green-400 font-black font-mono">{gain}</span>
             </div>
         </div>
@@ -191,11 +191,11 @@ function DiversionItem({ route, impact, gain, active, warning }: any) {
 
 function BlackspotCard({ location, risk, count, trend }: any) {
     return (
-        <div className="bg-black/40 border border-white/5 p-5 rounded-2xl group hover:border-white/20 transition-all">
+        <div className="bg-[var(--t-surface)] border border-[var(--t-border)] p-5 rounded-2xl group hover:border-white/20 transition-all">
             <div className="flex justify-between items-start mb-4">
                 <div>
                     <div className="text-[10px] font-black uppercase italic tracking-tighter mb-1">{location}</div>
-                    <div className="text-[8px] font-bold text-muted-grey uppercase">{count} Incidents last 30d</div>
+                    <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase">{count} Incidents last 30d</div>
                 </div>
                 <div className={`text-[9px] font-black ${trend === 'UP' ? 'text-red-500' : 'text-green-400'} italic font-mono`}>{trend}</div>
             </div>
@@ -211,7 +211,7 @@ function BlackspotCard({ location, risk, count, trend }: any) {
 
 function LayerToggle({ label, active }: any) {
     return (
-        <div className={`px-4 py-2 rounded-xl border flex items-center gap-3 cursor-pointer transition-all ${active ? 'bg-white text-black border-white' : 'bg-black/60 backdrop-blur-md border-white/10 text-muted-grey'
+        <div className={`px-4 py-2 rounded-xl border flex items-center gap-3 cursor-pointer transition-all ${active ? 'bg-white text-black border-white' : 'bg-black/60 backdrop-blur-md border-[var(--t-border)] text-[var(--t-text-muted)]'
             }`}>
             <Layers size={14} />
             <span className="text-[9px] font-black uppercase tracking-widest">{label}</span>
@@ -223,9 +223,10 @@ function TabButton({ active, label, onClick }: any) {
     return (
         <button
             onClick={onClick}
-            className={`px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${active ? 'bg-pulse-orange text-black italic shadow-lg shadow-pulse-orange/10' : 'bg-white/[0.03] text-muted-grey hover:bg-white/[0.06]'
+            className={`px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${active ? 'bg-[var(--t-orange)] text-black italic shadow-lg shadow-pulse-orange/10' : 'bg-[var(--t-surface)] text-[var(--t-text-muted)] hover:bg-white/[0.06]'
                 }`}>
             {label}
         </button>
     );
 }
+
