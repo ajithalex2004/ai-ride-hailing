@@ -14,151 +14,118 @@ const ROLES: { value: UserRole; label: string; description: string; icon: string
 ];
 
 const QUICK_LOGINS = [
-    { email: 'passenger@test.com', label: 'Passenger Demo' },
-    { email: 'admin@dubai.gov', label: 'Admin Demo' },
-    { email: 'ems@dha.gov', label: 'EMS Demo' },
-    { email: 'superadmin@exl.com', label: 'Super Admin Demo' },
+    { email: 'passenger@test.com', label: 'Passenger', role: 'PASSENGER' as UserRole },
+    { email: 'admin@dubai.gov', label: 'Admin', role: 'ADMIN' as UserRole },
+    { email: 'ems@dha.gov', label: 'EMS', role: 'EMS_OPERATOR' as UserRole },
+    { email: 'superadmin@exl.com', label: 'Super Admin', role: 'SUPER_ADMIN' as UserRole },
 ];
 
 export default function LoginPage() {
     const { login, user, isLoading } = useAuth();
     const router = useRouter();
-
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState<UserRole>('PASSENGER');
-    const [tenantSlug, setTenantSlug] = useState('dubai-ops');
     const [submitting, setSubmitting] = useState(false);
     const [error, setError] = useState('');
 
-    // Already logged in: redirect immediately
     useEffect(() => {
-        if (!isLoading && user) {
-            router.replace(ROLE_HOME[user.role]);
-        }
+        if (!isLoading && user) router.replace(ROLE_HOME[user.role]);
     }, [user, isLoading, router]);
-
-    const handleQuickLogin = (quickEmail: string) => {
-        setEmail(quickEmail);
-        setPassword('demo123');
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-        if (!email.trim()) { setError('Email is required'); return; }
-
-        setSubmitting(true);
-        try {
-            await login({ email, password, role, tenantSlug });
-            router.push(ROLE_HOME[role]);
-        } catch {
-            setError('Invalid credentials. Try a demo account below.');
-        } finally {
-            setSubmitting(false);
-        }
-    };
 
     if (isLoading) {
         return (
-            <div className="min-h-screen bg-[#050810] flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+            <div style={{ minHeight: '100vh', background: 'var(--t-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 32, height: 32, border: '2px solid var(--t-accent)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.7s linear infinite' }} />
             </div>
         );
     }
 
-    return (
-        <div className="min-h-screen bg-[#050810] flex items-center justify-center p-4 relative overflow-hidden">
-            {/* Background Glow */}
-            <div className="absolute inset-0 pointer-events-none">
-                <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
-                <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-500/10 rounded-full blur-3xl" />
-            </div>
+    const handleQuickLogin = async (q: typeof QUICK_LOGINS[0]) => {
+        setSubmitting(true); setError('');
+        try {
+            await login({ email: q.email, password: 'demo123', role: q.role, tenantSlug: 'dubai-ops' });
+            router.push(ROLE_HOME[q.role]);
+        } catch { setError('Login failed.'); }
+        finally { setSubmitting(false); }
+    };
 
-            <div className="w-full max-w-lg relative z-10">
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault(); setError('');
+        if (!email.trim()) { setError('Email is required'); return; }
+        setSubmitting(true);
+        try {
+            await login({ email, password, role, tenantSlug: 'dubai-ops' });
+            router.push(ROLE_HOME[role]);
+        } catch { setError('Invalid credentials. Try a demo account above.'); }
+        finally { setSubmitting(false); }
+    };
+
+    return (
+        <div style={{ minHeight: '100vh', background: 'var(--t-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', position: 'relative', overflow: 'hidden' }}>
+            {/* Background glow orbs */}
+            <div style={{ position: 'absolute', top: '15%', left: '20%', width: 400, height: 400, background: 'radial-gradient(circle, rgba(245,158,11,0.07) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
+            <div style={{ position: 'absolute', bottom: '15%', right: '20%', width: 350, height: 350, background: 'radial-gradient(circle, rgba(239,68,68,0.06) 0%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' }} />
+
+            <div style={{ width: '100%', maxWidth: 460, position: 'relative', zIndex: 1 }} className="animate-fade-in">
                 {/* Header */}
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center gap-2 mb-4 px-4 py-2 rounded-full border border-cyan-400/30 bg-cyan-400/5">
-                        <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-                        <span className="text-cyan-400 text-xs font-bold uppercase tracking-widest">System Online</span>
+                <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: '1.25rem', padding: '0.4rem 1rem', borderRadius: 999, border: '1px solid rgba(245,158,11,0.25)', background: 'rgba(245,158,11,0.06)' }}>
+                        <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--t-accent)', animation: 'pulse 2s ease-in-out infinite' }} />
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 600, color: 'var(--t-accent)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>System Online</span>
                     </div>
-                    <h1 className="text-4xl font-black text-white mb-2 tracking-tight">
-                        AI Mobility &<br />
-                        <span className="bg-gradient-to-r from-cyan-400 to-orange-400 bg-clip-text text-transparent">Emergency OS</span>
+                    <h1 style={{ fontSize: '2.5rem', fontWeight: 900, lineHeight: 1.1, marginBottom: '0.5rem', fontFamily: 'var(--font-heading)' }}>
+                        AI Mobility &{' '}
+                        <span className="gradient-text">Emergency OS</span>
                     </h1>
-                    <p className="text-gray-400 text-sm">Powered by EXL Solutions</p>
+                    <p style={{ color: 'var(--t-text-dim)', fontSize: '0.8rem', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase' }}>Powered by EXL Solutions</p>
                 </div>
 
-                {/* Login Card */}
-                <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-8 backdrop-blur-xl">
-                    {/* Quick Login Buttons */}
-                    <div className="mb-6">
-                        <p className="text-xs text-gray-500 uppercase tracking-widest font-bold mb-3">Quick Demo Login</p>
-                        <div className="grid grid-cols-2 gap-2">
-                            {QUICK_LOGINS.map(q => (
-                                <button
-                                    key={q.email}
-                                    type="button"
-                                    onClick={() => handleQuickLogin(q.email)}
-                                    className="text-left px-3 py-2 rounded-xl border border-white/10 bg-white/[0.03] hover:border-cyan-400/40 hover:bg-cyan-400/5 transition-all"
-                                >
-                                    <p className="text-xs font-bold text-white">{q.label}</p>
-                                    <p className="text-[10px] text-gray-500 font-mono truncate">{q.email}</p>
-                                </button>
-                            ))}
-                        </div>
+                {/* Card */}
+                <div style={{ background: 'var(--t-card)', border: '1px solid var(--t-border)', borderRadius: 20, padding: '2rem' }}>
+                    {/* Quick Logins */}
+                    <p style={{ fontSize: '0.65rem', color: 'var(--t-text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, marginBottom: '0.75rem' }}>Quick Demo Access</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: '1.5rem' }}>
+                        {QUICK_LOGINS.map(q => (
+                            <button key={q.email} onClick={() => handleQuickLogin(q)} disabled={submitting}
+                                style={{ textAlign: 'left', padding: '0.6rem 0.75rem', borderRadius: 10, border: '1px solid var(--t-border)', background: 'var(--t-surface)', cursor: 'pointer', transition: 'all 0.15s' }}
+                                onMouseEnter={e => { (e.currentTarget as any).style.borderColor = 'rgba(245,158,11,0.4)'; (e.currentTarget as any).style.background = 'var(--t-sidebar-active)'; }}
+                                onMouseLeave={e => { (e.currentTarget as any).style.borderColor = 'var(--t-border)'; (e.currentTarget as any).style.background = 'var(--t-surface)'; }}
+                            >
+                                <p style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--t-text)' }}>{q.label}</p>
+                                <p style={{ fontSize: '0.6rem', color: 'var(--t-text-dim)', fontFamily: 'var(--font-mono)', marginTop: 2 }}>{q.email}</p>
+                            </button>
+                        ))}
                     </div>
 
-                    <div className="relative mb-6">
-                        <div className="absolute inset-0 flex items-center">
-                            <div className="w-full border-t border-white/10" />
-                        </div>
-                        <div className="relative flex justify-center">
-                            <span className="px-3 bg-transparent text-gray-500 text-xs">or enter manually</span>
-                        </div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: '1.5rem' }}>
+                        <div style={{ flex: 1, height: 1, background: 'var(--t-border)' }} />
+                        <span style={{ color: 'var(--t-text-dim)', fontSize: '0.7rem' }}>or enter manually</span>
+                        <div style={{ flex: 1, height: 1, background: 'var(--t-border)' }} />
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-4">
-                        {/* Email */}
+                    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                         <div>
-                            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Email / Phone</label>
-                            <input
-                                type="text"
-                                value={email}
-                                onChange={e => setEmail(e.target.value)}
-                                placeholder="admin@dubai.gov"
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 outline-none focus:border-cyan-400/60 transition-all"
-                            />
+                            <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: 700, color: 'var(--t-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Email</label>
+                            <input className="input" type="text" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@dubai.gov" />
+                        </div>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: 700, color: 'var(--t-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>Password</label>
+                            <input className="input" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Any password for demo" />
                         </div>
 
-                        {/* Password */}
+                        {/* Role Grid */}
                         <div>
-                            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Password</label>
-                            <input
-                                type="password"
-                                value={password}
-                                onChange={e => setPassword(e.target.value)}
-                                placeholder="Any password for demo"
-                                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 outline-none focus:border-cyan-400/60 transition-all"
-                            />
-                        </div>
-
-                        {/* Role Selector */}
-                        <div>
-                            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Access Role</label>
-                            <div className="grid grid-cols-2 gap-2">
+                            <label style={{ display: 'block', fontSize: '0.65rem', fontWeight: 700, color: 'var(--t-text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Access Role</label>
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
                                 {ROLES.map(r => (
-                                    <button
-                                        key={r.value}
-                                        type="button"
-                                        onClick={() => setRole(r.value)}
-                                        className={`text-left px-3 py-2.5 rounded-xl border transition-all ${role === r.value ? 'border-cyan-400/60 bg-cyan-400/10 text-white' : 'border-white/10 bg-white/[0.02] text-gray-400 hover:border-white/20'}`}
-                                    >
-                                        <div className="flex items-center gap-2">
-                                            <span>{r.icon}</span>
+                                    <button key={r.value} type="button" onClick={() => setRole(r.value)}
+                                        style={{ textAlign: 'left', padding: '0.6rem 0.75rem', borderRadius: 10, border: `1px solid ${role === r.value ? 'rgba(245,158,11,0.5)' : 'var(--t-border)'}`, background: role === r.value ? 'var(--t-sidebar-active)' : 'var(--t-surface)', cursor: 'pointer', transition: 'all 0.15s' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                            <span style={{ fontSize: 16 }}>{r.icon}</span>
                                             <div>
-                                                <p className="text-xs font-bold leading-none">{r.label}</p>
-                                                <p className="text-[10px] mt-0.5 opacity-60">{r.description}</p>
+                                                <p style={{ fontSize: '0.7rem', fontWeight: 700, color: role === r.value ? 'var(--t-accent)' : 'var(--t-text)' }}>{r.label}</p>
+                                                <p style={{ fontSize: '0.6rem', color: 'var(--t-text-dim)', marginTop: 1 }}>{r.description}</p>
                                             </div>
                                         </div>
                                     </button>
@@ -167,23 +134,19 @@ export default function LoginPage() {
                         </div>
 
                         {error && (
-                            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+                            <div className="badge-red" style={{ padding: '0.6rem 0.75rem', borderRadius: 10, fontSize: '0.8rem' }}>
                                 {error}
                             </div>
                         )}
 
-                        <button
-                            type="submit"
-                            disabled={submitting}
-                            className="w-full py-4 rounded-2xl font-black text-base bg-gradient-to-r from-cyan-400 to-blue-500 text-black hover:from-cyan-300 hover:to-blue-400 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:scale-100 mt-2"
-                        >
+                        <button type="submit" className="btn-primary" disabled={submitting} style={{ width: '100%', marginTop: 4 }}>
                             {submitting ? '🔐 Authenticating...' : 'Login to Platform →'}
                         </button>
                     </form>
                 </div>
 
-                <p className="text-center text-gray-600 text-xs mt-6">
-                    Demo mode — any password accepted • Access governed by selected role
+                <p style={{ textAlign: 'center', color: 'var(--t-text-dim)', fontSize: '0.7rem', marginTop: '1.25rem', fontFamily: 'var(--font-mono)' }}>
+                    Demo mode · Any password accepted · Access governed by role
                 </p>
             </div>
         </div>

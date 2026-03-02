@@ -6,51 +6,53 @@ import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
 import DynamicBookingForm from '@/components/booking/DynamicBookingForm';
 
+const STATS = [
+  { label: 'Active Vehicles', value: '4,128', color: 'var(--t-accent)', icon: '🚗' },
+  { label: 'Drivers Online', value: '1,890', color: 'var(--t-blue)', icon: '👤' },
+  { label: 'Revenue (24h)', value: 'AED 842K', color: 'var(--t-green)', icon: '💰' },
+  { label: 'Avg ETA', value: '4.2 min', color: 'var(--t-orange)', icon: '⚡' },
+];
+
 export default function HomePage() {
   const { user, logout, isLoading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !user) {
-      router.replace('/login');
-    }
+    if (!isLoading && !user) router.replace('/login');
   }, [user, isLoading, router]);
 
   if (isLoading || !user) {
     return (
-      <div className="min-h-screen bg-[#050810] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+      <div style={{ minHeight: '100vh', background: 'var(--t-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: 32, height: 32, border: '2px solid var(--t-accent)', borderTopColor: 'transparent', borderRadius: '50%' }} />
       </div>
     );
   }
 
-  const isAdmin = user.role === 'ADMIN' || user.role === 'SUPER_ADMIN';
-  const isEMS = user.role === 'EMS_OPERATOR' || user.role === 'GOVT_EMS';
+  const isAdmin = ['ADMIN', 'SUPER_ADMIN', 'EMS_OPERATOR', 'GOVT_EMS', 'FLEET_ADMIN'].includes(user.role);
 
   return (
-    <div className="min-h-screen bg-[#050810] text-white">
-      {/* Top Nav */}
-      <nav className="sticky top-0 z-50 border-b border-white/5 bg-black/60 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span className="font-black text-sm tracking-widest uppercase text-white">AI Mobility OS</span>
+    <div style={{ minHeight: '100vh', background: 'var(--t-bg)', color: 'var(--t-text)' }}>
+      {/* Nav */}
+      <nav style={{ position: 'sticky', top: 0, zIndex: 50, borderBottom: '1px solid var(--t-border-subtle)', background: 'rgba(11,17,32,0.85)', backdropFilter: 'blur(16px)' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0.875rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--t-accent)', boxShadow: '0 0 8px var(--t-accent)' }} />
+            <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, fontSize: '0.9rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>AI Mobility OS</span>
           </div>
-          <div className="flex items-center gap-4">
-            {(isAdmin || isEMS) && (
-              <Link href="/admin" className="text-xs font-bold px-4 py-2 rounded-xl border border-cyan-400/30 text-cyan-400 hover:bg-cyan-400/10 transition-all">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            {isAdmin && (
+              <Link href="/admin" style={{ fontSize: '0.8rem', fontWeight: 700, padding: '0.4rem 1rem', borderRadius: 10, border: '1px solid rgba(245,158,11,0.35)', color: 'var(--t-accent)', textDecoration: 'none', background: 'var(--t-sidebar-active)', transition: 'all 0.15s' }}>
                 Admin Panel →
               </Link>
             )}
-            <div className="flex items-center gap-3 pl-4 border-l border-white/10">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, paddingLeft: 12, borderLeft: '1px solid var(--t-border)' }}>
               <div>
-                <p className="text-xs font-bold text-white leading-none">{user.name}</p>
-                <p className="text-[10px] text-gray-500">{user.role.replace(/_/g, ' ')} • {user.tenantName}</p>
+                <p style={{ fontSize: '0.8rem', fontWeight: 700, lineHeight: 1 }}>{user.name}</p>
+                <p style={{ fontSize: '0.65rem', color: 'var(--t-text-dim)', fontFamily: 'var(--font-mono)' }}>{user.role.replace(/_/g, ' ')} · {user.tenantName}</p>
               </div>
-              <button
-                onClick={() => { logout(); router.push('/login'); }}
-                className="text-xs text-gray-500 hover:text-red-400 transition-colors px-3 py-1.5 rounded-lg border border-white/5 hover:border-red-400/30"
-              >
+              <button onClick={() => { logout(); router.push('/login'); }}
+                className="btn-ghost" style={{ fontSize: '0.75rem', padding: '0.3rem 0.75rem' }}>
                 Logout
               </button>
             </div>
@@ -59,41 +61,33 @@ export default function HomePage() {
       </nav>
 
       {/* Hero */}
-      <div className="relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-cyan-500/10 rounded-full blur-3xl" />
-        </div>
-        <div className="max-w-7xl mx-auto px-6 py-16 text-center relative">
-          <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-cyan-400/30 bg-cyan-400/5">
-            <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse" />
-            <span className="text-cyan-400 text-xs font-bold uppercase tracking-widest">
-              Welcome, {user.name} • {user.tenantName}
-            </span>
+      <div style={{ position: 'relative', overflow: 'hidden' }}>
+        <div style={{ position: 'absolute', top: 0, left: '50%', transform: 'translateX(-50%)', width: 600, height: 300, background: 'radial-gradient(ellipse, rgba(245,158,11,0.08) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div style={{ maxWidth: 1200, margin: '0 auto', padding: '4rem 1.5rem 3rem', textAlign: 'center', position: 'relative' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, marginBottom: '1.5rem', padding: '0.35rem 1rem', borderRadius: 999, border: '1px solid rgba(16,185,129,0.3)', background: 'rgba(16,185,129,0.06)' }}>
+            <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--t-green)', animation: 'pulse 2s infinite' }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', fontWeight: 600, color: 'var(--t-green)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>Welcome, {user.name} · {user.tenantName}</span>
           </div>
-          <h1 className="text-5xl md:text-6xl font-black tracking-tight mb-4">
+          <h1 style={{ fontSize: 'clamp(2.5rem,5vw,3.75rem)', lineHeight: 1.05, marginBottom: '1rem', fontFamily: 'var(--font-heading)' }}>
             AI Mobility &{' '}
-            <span className="bg-gradient-to-r from-cyan-400 via-white to-orange-400 bg-clip-text text-transparent">
-              Emergency OS
-            </span>
+            <span className="gradient-text">Emergency OS</span>
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto mb-2">
+          <p style={{ color: 'var(--t-text-muted)', fontSize: '1.05rem', maxWidth: 600, margin: '0 auto 0.75rem' }}>
             City-scale dispatch intelligence. Book transport, request emergency services, or manage your fleet.
           </p>
-          <p className="text-gray-600 text-xs uppercase tracking-widest font-bold">
-            Powered by EXL Solutions • Mission Critical Platform
+          <p style={{ color: 'var(--t-text-dim)', fontSize: '0.7rem', fontFamily: 'var(--font-mono)', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            Powered by EXL Solutions · Mission Critical Platform
           </p>
 
-          {/* Live Stats Bar */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto mt-12">
-            {[
-              { label: 'Active Vehicles', value: '4,128', color: 'cyan' },
-              { label: 'Drivers Online', value: '1,890', color: 'blue' },
-              { label: 'Revenue (24h)', value: 'AED 842K', color: 'green' },
-              { label: 'Avg ETA', value: '4.2 min', color: 'orange' },
-            ].map(stat => (
-              <div key={stat.label} className="bg-white/[0.03] border border-white/10 rounded-2xl p-4">
-                <div className={`text-2xl font-black text-${stat.color}-400`}>{stat.value}</div>
-                <div className="text-xs text-gray-500 uppercase tracking-wider mt-1">{stat.label}</div>
+          {/* Stats */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(140px,1fr))', gap: '0.75rem', maxWidth: 700, margin: '2.5rem auto 0' }}>
+            {STATS.map(s => (
+              <div key={s.label} className="stat-card">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                  <span style={{ fontSize: '1.4rem' }}>{s.icon}</span>
+                </div>
+                <p className="stat-value" style={{ color: s.color, fontSize: '1.5rem' }}>{s.value}</p>
+                <p className="stat-label">{s.label}</p>
               </div>
             ))}
           </div>
@@ -101,10 +95,13 @@ export default function HomePage() {
       </div>
 
       {/* Booking Form */}
-      <div className="max-w-7xl mx-auto px-6 pb-24">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl font-black text-white mb-2">New Request</h2>
-          <p className="text-gray-500 text-sm">Access governed by your role: <span className="text-cyan-400 font-bold">{user.role.replace(/_/g, ' ')}</span></p>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 1.5rem 5rem' }}>
+        <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.75rem', marginBottom: '0.5rem' }}>New Request</h2>
+          <p style={{ color: 'var(--t-text-dim)', fontSize: '0.85rem' }}>
+            Access governed by your role:{' '}
+            <span style={{ color: 'var(--t-accent)', fontWeight: 700, fontFamily: 'var(--font-mono)' }}>{user.role.replace(/_/g, ' ')}</span>
+          </p>
         </div>
         <DynamicBookingForm />
       </div>

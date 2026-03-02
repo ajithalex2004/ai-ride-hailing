@@ -4,19 +4,11 @@ import React, { useState, useEffect } from 'react';
 import { BOOKING_METADATA, FormField, ROLE_DOMAIN_ACCESS } from './metadata';
 import { useAuth } from '@/context/AuthContext';
 
-interface DispatchResult {
-    trip_id: string;
-    status: string;
-    domain: string;
-    eta_minutes: number;
-    message: string;
-    [key: string]: any;
-}
+interface DispatchResult { trip_id: string; status: string; domain: string; eta_minutes: number; message: string;[key: string]: any; }
 
 export default function DynamicBookingForm() {
     const { user } = useAuth();
 
-    // Filter domains the current role can access
     const allowedDomains = BOOKING_METADATA.filter(d =>
         !user || (ROLE_DOMAIN_ACCESS[user.role] ?? ['TRANSPORT', 'EMERGENCY']).includes(d.domain)
     );
@@ -31,109 +23,74 @@ export default function DynamicBookingForm() {
     const requestTypeKeys = domainData ? Object.keys(domainData.requestTypes) : [];
     const currentConfig = domainData?.requestTypes[selectedRequestType];
 
-    useEffect(() => {
-        if (allowedDomains.length > 0) setSelectedDomain(allowedDomains[0].domain);
-    }, [user?.role]);
-
-    useEffect(() => {
-        if (requestTypeKeys.length > 0) setSelectedRequestType(requestTypeKeys[0]);
-        setResult(null);
-    }, [selectedDomain]);
-
+    useEffect(() => { if (allowedDomains.length > 0) setSelectedDomain(allowedDomains[0].domain); }, [user?.role]);
+    useEffect(() => { if (requestTypeKeys.length > 0) setSelectedRequestType(requestTypeKeys[0]); setResult(null); }, [selectedDomain]);
     useEffect(() => {
         const defaults: any = {};
-        currentConfig?.fields.forEach((f: FormField) => {
-            if (f.defaultValue !== undefined) defaults[f.id] = f.defaultValue;
-        });
-        setFormData(defaults);
-        setResult(null);
+        currentConfig?.fields.forEach((f: FormField) => { if (f.defaultValue !== undefined) defaults[f.id] = f.defaultValue; });
+        setFormData(defaults); setResult(null);
     }, [selectedRequestType]);
 
-    const handleInputChange = (id: string, value: any) => {
-        setFormData((prev: any) => ({ ...prev, [id]: value }));
-    };
-
     const handleSubmit = async () => {
-        setIsLoading(true);
-        setResult(null);
-        const payload = {
-            domain: selectedDomain,
-            request_type: selectedRequestType,
-            priority: formData.priority || 'STANDARD',
-            metadata_json: JSON.stringify(formData),
-            pickup_address: 'DIFC, Dubai',
-            dropoff_address: 'Dubai Marina',
-            requester_id: user?.id ?? '0',
-            requester_role: user?.role,
-        };
+        setIsLoading(true); setResult(null);
         try {
-            const resp = await fetch('/api/book', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
+            const resp = await fetch('/api/book', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ domain: selectedDomain, request_type: selectedRequestType, priority: formData.priority || 'STANDARD', metadata_json: JSON.stringify(formData), pickup_address: 'DIFC, Dubai', dropoff_address: 'Dubai Marina', requester_id: user?.id ?? '0', requester_role: user?.role }) });
             setResult(await resp.json());
-        } catch {
-            setResult({ trip_id: 'ERR-000', status: 'ERROR', domain: selectedDomain, eta_minutes: 0, message: '❌ Request failed. Check console.' });
-        } finally {
-            setIsLoading(false);
-        }
+        } catch { setResult({ trip_id: 'ERR-000', status: 'ERROR', domain: selectedDomain, eta_minutes: 0, message: '❌ Request failed.' }); }
+        finally { setIsLoading(false); }
     };
 
     const isEmergency = selectedDomain === 'EMERGENCY';
+    const accentColor = isEmergency ? 'var(--t-orange)' : 'var(--t-accent)';
+    const accentSoft = isEmergency ? 'var(--t-orange-soft)' : 'var(--t-accent-soft)';
+    const accentBorder = isEmergency ? 'rgba(249,115,22,0.25)' : 'rgba(245,158,11,0.25)';
 
     if (allowedDomains.length === 0) {
         return (
-            <div className="text-center py-12 text-gray-500">
-                <p className="text-4xl mb-4">🚫</p>
-                <p className="font-bold">No booking access for your role.</p>
-                <p className="text-sm mt-2">Contact your administrator to request access.</p>
+            <div style={{ textAlign: 'center', padding: '3rem', color: 'var(--t-text-muted)' }}>
+                <p style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>🚫</p>
+                <p style={{ fontWeight: 700, fontFamily: 'var(--font-heading)' }}>No booking access for your role.</p>
+                <p style={{ fontSize: '0.85rem', marginTop: '0.5rem', color: 'var(--t-text-dim)' }}>Contact your administrator to request access.</p>
             </div>
         );
     }
 
     return (
-        <div className="w-full max-w-2xl mx-auto space-y-6">
+        <div style={{ width: '100%', maxWidth: 640, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+
             {/* Domain Toggle */}
-            <div className="flex gap-3 p-1 bg-white/[0.03] border border-white/10 rounded-2xl">
-                {allowedDomains.map(d => (
-                    <button
-                        key={d.domain}
-                        onClick={() => setSelectedDomain(d.domain)}
-                        className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all ${selectedDomain === d.domain
-                                ? d.domain === 'EMERGENCY'
-                                    ? 'bg-orange-500 text-white shadow-[0_0_20px_rgba(249,115,22,0.35)]'
-                                    : 'bg-cyan-400 text-black shadow-[0_0_20px_rgba(34,211,238,0.35)]'
-                                : 'text-gray-400 hover:text-white'
-                            }`}
-                    >
-                        <span>{d.icon}</span>
-                        <span>{d.label}</span>
-                    </button>
-                ))}
+            <div style={{ display: 'flex', gap: 8, padding: 4, background: 'var(--t-surface)', border: '1px solid var(--t-border)', borderRadius: 16 }}>
+                {allowedDomains.map(d => {
+                    const isActive = selectedDomain === d.domain;
+                    const isEmg = d.domain === 'EMERGENCY';
+                    return (
+                        <button key={d.domain} onClick={() => setSelectedDomain(d.domain)}
+                            style={{
+                                flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, padding: '0.7rem', borderRadius: 12, border: 'none', cursor: 'pointer', fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '0.85rem', transition: 'all 0.2s',
+                                background: isActive ? (isEmg ? 'var(--t-orange)' : 'var(--t-accent)') : 'transparent',
+                                color: isActive ? (isEmg ? '#fff' : 'var(--t-accent-contrast)') : 'var(--t-text-muted)',
+                                boxShadow: isActive ? `0 4px 15px ${isEmg ? 'rgba(249,115,22,0.3)' : 'rgba(245,158,11,0.3)'}` : 'none',
+                            }}>
+                            <span>{d.icon}</span><span>{d.label}</span>
+                        </button>
+                    );
+                })}
             </div>
 
             {/* Form Card */}
-            <div className="bg-white/[0.03] border border-white/10 rounded-3xl p-8 backdrop-blur-xl">
-                {/* Request Type */}
-                <div className="mb-6">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">Request Type</label>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+            <div style={{ background: 'var(--t-card)', border: '1px solid var(--t-border)', borderRadius: 20, padding: '1.75rem' }}>
+
+                {/* Request Type Pills */}
+                <div style={{ marginBottom: '1.5rem' }}>
+                    <label style={{ display: 'block', fontSize: '0.62rem', fontWeight: 700, color: 'var(--t-text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 10 }}>Request Type</label>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
                         {requestTypeKeys.map(key => {
-                            const config = domainData!.requestTypes[key];
+                            const cfg = domainData!.requestTypes[key];
                             const isActive = selectedRequestType === key;
                             return (
-                                <button
-                                    key={key}
-                                    onClick={() => setSelectedRequestType(key)}
-                                    className={`py-2.5 px-3 rounded-xl text-sm font-bold border transition-all ${isActive
-                                            ? isEmergency
-                                                ? 'bg-orange-500/20 border-orange-500/50 text-orange-400'
-                                                : 'bg-cyan-400/15 border-cyan-400/40 text-cyan-400'
-                                            : 'bg-white/[0.02] border-white/10 text-gray-400 hover:border-white/20 hover:text-white'
-                                        }`}
-                                >
-                                    {config.label}
+                                <button key={key} onClick={() => setSelectedRequestType(key)}
+                                    style={{ padding: '0.5rem 1rem', borderRadius: 10, border: `1px solid ${isActive ? accentBorder : 'var(--t-border)'}`, background: isActive ? accentSoft : 'var(--t-surface)', color: isActive ? accentColor : 'var(--t-text-muted)', fontWeight: 700, fontSize: '0.8rem', fontFamily: 'var(--font-sans)', cursor: 'pointer', transition: 'all 0.15s' }}>
+                                    {cfg.label}
                                 </button>
                             );
                         })}
@@ -141,126 +98,91 @@ export default function DynamicBookingForm() {
                 </div>
 
                 {/* Dynamic Fields */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.25rem' }}>
                     {currentConfig?.fields.map((field: FormField) => (
-                        <div key={field.id} className={field.type === 'checkbox' ? 'col-span-1 md:col-span-2' : ''}>
-                            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest block mb-2">{field.label}</label>
-                            {renderField(field, formData[field.id], (val) => handleInputChange(field.id, val), isEmergency)}
+                        <div key={field.id} style={{ gridColumn: field.type === 'checkbox' ? '1 / -1' : 'auto' }}>
+                            <label style={{ display: 'block', fontSize: '0.62rem', fontWeight: 700, color: 'var(--t-text-dim)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>{field.label}</label>
+                            {renderField(field, formData[field.id], (val) => setFormData((p: any) => ({ ...p, [field.id]: val })), accentColor, accentSoft)}
                         </div>
                     ))}
                 </div>
 
-                {/* Pickup / Dropoff (mocked) */}
-                <div className="grid grid-cols-2 gap-3 mb-6">
-                    <div className="bg-white/[0.03] border border-white/10 rounded-xl p-3">
-                        <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">📍 Pickup</p>
-                        <p className="text-sm text-white font-medium">DIFC, Dubai</p>
-                    </div>
-                    <div className="bg-white/[0.03] border border-white/10 rounded-xl p-3">
-                        <p className="text-[10px] text-gray-500 uppercase font-bold mb-1">📍 Dropoff</p>
-                        <p className="text-sm text-white font-medium">Dubai Marina</p>
-                    </div>
+                {/* Pickup / Drop */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8, marginBottom: '1.25rem' }}>
+                    {[['📍 Pickup', 'DIFC, Dubai'], ['📍 Dropoff', 'Dubai Marina']].map(([lbl, val]) => (
+                        <div key={lbl} style={{ background: 'var(--t-surface)', border: '1px solid var(--t-border)', borderRadius: 10, padding: '0.7rem 0.85rem' }}>
+                            <p style={{ fontSize: '0.6rem', color: 'var(--t-text-dim)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 3 }}>{lbl}</p>
+                            <p style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--t-text)' }}>{val}</p>
+                        </div>
+                    ))}
                 </div>
 
                 {/* Submit */}
-                <button
-                    onClick={handleSubmit}
-                    disabled={isLoading}
-                    className={`w-full py-4 rounded-2xl font-black text-base transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:scale-100 ${isEmergency
-                            ? 'bg-orange-500 text-white shadow-lg shadow-orange-500/25 hover:bg-orange-400'
-                            : 'bg-cyan-400 text-black shadow-lg shadow-cyan-400/25 hover:bg-cyan-300'
-                        }`}
-                >
-                    {isLoading ? '⏳ Dispatching...' : currentConfig?.primaryAction || 'Process Request'}
+                <button onClick={handleSubmit} disabled={isLoading}
+                    style={{
+                        width: '100%', padding: '0.95rem', borderRadius: 14, border: 'none', cursor: isLoading ? 'not-allowed' : 'pointer', fontFamily: 'var(--font-heading)', fontWeight: 900, fontSize: '1rem', transition: 'all 0.2s', opacity: isLoading ? 0.65 : 1,
+                        background: isEmergency ? 'var(--t-orange)' : 'var(--t-accent)',
+                        color: isEmergency ? '#fff' : 'var(--t-accent-contrast)',
+                        boxShadow: `0 4px 20px ${isEmergency ? 'rgba(249,115,22,0.25)' : 'rgba(245,158,11,0.25)'}`,
+                    }}>
+                    {isLoading ? '⏳ Dispatching...' : (currentConfig?.primaryAction || 'Process Request')}
                 </button>
             </div>
 
             {/* Result Panel */}
             {result && (
-                <div className={`p-6 rounded-2xl border ${result.status === 'ERROR'
-                        ? 'bg-red-900/20 border-red-500/30'
-                        : isEmergency
-                            ? 'bg-orange-900/20 border-orange-500/30'
-                            : 'bg-cyan-900/20 border-cyan-500/30'
-                    }`}>
-                    <div className="flex items-start justify-between mb-4">
+                <div style={{ padding: '1.25rem', borderRadius: 16, border: `1px solid ${result.status === 'ERROR' ? 'rgba(239,68,68,0.25)' : accentBorder}`, background: result.status === 'ERROR' ? 'var(--t-red-soft)' : accentSoft, animation: 'fadeIn 0.3s ease' }}>
+                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1rem' }}>
                         <div>
-                            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-1">Dispatch Oracle Response</p>
-                            <p className="text-base font-black">{result.message}</p>
+                            <p style={{ fontSize: '0.6rem', color: 'var(--t-text-dim)', textTransform: 'uppercase', letterSpacing: '0.1em', fontWeight: 700, marginBottom: 4 }}>Dispatch Oracle Response</p>
+                            <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, fontSize: '1rem', color: 'var(--t-text)' }}>{result.message}</p>
                         </div>
-                        <span className={`text-xs px-3 py-1 rounded-full font-bold ${result.status === 'DISPATCHED' ? 'bg-orange-500/20 text-orange-400' :
-                                result.status === 'MATCHED' ? 'bg-cyan-500/20 text-cyan-400' :
-                                    'bg-red-500/20 text-red-400'
-                            }`}>{result.status}</span>
+                        <span className={`badge ${result.status === 'DISPATCHED' ? 'badge-orange' : result.status === 'MATCHED' ? 'badge-amber' : 'badge-red'}`}>
+                            {result.status}
+                        </span>
                     </div>
-                    <div className="grid grid-cols-2 gap-3 text-sm">
-                        <div className="bg-white/5 rounded-xl p-3">
-                            <p className="text-[10px] text-gray-500 mb-1">TRIP ID</p>
-                            <p className="font-mono font-bold">{result.trip_id}</p>
-                        </div>
-                        {result.eta_minutes > 0 && (
-                            <div className="bg-white/5 rounded-xl p-3">
-                                <p className="text-[10px] text-gray-500 mb-1">ETA</p>
-                                <p className="font-bold">{result.eta_minutes} min</p>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                        {[
+                            result.trip_id && { label: 'TRIP ID', val: result.trip_id, mono: true },
+                            result.eta_minutes > 0 && { label: 'ETA', val: `${result.eta_minutes} min` },
+                            result.assigned_driver && { label: 'DRIVER', val: `${result.assigned_driver} ⭐ ${result.driver_rating}` },
+                            result.fare_estimate_aed && { label: 'FARE', val: `AED ${result.fare_estimate_aed}` },
+                            result.assigned_ambulance && { label: 'UNIT', val: result.assigned_ambulance },
+                        ].filter(Boolean).map((item: any) => (
+                            <div key={item.label} style={{ background: 'var(--t-surface)', border: '1px solid var(--t-border)', borderRadius: 10, padding: '0.6rem 0.75rem' }}>
+                                <p style={{ fontSize: '0.6rem', color: 'var(--t-text-dim)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, marginBottom: 3 }}>{item.label}</p>
+                                <p style={{ fontSize: '0.8rem', fontWeight: 700, fontFamily: item.mono ? 'var(--font-mono)' : 'inherit' }}>{item.val}</p>
                             </div>
-                        )}
-                        {result.assigned_driver && (
-                            <div className="bg-white/5 rounded-xl p-3">
-                                <p className="text-[10px] text-gray-500 mb-1">DRIVER</p>
-                                <p className="font-bold">{result.assigned_driver} ⭐ {result.driver_rating}</p>
-                            </div>
-                        )}
-                        {result.fare_estimate_aed && (
-                            <div className="bg-white/5 rounded-xl p-3">
-                                <p className="text-[10px] text-gray-500 mb-1">FARE</p>
-                                <p className="font-bold">AED {result.fare_estimate_aed}</p>
-                            </div>
-                        )}
-                        {result.assigned_ambulance && (
-                            <div className="bg-white/5 rounded-xl p-3">
-                                <p className="text-[10px] text-gray-500 mb-1">UNIT</p>
-                                <p className="font-bold">{result.assigned_ambulance}</p>
-                            </div>
-                        )}
+                        ))}
                         {result.destination_hospital && (
-                            <div className="bg-white/5 rounded-xl p-3 col-span-2">
-                                <p className="text-[10px] text-gray-500 mb-1">HOSPITAL</p>
-                                <p className="font-bold">{result.destination_hospital}</p>
+                            <div style={{ gridColumn: '1 / -1', background: 'var(--t-surface)', border: '1px solid var(--t-border)', borderRadius: 10, padding: '0.6rem 0.75rem' }}>
+                                <p style={{ fontSize: '0.6rem', color: 'var(--t-text-dim)', textTransform: 'uppercase', letterSpacing: '0.08em', fontWeight: 700, marginBottom: 3 }}>HOSPITAL</p>
+                                <p style={{ fontSize: '0.8rem', fontWeight: 700 }}>{result.destination_hospital}</p>
                             </div>
                         )}
                     </div>
-                    <p className="text-[10px] text-gray-600 mt-3 font-mono text-right">{result.processed_by}</p>
+                    {result.processed_by && <p style={{ fontSize: '0.6rem', color: 'var(--t-text-dim)', fontFamily: 'var(--font-mono)', textAlign: 'right', marginTop: 10 }}>{result.processed_by}</p>}
                 </div>
             )}
         </div>
     );
 }
 
-function renderField(field: FormField, value: any, onChange: (val: any) => void, isEmergency: boolean) {
-    const focusClass = isEmergency ? 'focus:border-orange-400/60' : 'focus:border-cyan-400/60';
-    const baseClass = `w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 outline-none transition-all ${focusClass}`;
-    switch (field.type) {
-        case 'select':
-            return (
-                <select value={value || ''} onChange={e => onChange(e.target.value)} className={baseClass}>
-                    {field.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-                </select>
-            );
-        case 'number':
-            return <input type="number" value={value ?? ''} onChange={e => onChange(e.target.value)} className={baseClass} />;
-        case 'checkbox':
-            return (
-                <div
-                    onClick={() => onChange(!value)}
-                    className="flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/10 hover:border-white/20 transition-all cursor-pointer select-none"
-                >
-                    <span className="text-sm font-medium text-white">Enable</span>
-                    <div className={`w-6 h-6 rounded-md border flex items-center justify-center transition-all ${value ? (isEmergency ? 'bg-orange-500 border-orange-500' : 'bg-cyan-400 border-cyan-400') : 'bg-transparent border-white/20'}`}>
-                        {value && <span className="text-black text-xs font-black">✓</span>}
-                    </div>
-                </div>
-            );
-        default:
-            return <input type="text" value={value || ''} onChange={e => onChange(e.target.value)} placeholder={field.placeholder} className={baseClass} />;
-    }
+function renderField(field: FormField, value: any, onChange: (val: any) => void, accentColor: string, accentSoft: string) {
+    const base: React.CSSProperties = { width: '100%', background: 'var(--t-surface)', border: '1px solid var(--t-border)', borderRadius: 10, padding: '0.65rem 0.85rem', color: 'var(--t-text)', fontFamily: 'var(--font-sans)', fontSize: '0.85rem', outline: 'none', transition: 'border-color 0.15s', boxSizing: 'border-box' };
+    if (field.type === 'select') return (
+        <select value={value || ''} onChange={e => onChange(e.target.value)} style={base}>
+            {field.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}
+        </select>
+    );
+    if (field.type === 'number') return <input type="number" value={value ?? ''} onChange={e => onChange(e.target.value)} style={base} />;
+    if (field.type === 'checkbox') return (
+        <div onClick={() => onChange(!value)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 0.85rem', borderRadius: 10, background: 'var(--t-surface)', border: '1px solid var(--t-border)', cursor: 'pointer', userSelect: 'none' }}>
+            <span style={{ fontSize: '0.85rem', color: 'var(--t-text-muted)' }}>Enable</span>
+            <div style={{ width: 24, height: 24, borderRadius: 6, border: `2px solid ${value ? accentColor : 'var(--t-border)'}`, background: value ? accentSoft : 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.15s' }}>
+                {value && <span style={{ color: accentColor, fontSize: 12, fontWeight: 900 }}>✓</span>}
+            </div>
+        </div>
+    );
+    return <input type="text" value={value || ''} onChange={e => onChange(e.target.value)} placeholder={field.placeholder} style={base} />;
 }

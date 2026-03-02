@@ -7,7 +7,7 @@ import { useAuth } from '@/context/AuthContext';
 
 const NAV_GROUPS = [
     {
-        label: '🏛️ Command',
+        label: 'Command',
         items: [
             { href: '/admin', label: 'Overview Dashboard', icon: '📊' },
             { href: '/admin/governance', label: 'Global Governance', icon: '🌐' },
@@ -17,7 +17,7 @@ const NAV_GROUPS = [
         ],
     },
     {
-        label: '🚘 Transport',
+        label: 'Transport',
         items: [
             { href: '/admin/fleet', label: 'Fleet Management', icon: '🚗' },
             { href: '/admin/corporate', label: 'Corporate Accounts', icon: '🏢' },
@@ -28,7 +28,7 @@ const NAV_GROUPS = [
         ],
     },
     {
-        label: '🚑 Emergency',
+        label: 'Emergency',
         items: [
             { href: '/admin/emergency', label: 'Emergency Response', icon: '🆘' },
             { href: '/admin/emergency/predictive', label: 'Predictive AI', icon: '🔮' },
@@ -39,14 +39,14 @@ const NAV_GROUPS = [
         ],
     },
     {
-        label: '💰 Finance & Compliance',
+        label: 'Finance & Compliance',
         items: [
             { href: '/admin/finance', label: 'Finance & ERP', icon: '💳' },
             { href: '/admin/compliance', label: 'Compliance & Audit', icon: '🛡️' },
         ],
     },
     {
-        label: '👥 People & Security',
+        label: 'People & Security',
         items: [
             { href: '/admin/workforce', label: 'Driver Workforce', icon: '👷' },
             { href: '/admin/customers', label: 'Customer Intelligence', icon: '🧠' },
@@ -54,177 +54,184 @@ const NAV_GROUPS = [
         ],
     },
     {
-        label: '🔬 Drill & Simulation',
+        label: 'Simulation',
         items: [
             { href: '/admin/drill', label: 'Emergency Drill', icon: '🧪' },
         ],
     },
 ];
 
-// Which roles can access the admin panel
 const ADMIN_ROLES = ['ADMIN', 'SUPER_ADMIN', 'EMS_OPERATOR', 'GOVT_EMS', 'FLEET_ADMIN'];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
     const { user, logout, isLoading } = useAuth();
     const router = useRouter();
     const pathname = usePathname();
-    const [sidebarOpen, setSidebarOpen] = useState(true);
-    const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set(NAV_GROUPS.map(g => g.label)));
+    const [collapsed, setCollapsed] = useState(false);
+    const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
+        new Set(NAV_GROUPS.map(g => g.label))
+    );
 
     useEffect(() => {
-        if (!isLoading && !user) {
-            router.replace('/login');
-        } else if (!isLoading && user && !ADMIN_ROLES.includes(user.role)) {
-            router.replace('/');
-        }
+        if (!isLoading && !user) router.replace('/login');
+        else if (!isLoading && user && !ADMIN_ROLES.includes(user.role)) router.replace('/');
     }, [user, isLoading, router]);
 
     if (isLoading || !user) {
         return (
-            <div className="min-h-screen bg-[#050810] flex items-center justify-center">
-                <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
+            <div style={{ minHeight: '100vh', background: 'var(--t-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 32, height: 32, border: '2px solid var(--t-accent)', borderTopColor: 'transparent', borderRadius: '50%' }} />
             </div>
         );
     }
 
     const toggleGroup = (label: string) => {
         setExpandedGroups(prev => {
-            const next = new Set(prev);
-            if (next.has(label)) next.delete(label);
-            else next.add(label);
-            return next;
+            const n = new Set(prev);
+            n.has(label) ? n.delete(label) : n.add(label);
+            return n;
         });
     };
 
-    // Filter nav based on role
-    const filteredGroups = NAV_GROUPS.map(group => ({
-        ...group,
-        items: group.items.filter(item => {
+    const visibleGroups = NAV_GROUPS.map(g => ({
+        ...g,
+        items: g.items.filter(() => {
             if (user.role === 'SUPER_ADMIN' || user.role === 'ADMIN') return true;
-            if (user.role === 'EMS_OPERATOR' || user.role === 'GOVT_EMS') {
-                return group.label.includes('Emergency') || group.label.includes('Command') || item.href === '/admin';
-            }
-            if (user.role === 'FLEET_ADMIN') {
-                return group.label.includes('Transport') || item.href === '/admin';
-            }
-            return item.href === '/admin';
+            if (user.role === 'EMS_OPERATOR' || user.role === 'GOVT_EMS')
+                return g.label === 'Emergency' || g.label === 'Simulation';
+            if (user.role === 'FLEET_ADMIN') return g.label === 'Transport';
+            return false;
         }),
     })).filter(g => g.items.length > 0);
 
     return (
-        <div className="flex h-screen bg-[#050810] text-white overflow-hidden">
-            {/* Sidebar */}
-            <aside
-                className={`${sidebarOpen ? 'w-64' : 'w-16'} flex-shrink-0 flex flex-col border-r border-white/5 bg-black/40 backdrop-blur-xl transition-all duration-300 overflow-hidden`}
-            >
-                {/* Logo */}
-                <div className="flex items-center gap-3 px-4 py-5 border-b border-white/5">
-                    <button
-                        onClick={() => setSidebarOpen(v => !v)}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 hover:bg-white/10 transition-all flex-shrink-0"
-                    >
-                        <span className="text-xs">{sidebarOpen ? '◀' : '▶'}</span>
+        <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: 'var(--t-bg)', color: 'var(--t-text)' }}>
+
+            {/* ── Sidebar ── */}
+            <aside style={{
+                width: collapsed ? 56 : 232,
+                flexShrink: 0,
+                display: 'flex',
+                flexDirection: 'column',
+                background: 'var(--t-sidebar-bg)',
+                borderRight: '1px solid var(--t-border)',
+                transition: 'width 0.25s ease',
+                overflow: 'hidden',
+            }}>
+                {/* Logo row */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '1rem 0.75rem', borderBottom: '1px solid var(--t-border)' }}>
+                    <button onClick={() => setCollapsed(v => !v)}
+                        style={{ flexShrink: 0, width: 32, height: 32, borderRadius: 8, border: '1px solid var(--t-border)', background: 'var(--t-card)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--t-text-muted)', fontSize: 11, transition: 'all 0.15s' }}>
+                        {collapsed ? '▶' : '◀'}
                     </button>
-                    {sidebarOpen && (
-                        <div className="flex items-center gap-2 min-w-0">
-                            <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse flex-shrink-0" />
-                            <span className="font-black text-xs tracking-widest uppercase text-white truncate">AI Mobility OS</span>
+                    {!collapsed && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, overflow: 'hidden' }}>
+                            <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--t-accent)', flexShrink: 0, boxShadow: '0 0 6px var(--t-accent)' }} />
+                            <span style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, fontSize: '0.8rem', letterSpacing: '0.06em', textTransform: 'uppercase', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>AI Mobility OS</span>
                         </div>
                     )}
                 </div>
 
-                {/* User Badge */}
-                {sidebarOpen && (
-                    <div className="px-4 py-3 border-b border-white/5">
-                        <div className="bg-white/[0.03] border border-white/10 rounded-xl p-3">
-                            <p className="text-sm font-bold text-white truncate">{user.name}</p>
-                            <p className="text-[10px] text-cyan-400 font-bold uppercase tracking-wide mt-0.5">{user.role.replace(/_/g, ' ')}</p>
-                            <p className="text-[10px] text-gray-500 mt-0.5 truncate">{user.tenantName}</p>
+                {/* User badge */}
+                {!collapsed && (
+                    <div style={{ padding: '0.75rem', borderBottom: '1px solid var(--t-border)' }}>
+                        <div style={{ background: 'var(--t-card)', border: '1px solid var(--t-border)', borderRadius: 12, padding: '0.6rem 0.8rem' }}>
+                            <p style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--t-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.name}</p>
+                            <p style={{ fontSize: '0.6rem', color: 'var(--t-accent)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', marginTop: 2, fontFamily: 'var(--font-mono)' }}>{user.role.replace(/_/g, ' ')}</p>
+                            <p style={{ fontSize: '0.6rem', color: 'var(--t-text-dim)', marginTop: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user.tenantName}</p>
                         </div>
                     </div>
                 )}
 
-                {/* Navigation */}
-                <nav className="flex-1 overflow-y-auto py-3 space-y-1 px-2">
-                    {filteredGroups.map(group => (
-                        <div key={group.label}>
-                            {sidebarOpen && (
-                                <button
-                                    onClick={() => toggleGroup(group.label)}
-                                    className="w-full flex items-center justify-between px-2 py-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-widest hover:text-gray-400 transition-colors"
-                                >
+                {/* Nav */}
+                <nav style={{ flex: 1, overflowY: 'auto', padding: '0.5rem 0.5rem', display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    {visibleGroups.map(group => (
+                        <div key={group.label} style={{ marginBottom: 4 }}>
+                            {!collapsed && (
+                                <button onClick={() => toggleGroup(group.label)}
+                                    style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.35rem 0.5rem', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--t-text-dim)', fontSize: '0.62rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 2 }}>
                                     <span>{group.label}</span>
-                                    <span className="text-[8px]">{expandedGroups.has(group.label) ? '▲' : '▼'}</span>
+                                    <span style={{ fontSize: 8 }}>{expandedGroups.has(group.label) ? '▲' : '▼'}</span>
                                 </button>
                             )}
-                            {(expandedGroups.has(group.label) || !sidebarOpen) && (
-                                <div className="space-y-0.5">
-                                    {group.items.map(item => {
-                                        const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
-                                        return (
-                                            <Link
-                                                key={item.href}
-                                                href={item.href}
-                                                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all text-sm ${isActive
-                                                        ? 'bg-cyan-400/15 text-cyan-400 font-bold border border-cyan-400/20'
-                                                        : 'text-gray-400 hover:bg-white/[0.04] hover:text-white'
-                                                    }`}
-                                                title={!sidebarOpen ? item.label : undefined}
-                                            >
-                                                <span className="text-base flex-shrink-0">{item.icon}</span>
-                                                {sidebarOpen && <span className="truncate">{item.label}</span>}
-                                            </Link>
-                                        );
-                                    })}
-                                </div>
-                            )}
+                            {(expandedGroups.has(group.label) || collapsed) && group.items.map(item => {
+                                const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+                                return (
+                                    <Link key={item.href} href={item.href} title={collapsed ? item.label : undefined}
+                                        style={{
+                                            display: 'flex', alignItems: 'center', gap: 9,
+                                            padding: collapsed ? '0.6rem 0' : '0.5rem 0.6rem',
+                                            justifyContent: collapsed ? 'center' : 'flex-start',
+                                            borderRadius: 10,
+                                            textDecoration: 'none',
+                                            fontSize: '0.8rem',
+                                            fontWeight: isActive ? 700 : 500,
+                                            color: isActive ? 'var(--t-sidebar-active-text)' : 'var(--t-text-muted)',
+                                            background: isActive ? 'var(--t-sidebar-active)' : 'transparent',
+                                            border: isActive ? '1px solid rgba(245,158,11,0.2)' : '1px solid transparent',
+                                            transition: 'all 0.15s',
+                                        }}
+                                        onMouseEnter={e => { if (!isActive) { (e.currentTarget as any).style.background = 'var(--t-card-hover)'; (e.currentTarget as any).style.color = 'var(--t-text)'; } }}
+                                        onMouseLeave={e => { if (!isActive) { (e.currentTarget as any).style.background = 'transparent'; (e.currentTarget as any).style.color = 'var(--t-text-muted)'; } }}
+                                    >
+                                        <span style={{ fontSize: '1rem', flexShrink: 0 }}>{item.icon}</span>
+                                        {!collapsed && <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>}
+                                    </Link>
+                                );
+                            })}
                         </div>
                     ))}
                 </nav>
 
-                {/* Bottom Actions */}
-                <div className="border-t border-white/5 p-3 space-y-1">
-                    <Link href="/" className={`flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-gray-400 hover:bg-white/[0.04] hover:text-white transition-all`}>
-                        <span>🏠</span>
-                        {sidebarOpen && <span>Booking Portal</span>}
-                    </Link>
-                    <button
-                        onClick={() => { logout(); router.push('/login'); }}
-                        className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-gray-500 hover:bg-red-500/10 hover:text-red-400 transition-all"
-                    >
-                        <span>🚪</span>
-                        {sidebarOpen && <span>Logout</span>}
+                {/* Bottom: home + logout */}
+                <div style={{ borderTop: '1px solid var(--t-border)', padding: '0.5rem' }}>
+                    {[
+                        { href: '/', label: 'Booking Portal', icon: '🏠' },
+                    ].map(item => (
+                        <Link key={item.href} href={item.href}
+                            style={{ display: 'flex', alignItems: 'center', gap: 9, padding: collapsed ? '0.6rem 0' : '0.5rem 0.6rem', justifyContent: collapsed ? 'center' : 'flex-start', borderRadius: 10, textDecoration: 'none', fontSize: '0.8rem', fontWeight: 500, color: 'var(--t-text-muted)', transition: 'all 0.15s', marginBottom: 2 }}
+                            onMouseEnter={e => { (e.currentTarget as any).style.background = 'var(--t-card)'; (e.currentTarget as any).style.color = 'var(--t-text)'; }}
+                            onMouseLeave={e => { (e.currentTarget as any).style.background = 'transparent'; (e.currentTarget as any).style.color = 'var(--t-text-muted)'; }}>
+                            <span style={{ fontSize: '1rem' }}>{item.icon}</span>
+                            {!collapsed && <span>{item.label}</span>}
+                        </Link>
+                    ))}
+                    <button onClick={() => { logout(); router.push('/login'); }}
+                        style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 9, padding: collapsed ? '0.6rem 0' : '0.5rem 0.6rem', justifyContent: collapsed ? 'center' : 'flex-start', borderRadius: 10, background: 'none', border: 'none', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 500, color: 'var(--t-text-dim)', transition: 'all 0.15s' }}
+                        onMouseEnter={e => { (e.currentTarget as any).style.background = 'var(--t-red-soft)'; (e.currentTarget as any).style.color = 'var(--t-red)'; }}
+                        onMouseLeave={e => { (e.currentTarget as any).style.background = 'none'; (e.currentTarget as any).style.color = 'var(--t-text-dim)'; }}>
+                        <span style={{ fontSize: '1rem' }}>🚪</span>
+                        {!collapsed && <span>Logout</span>}
                     </button>
                 </div>
             </aside>
 
-            {/* Main content */}
-            <div className="flex-1 flex flex-col overflow-hidden">
-                {/* Top bar */}
-                <header className="flex-shrink-0 border-b border-white/5 bg-black/20 px-6 py-4 flex items-center justify-between">
+            {/* ── Main ── */}
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+                {/* Header */}
+                <header style={{ flexShrink: 0, borderBottom: '1px solid var(--t-border)', background: 'rgba(17,24,39,0.7)', backdropFilter: 'blur(12px)', padding: '0.875rem 1.5rem', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                     <div>
-                        <h2 className="font-black text-white capitalize">
-                            {pathname === '/admin' ? 'Overview Dashboard' :
-                                pathname.split('/').filter(Boolean).slice(1).join(' › ').replace(/-/g, ' ')}
+                        <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', fontWeight: 900, color: 'var(--t-text)', textTransform: 'capitalize' }}>
+                            {pathname === '/admin' ? 'Overview Dashboard' : pathname.split('/').filter(Boolean).slice(1).join(' › ').replace(/-/g, ' ')}
                         </h2>
-                        <p className="text-xs text-gray-500 mt-0.5">{user.tenantName} · {new Date().toLocaleDateString('en-AE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <p style={{ fontSize: '0.7rem', color: 'var(--t-text-dim)', marginTop: 2, fontFamily: 'var(--font-mono)' }}>
+                            {user.tenantName} · {new Date().toLocaleDateString('en-AE', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                        </p>
                     </div>
-                    <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-green-500/30 bg-green-500/10">
-                            <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                            <span className="text-green-400 text-xs font-bold">All Services Online</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div className="badge badge-green" style={{ padding: '0.3rem 0.75rem', display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--t-green)' }} />
+                            All Services Online
                         </div>
-                        <span className="text-xs text-gray-600 border-l border-white/5 pl-3 font-mono">
+                        <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--t-text-dim)', paddingLeft: 12, borderLeft: '1px solid var(--t-border)' }}>
                             {new Date().toLocaleTimeString('en-AE', { hour: '2-digit', minute: '2-digit' })}
                         </span>
                     </div>
                 </header>
 
-                {/* Page content */}
-                <main className="flex-1 overflow-y-auto bg-[#050810]">
-                    <div className="p-6">
-                        {children}
-                    </div>
+                {/* Page */}
+                <main style={{ flex: 1, overflowY: 'auto', padding: '1.5rem' }}>
+                    {children}
                 </main>
             </div>
         </div>
