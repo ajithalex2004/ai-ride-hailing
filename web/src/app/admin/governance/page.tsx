@@ -22,19 +22,20 @@ export default function GovernanceDashboard() {
     const [governanceMode, setGovernanceMode] = useState('GLOBAL');
 
     return (
-        <div className="min-h-screen bg-[var(--t-bg)] text-white p-8 selection:bg-[var(--t-accent)]/30 overflow-x-hidden" style={{fontFamily:"var(--font-sans)"}}>
+        <div className="min-h-screen bg-[var(--t-bg)] text-white p-8 selection:bg-[var(--t-accent)]/30 overflow-x-hidden" style={{ fontFamily: "var(--font-sans)" }}>
             {/* City-Scale Header */}
-            <div className="flex justify-between items-start mb-16 px-4">
+            <div className="flex flex-col gap-6 mb-12 px-4">
+                {/* Title row */}
                 <div className="relative">
                     <div className="absolute -left-12 top-1/2 -translate-y-1/2 w-4 h-40 bg-[var(--t-accent)]/20 blur-3xl rounded-full" />
                     <div className="flex items-center gap-3 mb-3">
                         <Globe size={16} className="text-[var(--t-cyan)] animate-pulse" />
                         <span className="text-[11px] font-black uppercase tracking-[0.4em] text-[var(--t-text-muted)]">City_Authority_Governance</span>
                     </div>
-                    <h1 className="text-6xl font-black tracking-tighter italic uppercase text-white drop-shadow-2xl">GLOBAL_SYSTEM_OS</h1>
+                    <h1 className="text-4xl md:text-5xl font-black tracking-tighter italic uppercase drop-shadow-2xl" style={{ color: 'var(--t-text)', fontFamily: 'var(--font-heading)' }}>GLOBAL_SYSTEM_OS</h1>
                 </div>
-
-                <div className="flex bg-[var(--t-surface)] border border-[var(--t-border)] p-1.5 rounded-[24px] backdrop-blur-3xl shadow-2xl">
+                {/* Tab bar — always full width so all 4 tabs are visible */}
+                <div className="inline-flex flex-wrap gap-1 bg-[var(--t-surface)] border border-[var(--t-border)] p-1.5 rounded-2xl">
                     <TabButton active={governanceMode === 'GLOBAL'} onClick={() => setGovernanceMode('GLOBAL')} label="GLOBAL_VITALS" />
                     <TabButton active={governanceMode === 'FINANCIAL'} onClick={() => setGovernanceMode('FINANCIAL')} label="TRANSPORT_ERP" />
                     <TabButton active={governanceMode === 'EMERGENCY'} onClick={() => setGovernanceMode('EMERGENCY')} label="SAFETY_SLAs" />
