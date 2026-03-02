@@ -1,168 +1,248 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
-
-type ServiceID = 'EMERGENCY_CORE' | 'TRANSPORT_CORE' | 'WORKFORCE_AI' | 'INCIDENT_MGMT' | 'TELEMETRY_HUB';
-type TenantCategory = 'PRIVATE_EMS' | 'GOVT_EMS' | 'TRAFFIC_AUTH' | 'MUNICIPALITY' | 'HIGHWAY_PATROL' | 'TOW_OPERATOR';
 
 interface Tenant {
     id: string;
     name: string;
     slug: string;
-    category: TenantCategory;
-    services: ServiceID[];
-    status: 'ACTIVE' | 'SUSPENDED' | 'PENDING_COMPLIANCE';
-    complianceLevel: number;
-    sla: Record<'P1' | 'P2' | 'P3', number>;
+    type: 'GOVT' | 'CORPORATE' | 'SCHOOL' | 'HOSPITAL' | 'INDIVIDUAL';
+    country: string;
+    status: 'ACTIVE' | 'SUSPENDED' | 'TRIAL';
+    services: string[];
+    users: number;
+    trips_30d: number;
+    revenue_30d: number;
+    plan: string;
+    created: string;
 }
 
-const AVAILABLE_SERVICES: { id: ServiceID, label: string, desc: string }[] = [
-    { id: 'EMERGENCY_CORE', label: 'Emergency Ops', desc: 'Ambulance dispatch, hospital routing, P1 queuing.' },
-    { id: 'TRANSPORT_CORE', label: 'Commercial Transport', desc: 'Taxi, Limo, Corporate booking & flows.' },
-    { id: 'WORKFORCE_AI', label: 'Workforce Intelligence', desc: 'Fatigue monitoring, skill matching, shift AI.' },
-    { id: 'INCIDENT_MGMT', label: 'Road Incident Hub', desc: 'Citizen reports, Police & Tow orchestration.' },
-    { id: 'TELEMETRY_HUB', label: 'Real-time Telemetry', desc: 'Kafka-driven live asset tracking & mission control.' },
+const MOCK_TENANTS: Tenant[] = [
+    { id: '1', name: 'Dubai Municipality', slug: 'dubai-ops', type: 'GOVT', country: '🇦🇪 UAE', status: 'ACTIVE', services: ['TRANSPORT', 'EMERGENCY', 'INCIDENT'], users: 1240, trips_30d: 42800, revenue_30d: 185000, plan: 'Enterprise', created: '2024-01-15' },
+    { id: '2', name: 'ACME Corporation', slug: 'acme-corp', type: 'CORPORATE', country: '🇦🇪 UAE', status: 'ACTIVE', services: ['TRANSPORT', 'SHUTTLE', 'RENTAL'], users: 340, trips_30d: 12400, revenue_30d: 62000, plan: 'Corporate', created: '2024-03-12' },
+    { id: '3', name: 'Dubai Health Authority', slug: 'dha-ems', type: 'HOSPITAL', country: '🇦🇪 UAE', status: 'ACTIVE', services: ['EMERGENCY', 'AMBULANCE'], users: 520, trips_30d: 8900, revenue_30d: 0, plan: 'Govt EMS', created: '2024-02-01' },
+    { id: '4', name: 'Al Noor School District', slug: 'alnoor-school', type: 'SCHOOL', country: '🇦🇪 UAE', status: 'ACTIVE', services: ['SCHOOL_BUS'], users: 89, trips_30d: 6200, revenue_30d: 35000, plan: 'Education', created: '2024-06-10' },
+    { id: '5', name: 'RTA Traffic Authority', slug: 'rta-traffic', type: 'GOVT', country: '🇦🇪 UAE', status: 'ACTIVE', services: ['TRANSPORT', 'INCIDENT', 'EMERGENCY'], users: 780, trips_30d: 31200, revenue_30d: 0, plan: 'Govt Master', created: '2024-01-20' },
+    { id: '6', name: 'Riyadh Metro Corp', slug: 'riyadh-metro', type: 'CORPORATE', country: '🇸🇦 KSA', status: 'TRIAL', services: ['SHUTTLE', 'TRANSPORT'], users: 120, trips_30d: 3100, revenue_30d: 14000, plan: 'Trial', created: '2025-11-01' },
+    { id: '7', name: 'Cairo Ambulance Network', slug: 'cairo-ems', type: 'HOSPITAL', country: '🇪🇬 Egypt', status: 'SUSPENDED', services: ['EMERGENCY'], users: 45, trips_30d: 0, revenue_30d: 0, plan: 'Govt EMS', created: '2024-08-05' },
+    { id: '8', name: 'Kuwait Oil Transport', slug: 'kot-fleet', type: 'CORPORATE', country: '🇰🇼 Kuwait', status: 'ACTIVE', services: ['TRANSPORT', 'RENTAL'], users: 210, trips_30d: 7800, revenue_30d: 48000, plan: 'Corporate', created: '2025-01-18' },
 ];
 
-const CATEGORIES: { id: TenantCategory, label: string }[] = [
-    { id: 'GOVT_EMS', label: 'Government EMS' },
-    { id: 'PRIVATE_EMS', label: 'Private Ambulance Operator' },
-    { id: 'TRAFFIC_AUTH', label: 'Traffic Authority' },
-    { id: 'MUNICIPALITY', label: 'Municipality' },
-    { id: 'HIGHWAY_PATROL', label: 'Highway Patrol' },
-    { id: 'TOW_OPERATOR', label: 'Tow Truck Operator' },
-];
+const ALL_SERVICES = ['TRANSPORT', 'EMERGENCY', 'AMBULANCE', 'INCIDENT', 'SHUTTLE', 'SCHOOL_BUS', 'RENTAL'];
+const TENANT_TYPES = ['ALL', 'GOVT', 'CORPORATE', 'SCHOOL', 'HOSPITAL', 'INDIVIDUAL'];
+const STATUS_COLORS: Record<string, string> = {
+    ACTIVE: 'bg-green-500/15 text-green-400 border-green-500/30',
+    SUSPENDED: 'bg-red-500/15 text-red-400 border-red-500/30',
+    TRIAL: 'bg-yellow-500/15 text-yellow-400 border-yellow-500/30',
+};
+const TYPE_ICONS: Record<string, string> = {
+    GOVT: '🏛️', CORPORATE: '🏢', SCHOOL: '🏫', HOSPITAL: '🏥', INDIVIDUAL: '👤',
+};
 
-export default function SuperAdminTenantsPage() {
-    const [tenants, setTenants] = useState<Tenant[]>([
-        { id: '1', name: 'Dubai Health Authority', slug: 'dha-ems', category: 'GOVT_EMS', status: 'ACTIVE', complianceLevel: 5, services: ['EMERGENCY_CORE', 'WORKFORCE_AI', 'TELEMETRY_HUB'], sla: { P1: 8, P2: 15, P3: 60 } },
-        { id: '2', name: 'Roads & Transport Authority', slug: 'rta-traffic', category: 'TRAFFIC_AUTH', status: 'ACTIVE', complianceLevel: 5, services: ['INCIDENT_MGMT', 'TELEMETRY_HUB'], sla: { P1: 10, P2: 20, P3: 90 } },
-        { id: '3', name: 'Al Ghurair Ambulance', slug: 'ag-private-ems', category: 'PRIVATE_EMS', status: 'PENDING_COMPLIANCE', complianceLevel: 3, services: ['EMERGENCY_CORE'], sla: { P1: 12, P2: 18, P3: 45 } },
-    ]);
+export default function TenantsPage() {
+    const [filter, setFilter] = useState('ALL');
+    const [search, setSearch] = useState('');
+    const [selectedTenant, setSelectedTenant] = useState<Tenant | null>(null);
+    const [tenants, setTenants] = useState<Tenant[]>(MOCK_TENANTS);
 
-    const updateSLA = (tenantId: string, priority: 'P1' | 'P2' | 'P3', value: number) => {
-        setTenants(prev => prev.map(t => t.id === tenantId ? { ...t, sla: { ...t.sla, [priority]: value } } : t));
+    const filtered = tenants.filter(t =>
+        (filter === 'ALL' || t.type === filter) &&
+        (t.name.toLowerCase().includes(search.toLowerCase()) || t.slug.includes(search.toLowerCase()))
+    );
+
+    const totalRevenue = tenants.reduce((s, t) => s + t.revenue_30d, 0);
+    const totalUsers = tenants.reduce((s, t) => s + t.users, 0);
+    const totalTrips = tenants.reduce((s, t) => s + t.trips_30d, 0);
+    const activeCount = tenants.filter(t => t.status === 'ACTIVE').length;
+
+    const toggleService = (tenantId: string, service: string) => {
+        setTenants(prev => prev.map(t => {
+            if (t.id !== tenantId) return t;
+            const has = t.services.includes(service);
+            return { ...t, services: has ? t.services.filter(s => s !== service) : [...t.services, service] };
+        }));
+        if (selectedTenant?.id === tenantId) {
+            setSelectedTenant(prev => {
+                if (!prev) return null;
+                const has = prev.services.includes(service);
+                return { ...prev, services: has ? prev.services.filter(s => s !== service) : [...prev.services, service] };
+            });
+        }
     };
 
-    const toggleService = (tenantId: string, serviceId: ServiceID) => {
+    const toggleStatus = (tenantId: string) => {
         setTenants(prev => prev.map(t => {
-            if (t.id === tenantId) {
-                const hasService = t.services.includes(serviceId);
-                return { ...t, services: hasService ? t.services.filter(s => s !== serviceId) : [...t.services, serviceId] };
-            }
-            return t;
+            if (t.id !== tenantId) return t;
+            return { ...t, status: t.status === 'ACTIVE' ? 'SUSPENDED' : 'ACTIVE' };
         }));
     };
 
     return (
-        <div className="min-h-screen bg-[#08080a] text-white p-8 font-sans selection:bg-neon-blue selection:text-black">
-            <div className="max-w-7xl mx-auto space-y-12">
-                <header className="flex justify-between items-end border-b border-white/5 pb-10">
-                    <div className="space-y-2">
-                        <div className="flex items-center gap-3">
-                            <span className="px-2 py-0.5 bg-neon-blue text-black text-[10px] font-black rounded uppercase">Super_Admin</span>
-                            <h1 className="text-4xl font-black italic tracking-tighter text-white">PLATFORM_ORCHESTRATOR</h1>
-                        </div>
-                        <p className="text-xs text-muted-grey uppercase tracking-[0.4em] font-medium">Global Multi-Tenant Control Hub & Compliance Layer</p>
+        <div className="space-y-6">
+            {/* KPI Strip */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                    { label: 'Total Tenants', value: tenants.length, sub: `${activeCount} active`, color: 'cyan' },
+                    { label: 'Total Users', value: totalUsers.toLocaleString(), sub: 'across all tenants', color: 'blue' },
+                    { label: 'Trips (30d)', value: totalTrips.toLocaleString(), sub: 'all domains', color: 'green' },
+                    { label: 'Revenue (30d)', value: `AED ${(totalRevenue / 1000).toFixed(0)}K`, sub: 'billed tenants', color: 'orange' },
+                ].map(k => (
+                    <div key={k.label} className="bg-white/[0.03] border border-white/10 rounded-2xl p-5">
+                        <p className={`text-2xl font-black text-${k.color}-400`}>{k.value}</p>
+                        <p className="text-xs text-gray-400 font-bold mt-1">{k.label}</p>
+                        <p className="text-[10px] text-gray-600 mt-0.5">{k.sub}</p>
                     </div>
-                    <div className="flex gap-4">
-                        <button className="px-6 py-2 border border-white/10 text-[10px] font-black uppercase tracking-widest rounded-lg hover:bg-white hover:text-black transition-all">
-                            BUSINESS_RULES
-                        </button>
-                        <button className="px-8 py-2 bg-neon-blue text-black font-black rounded-lg hover:scale-105 active:scale-95 transition-all shadow-[0_0_20px_rgba(0,243,255,0.3)]">
-                            PROVISION_TENANT
-                        </button>
-                    </div>
-                </header>
-
-                <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-                    {tenants.map((tenant) => (
-                        <div key={tenant.id} className="group relative glass-panel p-8 rounded-[2rem] border border-white/5 hover:border-white/20 transition-all duration-500 overflow-hidden bg-gradient-to-br from-white/[0.03] to-transparent">
-                            {/* Animated Pulse for Pending Compliance */}
-                            {tenant.status === 'PENDING_COMPLIANCE' && (
-                                <div className="absolute top-0 left-0 w-full h-1 bg-yellow-500/50 animate-pulse"></div>
-                            )}
-
-                            <div className="flex justify-between items-start mb-8">
-                                <div className="space-y-1">
-                                    <h2 className="text-2xl font-black tracking-tight group-hover:text-neon-blue transition-colors">{tenant.name}</h2>
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-[9px] font-black px-2 py-0.5 bg-white/5 rounded text-muted-grey border border-white/10 uppercase">{tenant.category.replace('_', ' ')}</span>
-                                        <code className="text-[9px] text-neon-blue font-mono font-bold">/{tenant.slug}</code>
-                                    </div>
-                                </div>
-                                <div className="text-right">
-                                    <div className="text-[8px] font-black uppercase text-muted-grey mb-1">Compliance</div>
-                                    <div className="flex gap-0.5">
-                                        {[1, 2, 3, 4, 5].map(lvl => (
-                                            <div key={lvl} className={`w-1.5 h-3 rounded-sm ${lvl <= tenant.complianceLevel ? 'bg-neon-blue' : 'bg-white/5'}`}></div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-6">
-                                <div className="flex justify-between items-center">
-                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-grey">Priority SLA Controls</h3>
-                                </div>
-                                <div className="grid grid-cols-3 gap-2">
-                                    {(['P1', 'P2', 'P3'] as const).map((p) => (
-                                        <div key={p} className="bg-black/40 border border-white/5 p-3 rounded-xl">
-                                            <div className="text-[8px] font-black text-muted-grey mb-1">{p} TARGET</div>
-                                            <input
-                                                type="number"
-                                                value={tenant.sla[p]}
-                                                onChange={(e) => updateSLA(tenant.id, p, parseInt(e.target.value))}
-                                                className="bg-transparent text-xs font-mono text-neon-blue w-full outline-none"
-                                            />
-                                            <div className="text-[7px] text-muted-grey mt-1">mins</div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="space-y-6 mt-6">
-                                <div className="flex justify-between items-center">
-                                    <h3 className="text-[10px] font-black uppercase tracking-widest text-muted-grey">Enabled Modules</h3>
-                                    <span className="text-[10px] font-mono text-neon-blue">{tenant.services.length}/{AVAILABLE_SERVICES.length}</span>
-                                </div>
-                                <div className="grid grid-cols-1 gap-2">
-                                    {AVAILABLE_SERVICES.map((svc) => (
-                                        <ServiceCard
-                                            key={svc.id}
-                                            label={svc.label}
-                                            active={tenant.services.includes(svc.id)}
-                                            onClick={() => toggleService(tenant.id, svc.id)}
-                                        />
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="mt-10 pt-8 border-t border-white/5 grid grid-cols-2 gap-4">
-                                <button className="py-4 bg-white/5 hover:bg-white/10 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all">
-                                    GOVERNANCE_LOGS
-                                </button>
-                                <button className={`py-4 rounded-2xl text-[9px] font-black uppercase tracking-widest transition-all border ${tenant.status === 'SUSPENDED' ? 'border-green-500/20 text-green-400 bg-green-500/5' : 'border-red-500/20 text-red-400 bg-red-500/5'}`}>
-                                    {tenant.status === 'SUSPENDED' ? 'REINSTATE' : 'SUSPEND_OPS'}
-                                </button>
-                            </div>
-                        </div>
-                    ))}
-                </div>
+                ))}
             </div>
-        </div>
-    );
-}
 
-function ServiceCard({ label, active, onClick }: { label: string, active: boolean, onClick: () => void }) {
-    return (
-        <div
-            onClick={onClick}
-            className={`px-4 py-3 rounded-xl flex items-center justify-between cursor-pointer transition-all border group/card ${active ? 'bg-neon-blue/10 border-neon-blue/30' : 'bg-black/40 border-white/5 hover:border-white/10'}`}
-        >
-            <span className={`text-[11px] font-bold ${active ? 'text-white' : 'text-muted-grey group-hover/card:text-white'}`}>{label}</span>
-            <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center transition-all ${active ? 'border-neon-blue bg-neon-blue' : 'border-white/10 bg-transparent'}`}>
-                {active && <div className="w-1.5 h-1.5 bg-black rounded-full"></div>}
+            <div className="flex gap-6">
+                {/* Tenant List */}
+                <div className="flex-1 space-y-4">
+                    {/* Filters */}
+                    <div className="flex gap-3 flex-wrap">
+                        <input
+                            type="text"
+                            placeholder="Search tenants..."
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            className="flex-1 min-w-40 bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white placeholder-gray-600 outline-none focus:border-cyan-400/50 transition-all"
+                        />
+                        <div className="flex gap-1 bg-white/[0.03] border border-white/10 rounded-xl p-1">
+                            {TENANT_TYPES.map(t => (
+                                <button key={t} onClick={() => setFilter(t)}
+                                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${filter === t ? 'bg-cyan-400/20 text-cyan-400' : 'text-gray-500 hover:text-white'}`}>
+                                    {t === 'ALL' ? 'All' : `${TYPE_ICONS[t]} ${t}`}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Table */}
+                    <div className="bg-white/[0.02] border border-white/10 rounded-2xl overflow-hidden">
+                        <table className="w-full text-sm">
+                            <thead>
+                                <tr className="border-b border-white/5">
+                                    <th className="text-left px-4 py-3 text-[10px] text-gray-500 uppercase font-bold tracking-widest">Tenant</th>
+                                    <th className="text-left px-4 py-3 text-[10px] text-gray-500 uppercase font-bold tracking-widest">Type</th>
+                                    <th className="text-left px-4 py-3 text-[10px] text-gray-500 uppercase font-bold tracking-widest">Status</th>
+                                    <th className="text-left px-4 py-3 text-[10px] text-gray-500 uppercase font-bold tracking-widest">Services</th>
+                                    <th className="text-left px-4 py-3 text-[10px] text-gray-500 uppercase font-bold tracking-widest">Users</th>
+                                    <th className="text-left px-4 py-3 text-[10px] text-gray-500 uppercase font-bold tracking-widest">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/[0.04]">
+                                {filtered.map(t => (
+                                    <tr key={t.id} className={`hover:bg-white/[0.02] transition-all cursor-pointer ${selectedTenant?.id === t.id ? 'bg-cyan-400/5' : ''}`}
+                                        onClick={() => setSelectedTenant(t)}>
+                                        <td className="px-4 py-3">
+                                            <p className="font-bold text-white">{t.name}</p>
+                                            <p className="text-[10px] text-gray-500 font-mono">{t.slug} · {t.country}</p>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <span className="text-xs">{TYPE_ICONS[t.type]} {t.type}</span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <span className={`text-[10px] px-2 py-1 rounded-full border font-bold ${STATUS_COLORS[t.status]}`}>{t.status}</span>
+                                        </td>
+                                        <td className="px-4 py-3">
+                                            <div className="flex gap-1 flex-wrap">
+                                                {t.services.slice(0, 3).map(s => (
+                                                    <span key={s} className="text-[9px] px-1.5 py-0.5 rounded bg-white/10 text-gray-300">{s}</span>
+                                                ))}
+                                                {t.services.length > 3 && <span className="text-[9px] text-gray-500">+{t.services.length - 3}</span>}
+                                            </div>
+                                        </td>
+                                        <td className="px-4 py-3 text-gray-300">{t.users.toLocaleString()}</td>
+                                        <td className="px-4 py-3">
+                                            <button
+                                                onClick={e => { e.stopPropagation(); toggleStatus(t.id); }}
+                                                className={`text-[10px] px-3 py-1.5 rounded-lg border font-bold transition-all ${t.status === 'ACTIVE'
+                                                        ? 'border-red-500/30 text-red-400 hover:bg-red-500/10'
+                                                        : 'border-green-500/30 text-green-400 hover:bg-green-500/10'
+                                                    }`}
+                                            >
+                                                {t.status === 'ACTIVE' ? 'Suspend' : 'Activate'}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                {/* Tenant Detail Panel */}
+                {selectedTenant && (
+                    <div className="w-80 flex-shrink-0 bg-white/[0.02] border border-white/10 rounded-2xl p-5 space-y-5 h-fit sticky top-0">
+                        <div className="flex items-start justify-between">
+                            <div>
+                                <p className="font-black text-white">{selectedTenant.name}</p>
+                                <p className="text-xs text-gray-500 font-mono">{selectedTenant.slug}</p>
+                            </div>
+                            <button onClick={() => setSelectedTenant(null)} className="text-gray-600 hover:text-white text-xs">✕</button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-center">
+                            <div className="bg-white/5 rounded-xl p-3">
+                                <p className="text-lg font-black text-cyan-400">{selectedTenant.users.toLocaleString()}</p>
+                                <p className="text-[10px] text-gray-500">Users</p>
+                            </div>
+                            <div className="bg-white/5 rounded-xl p-3">
+                                <p className="text-lg font-black text-green-400">{selectedTenant.trips_30d.toLocaleString()}</p>
+                                <p className="text-[10px] text-gray-500">Trips (30d)</p>
+                            </div>
+                            <div className="bg-white/5 rounded-xl p-3">
+                                <p className="text-lg font-black text-orange-400">
+                                    {selectedTenant.revenue_30d > 0 ? `AED ${(selectedTenant.revenue_30d / 1000).toFixed(0)}K` : '—'}
+                                </p>
+                                <p className="text-[10px] text-gray-500">Revenue</p>
+                            </div>
+                            <div className="bg-white/5 rounded-xl p-3">
+                                <p className="text-[10px] font-black text-white">{selectedTenant.plan}</p>
+                                <p className="text-[10px] text-gray-500">Plan</p>
+                            </div>
+                        </div>
+
+                        {/* Service Toggles */}
+                        <div>
+                            <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest mb-3">Service Entitlements</p>
+                            <div className="space-y-2">
+                                {ALL_SERVICES.map(svc => {
+                                    const enabled = selectedTenant.services.includes(svc);
+                                    return (
+                                        <div key={svc} className="flex items-center justify-between">
+                                            <span className="text-xs text-gray-300">{svc.replace(/_/g, ' ')}</span>
+                                            <button
+                                                onClick={() => toggleService(selectedTenant.id, svc)}
+                                                className={`relative w-10 h-5 rounded-full transition-all ${enabled ? 'bg-cyan-400' : 'bg-white/10'}`}
+                                            >
+                                                <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-all ${enabled ? 'left-5' : 'left-0.5'}`} />
+                                            </button>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        </div>
+
+                        <div className="space-y-2 pt-2 border-t border-white/5">
+                            <button className="w-full py-2.5 rounded-xl text-xs font-bold bg-cyan-400/15 text-cyan-400 border border-cyan-400/30 hover:bg-cyan-400/25 transition-all">
+                                📧 Send Notification
+                            </button>
+                            <button className="w-full py-2.5 rounded-xl text-xs font-bold bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10 transition-all">
+                                📊 View Full Report
+                            </button>
+                            <button
+                                onClick={() => toggleStatus(selectedTenant.id)}
+                                className={`w-full py-2.5 rounded-xl text-xs font-bold border transition-all ${selectedTenant.status === 'ACTIVE'
+                                        ? 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20'
+                                        : 'bg-green-500/10 text-green-400 border-green-500/30 hover:bg-green-500/20'
+                                    }`}
+                            >
+                                {selectedTenant.status === 'ACTIVE' ? '🔴 Suspend Tenant' : '🟢 Activate Tenant'}
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
