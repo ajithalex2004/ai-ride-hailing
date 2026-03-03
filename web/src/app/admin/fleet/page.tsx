@@ -1,190 +1,436 @@
 ﻿'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const S = {
-    page: { minHeight: '100vh', background: 'var(--t-bg)', color: 'var(--t-text)', fontFamily: 'var(--font-sans)', padding: '2rem' } as React.CSSProperties,
-    card: { background: 'var(--t-card)', border: '1px solid var(--t-border)', borderRadius: 16, padding: '1.5rem' } as React.CSSProperties,
-    surface: { background: 'var(--t-surface)', border: '1px solid var(--t-border)', borderRadius: 12, padding: '1rem' } as React.CSSProperties,
-    h1: { fontFamily: 'var(--font-heading)', fontWeight: 900, letterSpacing: '-0.02em', color: 'var(--t-text)' } as React.CSSProperties,
-    h2: { fontFamily: 'var(--font-heading)', fontWeight: 800, color: 'var(--t-text)' } as React.CSSProperties,
-    label: { fontSize: '0.62rem', fontWeight: 700, color: 'var(--t-text-dim)', textTransform: 'uppercase' as const, letterSpacing: '0.09em', fontFamily: 'var(--font-mono)' },
-    val: { fontFamily: 'var(--font-heading)', fontWeight: 900 } as React.CSSProperties,
-    mono: { fontFamily: 'var(--font-mono)', fontSize: '0.8rem' } as React.CSSProperties,
-    muted: { color: 'var(--t-text-muted)', fontSize: '0.85rem' } as React.CSSProperties,
+/* ─── Design tokens ──────────────────────────────────────────── */
+const C = {
+    bg: 'var(--t-bg)',
+    card: 'var(--t-card)',
+    surface: 'var(--t-surface)',
+    border: 'var(--t-border)',
+    borderSub: 'var(--t-border-subtle)',
+    text: 'var(--t-text)',
+    muted: 'var(--t-text-muted)',
+    dim: 'var(--t-text-dim)',
+    accent: 'var(--t-accent)',
+    green: 'var(--t-green)',
+    red: 'var(--t-red)',
+    orange: 'var(--t-orange)',
+    cyan: 'var(--t-cyan)',
+    purple: 'var(--t-purple)',
+    blue: 'var(--t-blue)',
 };
 
-const VEHICLES = [
-    { vin: '7GZXX1...442', model: 'Toyota Hiace', fuel: '12.4 L/100', value: 'AED 28,400', health: 94, status: 'Active', flag: false },
-    { vin: '8HBYY2...881', model: 'Mercedes Sprinter', fuel: '15.8 L/100', value: 'AED 45,200', health: 42, status: 'Maint.', flag: false },
-    { vin: '1JKLL3...102', model: 'Ford Transit', fuel: '11.2 L/100', value: 'AED 31,000', health: 82, status: 'Active', flag: false },
-    { vin: '5POQQ4...556', model: 'Toyota Hiace', fuel: '22.1 L/100 ⚠️', value: 'AED 24,900', health: 76, status: 'Active', flag: true },
+const T: Record<string, React.CSSProperties> = {
+    h: { fontFamily: 'var(--font-heading)', fontWeight: 900, letterSpacing: '-0.01em' },
+    mono: { fontFamily: 'var(--font-mono)' },
+    label: { fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--t-text-dim)' },
+};
+
+/* ─── Helper components ──────────────────────────────────────── */
+function Widget({ title, children, span = 1, action }: { title: string; children: React.ReactNode; span?: number; action?: React.ReactNode }) {
+    return (
+        <div style={{ gridColumn: `span ${span}`, background: C.card, border: `1px solid ${C.border}`, borderRadius: 14, padding: '1rem', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ ...T.label, fontSize: '0.62rem', color: C.muted }}>{title}</span>
+                {action}
+            </div>
+            {children}
+        </div>
+    );
+}
+
+function KpiPair({ items }: { items: { label: string; value: string | number; color?: string }[] }) {
+    return (
+        <div style={{ display: 'flex', gap: '1.5rem', flex: 1 }}>
+            {items.map(item => (
+                <div key={item.label}>
+                    <p style={{ ...T.h, fontSize: '2rem', color: item.color ?? C.accent }}>{item.value}</p>
+                    <p style={{ ...T.label, marginTop: 2 }}>{item.label}</p>
+                </div>
+            ))}
+        </div>
+    );
+}
+
+function Dot({ color }: { color: string }) {
+    return <span style={{ width: 8, height: 8, borderRadius: '50%', background: color, display: 'inline-block', flexShrink: 0 }} />;
+}
+
+function Badge({ v, color }: { v: number; color: string }) {
+    return (
+        <span style={{ ...T.mono, fontSize: '0.72rem', fontWeight: 700, color, background: `${color}18`, border: `1px solid ${color}44`, borderRadius: 6, padding: '1px 7px', minWidth: 24, textAlign: 'center' }}>
+            {v}
+        </span>
+    );
+}
+
+/* ─── Mini SVG Bar chart ─────────────────────────────────────── */
+function BarChart({ data, color = C.green, height = 60 }: { data: number[]; color?: string; height?: number }) {
+    const max = Math.max(...data, 1);
+    const labels = ['Oct 23', 'Nov 23', 'Dec 23', 'Jan 26', 'Feb 26', 'Mar 26'];
+    const w = 100 / data.length;
+    return (
+        <svg viewBox={`0 0 200 ${height + 20}`} style={{ width: '100%', overflow: 'visible' }}>
+            {data.map((v, i) => {
+                const barH = (v / max) * height;
+                const x = i * (200 / data.length) + 4;
+                return (
+                    <g key={i}>
+                        <rect x={x} y={height - barH} width={(200 / data.length) - 8} height={barH} rx={3} fill={color} opacity={0.85} />
+                        <text x={x + (200 / data.length - 8) / 2} y={height + 14} textAnchor="middle" style={{ fontSize: 7, fill: C.dim, fontFamily: 'var(--font-mono)' }}>
+                            {labels[i] ?? ''}
+                        </text>
+                    </g>
+                );
+            })}
+        </svg>
+    );
+}
+
+/* ─── Mini SVG Line chart ────────────────────────────────────── */
+function LineChart({ data, color = C.accent, height = 60 }: { data: number[]; color?: string; height?: number }) {
+    const max = Math.max(...data, 1);
+    const labels = ['Oct 23', 'Nov 23', 'Dec 23', 'Jan 26', 'Feb 26', 'Mar 26'];
+    const px = (i: number) => (i / (data.length - 1)) * 190 + 5;
+    const py = (v: number) => height - (v / max) * (height - 10) + 5;
+    const points = data.map((v, i) => `${px(i)},${py(v)}`).join(' ');
+    const area = `M${px(0)},${py(data[0])} ` + data.slice(1).map((v, i) => `L${px(i + 1)},${py(v)}`).join(' ') + ` L${px(data.length - 1)},${height + 5} L${px(0)},${height + 5} Z`;
+    return (
+        <svg viewBox={`0 0 200 ${height + 20}`} style={{ width: '100%', overflow: 'visible' }}>
+            <defs>
+                <linearGradient id={`lg-${color.replace(/[^a-z]/gi, '')}`} x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor={color} stopOpacity="0.3" />
+                    <stop offset="100%" stopColor={color} stopOpacity="0" />
+                </linearGradient>
+            </defs>
+            <path d={area} fill={`url(#lg-${color.replace(/[^a-z]/gi, '')})`} />
+            <polyline points={points} fill="none" stroke={color} strokeWidth={1.5} strokeLinejoin="round" />
+            {data.map((v, i) => (
+                <circle key={i} cx={px(i)} cy={py(v)} r={2.5} fill={color} />
+            ))}
+            {labels.map((l, i) => (
+                <text key={i} x={px(i)} y={height + 14} textAnchor="middle" style={{ fontSize: 7, fill: C.dim, fontFamily: 'var(--font-mono)' }}>{l}</text>
+            ))}
+        </svg>
+    );
+}
+
+/* ─── Mini SVG Pie chart ─────────────────────────────────────── */
+function PieChart({ slices }: { slices: { v: number; color: string }[] }) {
+    const total = slices.reduce((a, s) => a + s.v, 0);
+    let angle = -Math.PI / 2;
+    const R = 36, cx = 40, cy = 40;
+    const paths = slices.map(s => {
+        const sweep = (s.v / total) * 2 * Math.PI;
+        const x1 = cx + R * Math.cos(angle);
+        const y1 = cy + R * Math.sin(angle);
+        angle += sweep;
+        const x2 = cx + R * Math.cos(angle);
+        const y2 = cy + R * Math.sin(angle);
+        const large = sweep > Math.PI ? 1 : 0;
+        return { d: `M${cx},${cy} L${x1},${y1} A${R},${R},0,${large},1,${x2},${y2} Z`, color: s.color };
+    });
+    return (
+        <svg viewBox="0 0 80 80" width={80} height={80}>
+            {paths.map((p, i) => <path key={i} d={p.d} fill={p.color} opacity={0.9} stroke={C.card} strokeWidth={1.5} />)}
+            <circle cx={cx} cy={cy} r={18} fill={C.card} />
+        </svg>
+    );
+}
+
+/* ─── Live Clock ─────────────────────────────────────────────── */
+function Clock() {
+    const [t, setT] = useState('');
+    useEffect(() => {
+        const update = () => setT(new Date().toLocaleTimeString());
+        update(); const id = setInterval(update, 1000); return () => clearInterval(id);
+    }, []);
+    return <span style={{ ...T.mono, fontSize: '0.72rem', color: C.muted }}>{t}</span>;
+}
+
+/* ─── Data ───────────────────────────────────────────────────── */
+const MONTHS = ['Oct 23', 'Nov 23', 'Dec 23', 'Jan 26', 'Feb 26', 'Mar 26'];
+const fuelData = [12, 18, 14, 22, 16, 20];
+const svcData = [800, 1200, 600, 900, 1800, 400];
+const otherData = [400, 600, 800, 500, 1900, 700];
+const totalData = [4, 5, 4.5, 6, 5.5, 5.8];
+const resolveData = [3, 4, 2, 5, 3.5, 4];
+const cpmData = [0.8, 1.2, 0.9, 1.5, 1.1, 1.3];
+
+const VEHICLE_STATUS = [
+    { label: 'Active', v: 42, color: C.green },
+    { label: 'In Shop', v: 6, color: C.orange },
+    { label: 'Inactive', v: 3, color: C.muted },
+    { label: 'Out of Service', v: 1, color: C.red },
 ];
 
-const PARTS = [
-    { label: 'Brake Pads (DXB-442)', health: 12, status: 'Replace' },
-    { label: 'Front Left Tire (DXB-881)', health: 28, status: 'Warning' },
-    { label: 'Timing Belt (DXB-102)', health: 88, status: 'Good' },
+const REASONS = [
+    { label: 'Worn Out', v: 22, color: C.orange },
+    { label: 'Oil Consumption', v: 20, color: C.cyan },
+    { label: 'Trouble', v: 11, color: C.purple },
 ];
 
-const STATS = [
-    { label: 'Fleet Health Index', value: '92%', color: 'var(--t-green)', icon: '📊' },
-    { label: 'Active Procurement', value: 'AED 2.4M', color: 'var(--t-accent)', icon: '🚗' },
-    { label: 'Depreciation Avg', value: '14.2%', color: 'var(--t-orange)', icon: '📉' },
-    { label: 'Fuel Anomalies', value: '04', color: 'var(--t-red)', icon: '⛽' },
+const COMMENTS = [
+    { user: 'Aaron Ali', avatar: 'AA', msg: 'Checked this periodically to prevent further problems.', time: '4 months ago' },
+    { user: 'Aaron Ali', avatar: 'AA', msg: "Might want to get it checked out though, we have replaced the bulb several times.", time: 'a month ago' },
+    { user: 'Aaron Ali', avatar: 'AA', msg: 'Called the shop and they\'ll replace the 2 back tires later today.', time: '5 months ago' },
+    { user: 'Aaron Ali', avatar: 'AA', msg: 'Thanks!', time: '7 days ago' },
+    { user: 'Aaron Ali', avatar: 'AA', msg: 'Confirmed with driver — issue resolved.', time: '3 months ago' },
 ];
 
-export default function FleetAdminPage() {
-    const [selectedVin, setSelectedVin] = useState<string | null>(null);
+const PO_STATUS = [
+    { label: 'Draft', v: 2, color: C.muted },
+    { label: 'Pending Approval', v: 1, color: C.orange },
+    { label: 'Approved', v: 4, color: C.cyan },
+    { label: 'Purchased', v: 8, color: C.green },
+];
+
+/* ─── Main Dashboard ─────────────────────────────────────────── */
+export default function FleetManagementDashboard() {
+    const [location, setLocation] = useState('Alabama / Birmingham');
 
     return (
-        <div style={S.page}>
-            {/* Header */}
-            <header style={{ marginBottom: '2rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '0.5rem' }}>
-                    <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--t-orange)', boxShadow: '0 0 6px var(--t-orange)' }} />
-                    <span style={S.label}>Fleet_Asset_Intelligence</span>
+        <div style={{ background: C.bg, minHeight: '100vh', fontFamily: 'var(--font-sans)', color: C.text, padding: '1.25rem' }}>
+
+            {/* ── Top bar ── */}
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem', flexWrap: 'wrap', gap: '0.75rem' }}>
+                <div>
+                    <h1 style={{ ...T.h, fontSize: '1.4rem', color: C.text }}>Fleet Dashboard</h1>
+                    <p style={{ ...T.label, marginTop: 3, color: C.dim }}>Live fleet intelligence · <Clock /></p>
                 </div>
-                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
-                    <div>
-                        <h1 style={{ ...S.h1, fontSize: '2.25rem', marginBottom: '0.25rem' }}>Fleet Management</h1>
-                        <p style={S.muted}>Vehicle lifecycle, fuel analytics &amp; predictive maintenance</p>
-                    </div>
-                    <button style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.65rem 1.25rem', borderRadius: 10, border: 'none', background: 'var(--t-accent)', color: 'var(--t-accent-contrast)', fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '0.85rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(245,158,11,0.25)' }}>
-                        🔍 Scan VIN Data
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                    <select value={location} onChange={e => setLocation(e.target.value)}
+                        style={{ background: C.surface, border: `1px solid ${C.border}`, color: C.text, borderRadius: 9, padding: '0.4rem 0.75rem', fontFamily: 'var(--font-sans)', fontSize: '0.8rem', outline: 'none', colorScheme: 'dark' }}>
+                        <option>Alabama / Birmingham</option>
+                        <option>Dubai / DIFC</option>
+                        <option>Abu Dhabi / CBD</option>
+                    </select>
+                    <button style={{ padding: '0.4rem 0.875rem', borderRadius: 9, border: `1px solid ${C.border}`, background: C.accent, color: '#000', fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '0.78rem', cursor: 'pointer' }}>
+                        + Add Widget
                     </button>
                 </div>
-            </header>
-
-            {/* KPI Strip */}
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px,1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
-                {STATS.map(s => (
-                    <div key={s.label} style={{ ...S.card, padding: '1.1rem' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                            <span style={{ fontSize: '1.3rem' }}>{s.icon}</span>
-                        </div>
-                        <p style={{ ...S.val, fontSize: '1.6rem', color: s.color }}>{s.value}</p>
-                        <p style={S.label}>{s.label}</p>
-                    </div>
-                ))}
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '1.25rem' }}>
-                {/* Left: Lifecycle + Parts */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                    {/* AI Resale */}
-                    <div style={{ ...S.card }}>
-                        <p style={{ ...S.h2, fontSize: '0.85rem', marginBottom: '1rem' }}>Lifecycle Summary</p>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                            {[
-                                { label: 'Active Procurement', value: 'AED 2.4M', sub: '12 vehicles pending' },
-                                { label: 'Avg Depreciation', value: '14.2%', sub: 'Year-over-year' },
-                                { label: 'Fuel Anomalies', value: '4', sub: 'Last 24 hours' },
-                            ].map(item => (
-                                <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.75rem', background: 'var(--t-surface)', borderRadius: 10 }}>
-                                    <div>
-                                        <p style={{ ...S.label, marginBottom: 3 }}>{item.label}</p>
-                                        <p style={{ ...S.mono, color: 'var(--t-text-muted)', fontSize: '0.72rem' }}>{item.sub}</p>
+            {/* ── Grid ── */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem' }}>
+
+                {/* Row 1 */}
+                <Widget title="Service Reminders Compliance">
+                    <div style={{ textAlign: 'center' as const, padding: '0.5rem 0' }}>
+                        <p style={{ ...T.h, fontSize: '2.4rem', color: C.green }}>98%</p>
+                        <p style={{ ...T.label, color: C.muted, margin: '4px 0 10px' }}>compliance rate</p>
+                        <p style={{ fontSize: '0.72rem', color: C.dim, lineHeight: 1.5 }}>
+                            You have 7 open service reminders due soon. Assign them to maintain your compliance rate.
+                        </p>
+                        <button style={{ marginTop: 10, padding: '0.35rem 1rem', borderRadius: 8, border: `1px solid ${C.border}`, background: C.surface, color: C.text, fontSize: '0.75rem', cursor: 'pointer', fontFamily: 'var(--font-sans)' }}>
+                            See reminders →
+                        </button>
+                    </div>
+                </Widget>
+
+                <Widget title="Service Reminders">
+                    <KpiPair items={[
+                        { label: 'Vehicles Overdue', value: 0, color: C.red },
+                        { label: 'Vehicles Due Soon', value: 1, color: C.orange },
+                    ]} />
+                </Widget>
+
+                <Widget title="Vehicle Renewal Reminders">
+                    <KpiPair items={[
+                        { label: 'Overdue', value: 0, color: C.red },
+                        { label: 'Due Soon', value: 0, color: C.orange },
+                    ]} />
+                </Widget>
+
+                <Widget title="Open Issues">
+                    <KpiPair items={[
+                        { label: 'Open', value: 1, color: C.orange },
+                        { label: 'Overdue', value: 0, color: C.red },
+                    ]} />
+                </Widget>
+
+                {/* Row 2 */}
+                <Widget title="Incomplete Work Orders">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                        {[
+                            { label: 'Open', v: 8, color: C.blue },
+                            { label: 'Pending', v: 2, color: C.orange },
+                        ].map(item => (
+                            <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.5rem 0.6rem', background: C.surface, borderRadius: 8 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <Dot color={item.color} />
+                                    <span style={{ fontSize: '0.82rem', fontWeight: 600 }}>{item.label}</span>
+                                </div>
+                                <Badge v={item.v} color={item.color} />
+                            </div>
+                        ))}
+                    </div>
+                </Widget>
+
+                <Widget title="Time to Resolve">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: 4, ...T.label }}><Dot color={C.accent} />Avg Time to Resolve</span>
+                            <span style={{ display: 'flex', alignItems: 'center', gap: 4, ...T.label }}><Dot color={C.cyan} />All Issues</span>
+                        </div>
+                    </div>
+                    <LineChart data={resolveData} color={C.accent} height={55} />
+                </Widget>
+
+                <Widget title="Purchase Orders">
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        {PO_STATUS.map(po => (
+                            <div key={po.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.4rem 0.6rem', background: C.surface, borderRadius: 8 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <Dot color={po.color} />
+                                    <span style={{ fontSize: '0.78rem', fontWeight: 500 }}>{po.label}</span>
+                                </div>
+                                <Badge v={po.v} color={po.color} />
+                            </div>
+                        ))}
+                    </div>
+                </Widget>
+
+                <Widget title="Contact Renewal Reminders">
+                    <KpiPair items={[
+                        { label: 'Overdue', value: 0, color: C.red },
+                        { label: 'Due Soon', value: 2, color: C.orange },
+                    ]} />
+                </Widget>
+
+                {/* Row 3 */}
+                <Widget title="Vehicle Assignments">
+                    <KpiPair items={[
+                        { label: 'Assigned', value: 0, color: C.cyan },
+                        { label: 'Unassigned', value: 11, color: C.orange },
+                    ]} />
+                </Widget>
+
+                <Widget title="Vehicle Status">
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'flex-start' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 7, flex: 1 }}>
+                            {VEHICLE_STATUS.map(vs => (
+                                <div key={vs.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.4rem 0.6rem', background: C.surface, borderRadius: 8 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <Dot color={vs.color} />
+                                        <span style={{ fontSize: '0.78rem' }}>{vs.label}</span>
                                     </div>
-                                    <p style={{ ...S.val, fontSize: '1.25rem', color: 'var(--t-accent)' }}>{item.value}</p>
+                                    <Badge v={vs.v} color={vs.color} />
                                 </div>
                             ))}
                         </div>
-
-                        <div style={{ marginTop: '1rem', padding: '0.875rem', background: 'var(--t-cyan-soft)', border: '1px solid rgba(6,182,212,0.2)', borderRadius: 10 }}>
-                            <p style={{ ...S.label, color: 'var(--t-cyan)', marginBottom: 6 }}>⚡ Resale Valuation AI</p>
-                            <p style={{ fontSize: '0.78rem', color: 'var(--t-text-muted)', lineHeight: 1.6 }}>
-                                Market trends indicate a <strong style={{ color: 'var(--t-text)' }}>5.2% increase</strong> in resale value for 2024 Toyota HiAce in MENA region.
-                            </p>
-                        </div>
+                        <PieChart slices={VEHICLE_STATUS.map(vs => ({ v: vs.v, color: vs.color }))} />
                     </div>
+                </Widget>
 
-                    {/* Parts Health */}
-                    <div style={S.card}>
-                        <p style={{ ...S.h2, fontSize: '0.85rem', marginBottom: '1rem' }}>Critical Spare Parts</p>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                            {PARTS.map(p => {
-                                const color = p.health < 20 ? 'var(--t-red)' : p.health < 40 ? 'var(--t-orange)' : 'var(--t-green)';
-                                return (
-                                    <div key={p.label}>
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 5 }}>
-                                            <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>{p.label}</span>
-                                            <span style={{ ...S.label, color }}>{p.status}</span>
-                                        </div>
-                                        <div style={{ height: 5, background: 'var(--t-border)', borderRadius: 99, overflow: 'hidden' }}>
-                                            <div style={{ height: '100%', width: `${p.health}%`, background: color, borderRadius: 99, transition: 'width 0.6s ease' }} />
-                                        </div>
+                <Widget title="Vehicle Locations">
+                    <div style={{ background: C.surface, borderRadius: 10, height: 110, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 6, border: `1px solid ${C.border}` }}>
+                        <span style={{ fontSize: '2rem' }}>🗺️</span>
+                        <p style={{ ...T.label, color: C.dim }}>No active GPS data</p>
+                        <p style={{ fontSize: '0.7rem', color: C.dim }}>{location}</p>
+                    </div>
+                </Widget>
+
+                <Widget title="Overdue Inspections">
+                    <KpiPair items={[
+                        { label: 'Overdue', value: 0, color: C.red },
+                        { label: '% of Total Due', value: '0%', color: C.orange },
+                    ]} />
+                </Widget>
+
+                {/* Row 4 — Cost charts */}
+                <Widget title="Fuel Costs">
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 2 }}>
+                        <span style={{ ...T.mono, fontSize: '0.68rem', color: C.dim }}>$5K</span>
+                    </div>
+                    <BarChart data={fuelData} color={C.green} height={60} />
+                </Widget>
+
+                <Widget title="Service Costs">
+                    <BarChart data={svcData.map((v, i) => v)} color={C.cyan} height={60} />
+                </Widget>
+
+                <Widget title="Other Costs">
+                    <BarChart data={otherData} color={C.orange} height={60} />
+                </Widget>
+
+                <Widget title="Total Costs">
+                    <BarChart data={totalData.map(v => v * 1000)} color={C.blue} height={60} />
+                </Widget>
+
+                {/* Row 5 */}
+                <Widget title="On-Time Service Compliance">
+                    <KpiPair items={[
+                        { label: 'All Time', value: '99%', color: C.green },
+                        { label: 'Last 30 Days', value: '98%', color: C.accent },
+                    ]} />
+                </Widget>
+
+                <Widget title="Cost Per Meter">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 4 }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 4, ...T.label }}><Dot color={C.green} />Gasoline</span>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 4, ...T.label }}><Dot color={C.blue} />Electric</span>
+                    </div>
+                    <LineChart data={cpmData} color={C.green} height={55} />
+                </Widget>
+
+                <Widget title="Recent Comments" span={2}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                        {COMMENTS.map((c, i) => (
+                            <div key={i} style={{ display: 'flex', gap: 10, padding: '0.625rem 0', borderBottom: i < COMMENTS.length - 1 ? `1px solid ${C.borderSub}` : 'none' }}>
+                                <div style={{ width: 28, height: 28, borderRadius: '50%', background: `${C.accent}20`, border: `1px solid ${C.accent}44`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, ...T.mono, fontSize: '0.6rem', fontWeight: 800, color: C.accent }}>
+                                    {c.avatar}
+                                </div>
+                                <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 6 }}>
+                                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: C.text }}>{c.user}</span>
+                                        <span style={{ ...T.label, fontSize: '0.58rem', color: C.dim, flexShrink: 0 }}>{c.time}</span>
                                     </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Right: Asset Table */}
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                    <div style={{ ...S.card, padding: 0, overflow: 'hidden' }}>
-                        <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--t-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                            <h2 style={{ ...S.h2, fontSize: '1rem' }}>Active Asset Inventory</h2>
-                            <span style={{ ...S.label, background: 'var(--t-accent-soft)', color: 'var(--t-accent)', padding: '0.25rem 0.75rem', borderRadius: 999, border: '1px solid rgba(245,158,11,0.25)' }}>
-                                {VEHICLES.length} vehicles
-                            </span>
-                        </div>
-                        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                            <thead>
-                                <tr style={{ background: 'var(--t-surface)' }}>
-                                    {['VIN', 'Model', 'Fuel Efficiency', 'Book Value', 'Health', 'Status'].map(col => (
-                                        <th key={col} style={{ ...S.label, padding: '0.75rem 1.25rem', textAlign: 'left' }}>{col}</th>
-                                    ))}
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {VEHICLES.map(v => (
-                                    <tr key={v.vin} onClick={() => setSelectedVin(v.vin === selectedVin ? null : v.vin)}
-                                        style={{ borderBottom: '1px solid var(--t-border-subtle)', cursor: 'pointer', background: v.vin === selectedVin ? 'var(--t-row-selected)' : 'transparent', transition: 'background 0.15s' }}>
-                                        <td style={{ padding: '0.875rem 1.25rem' }}>
-                                            <p style={{ ...S.mono, color: 'var(--t-text-dim)', fontSize: '0.7rem' }}>{v.vin}</p>
-                                        </td>
-                                        <td style={{ padding: '0.875rem 1.25rem', fontWeight: 700, fontSize: '0.85rem' }}>{v.model}</td>
-                                        <td style={{ padding: '0.875rem 1.25rem' }}>
-                                            <span style={{ ...S.mono, color: v.flag ? 'var(--t-red)' : 'var(--t-cyan)' }}>{v.fuel}</span>
-                                        </td>
-                                        <td style={{ padding: '0.875rem 1.25rem', ...S.mono, color: 'var(--t-text-muted)' }}>{v.value}</td>
-                                        <td style={{ padding: '0.875rem 1.25rem' }}>
-                                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                                <div style={{ flex: 1, maxWidth: 60, height: 4, background: 'var(--t-border)', borderRadius: 99, overflow: 'hidden' }}>
-                                                    <div style={{ height: '100%', width: `${v.health}%`, background: v.health > 70 ? 'var(--t-green)' : v.health > 40 ? 'var(--t-orange)' : 'var(--t-red)', borderRadius: 99 }} />
-                                                </div>
-                                                <span style={{ ...S.mono, color: 'var(--t-text-dim)', fontSize: '0.7rem' }}>{v.health}%</span>
-                                            </div>
-                                        </td>
-                                        <td style={{ padding: '0.875rem 1.25rem' }}>
-                                            <span style={{ padding: '0.2rem 0.6rem', borderRadius: 999, fontSize: '0.65rem', fontWeight: 700, background: v.status === 'Active' ? 'var(--t-green-soft)' : 'var(--t-orange-soft)', color: v.status === 'Active' ? 'var(--t-green)' : 'var(--t-orange)', border: `1px solid ${v.status === 'Active' ? 'rgba(16,185,129,0.25)' : 'rgba(249,115,22,0.25)'}` }}>
-                                                {v.status}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {/* AI Optimisation alert */}
-                    <div style={{ ...S.card, background: 'var(--t-orange-soft)', border: '1px solid rgba(249,115,22,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '1.5rem', flexWrap: 'wrap' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <div style={{ padding: '0.875rem', background: 'rgba(249,115,22,0.12)', borderRadius: 12, fontSize: '1.75rem' }}>📈</div>
-                            <div>
-                                <h3 style={{ ...S.h2, fontSize: '0.95rem', color: 'var(--t-orange)', marginBottom: 4 }}>Driver ↔ Vehicle Optimisation</h3>
-                                <p style={{ ...S.muted, fontSize: '0.8rem' }}>
-                                    Assign <strong>Top_Gun_Driver #442</strong> to Mercedes DXB-881 for <strong>18% lower brake wear</strong> forecast.
-                                </p>
+                                    <p style={{ fontSize: '0.73rem', color: C.muted, marginTop: 2, lineHeight: 1.4, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' as const }}>{c.msg}</p>
+                                </div>
                             </div>
-                        </div>
-                        <button style={{ padding: '0.65rem 1.25rem', borderRadius: 10, border: 'none', background: 'var(--t-orange)', color: '#fff', fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '0.8rem', cursor: 'pointer', whiteSpace: 'nowrap' as const }}>
-                            Activate Optimisation
-                        </button>
+                        ))}
                     </div>
-                </div>
+                </Widget>
+
+                {/* Row 6 */}
+                <Widget title="Top Reasons for Repair">
+                    <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                        <PieChart slices={REASONS.map(r => ({ v: r.v, color: r.color }))} />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
+                            {REASONS.map(r => (
+                                <div key={r.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                        <Dot color={r.color} />
+                                        <span style={{ fontSize: '0.75rem', color: C.muted }}>{r.label}</span>
+                                    </div>
+                                    <Badge v={r.v} color={r.color} />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </Widget>
+
+                {/* Fleet Metrics summary */}
+                <Widget title="Fleet Health Index" span={3}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6,1fr)', gap: '0.5rem' }}>
+                        {[
+                            { label: 'Total Vehicles', value: '52', color: C.text },
+                            { label: 'Active', value: '42', color: C.green },
+                            { label: 'Avg Mileage', value: '42,180 km', color: C.cyan },
+                            { label: 'Fuel Spend (YTD)', value: 'AED 92K', color: C.orange },
+                            { label: 'Service Spend (YTD)', value: 'AED 48K', color: C.accent },
+                            { label: 'SLA On-Time', value: '99%', color: C.green },
+                        ].map(item => (
+                            <div key={item.label} style={{ background: C.surface, borderRadius: 10, padding: '0.75rem', border: `1px solid ${C.border}` }}>
+                                <p style={{ ...T.h, fontSize: '1.2rem', color: item.color }}>{item.value}</p>
+                                <p style={{ ...T.label, marginTop: 4 }}>{item.label}</p>
+                            </div>
+                        ))}
+                    </div>
+                </Widget>
+
             </div>
         </div>
     );
