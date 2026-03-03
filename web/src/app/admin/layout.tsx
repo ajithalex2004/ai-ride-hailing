@@ -19,7 +19,16 @@ const NAV_GROUPS = [
     {
         label: 'Transport',
         items: [
-            { href: '/admin/fleet', label: 'Fleet Management', icon: '🚗' },
+            {
+                href: '/admin/fleet', label: 'Fleet Management', icon: '🚗',
+                sub: [
+                    { href: '/admin/fleet', label: 'Dashboard', icon: '📊' },
+                    { href: '/admin/fleet/vehicles', label: 'Vehicle Master', icon: '🚙' },
+                    { href: '/admin/fleet/drivers', label: 'Drivers', icon: '👤' },
+                    { href: '/admin/fleet/maintenance', label: 'Maintenance', icon: '🔧' },
+                    { href: '/admin/fleet/fuel', label: 'Fuel Logs', icon: '⛽' },
+                ],
+            },
             { href: '/admin/corporate', label: 'Corporate Accounts', icon: '🏢' },
             { href: '/admin/corporate-shuttle', label: 'Corporate Shuttle', icon: '🚌' },
             { href: '/admin/school-bus', label: 'School Bus', icon: '🏫' },
@@ -61,6 +70,7 @@ const NAV_GROUPS = [
     },
 ];
 
+
 const ADMIN_ROLES = ['ADMIN', 'SUPER_ADMIN', 'EMS_OPERATOR', 'GOVT_EMS', 'FLEET_ADMIN'];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -70,6 +80,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     const [collapsed, setCollapsed] = useState(false);
     const [expandedGroups, setExpandedGroups] = useState<Set<string>>(
         new Set(NAV_GROUPS.map(g => g.label))
+    );
+    // Track which parent nav items have their sub-menus open
+    const [expandedSubs, setExpandedSubs] = useState<Set<string>>(
+        new Set(['/admin/fleet']) // Fleet open by default
     );
 
     useEffect(() => {
@@ -93,6 +107,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         });
     };
 
+    const toggleSub = (href: string) => {
+        setExpandedSubs(prev => {
+            const n = new Set(prev);
+            n.has(href) ? n.delete(href) : n.add(href);
+            return n;
+        });
+    };
+
     const visibleGroups = NAV_GROUPS.map(g => ({
         ...g,
         items: g.items.filter(() => {
@@ -109,7 +131,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
             {/* ── Sidebar ── */}
             <aside style={{
-                width: collapsed ? 56 : 232,
+                width: collapsed ? 56 : 256,
                 flexShrink: 0,
                 display: 'flex',
                 flexDirection: 'column',
@@ -154,31 +176,86 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                                     <span style={{ fontSize: 8 }}>{expandedGroups.has(group.label) ? '▲' : '▼'}</span>
                                 </button>
                             )}
-                            {(expandedGroups.has(group.label) || collapsed) && group.items.map(item => {
-                                const isActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+                            {(expandedGroups.has(group.label) || collapsed) && (group.items as any[]).map((item: any) => {
+                                const hasSub = Boolean(item.sub?.length);
+                                const subOpen = expandedSubs.has(item.href);
+                                const isParentActive = pathname === item.href || (item.href !== '/admin' && pathname.startsWith(item.href));
+                                const isActive = !hasSub && isParentActive;
                                 return (
-                                    <Link key={item.href} href={item.href} title={collapsed ? item.label : undefined}
-                                        style={{
-                                            display: 'flex', alignItems: 'center', gap: 9,
-                                            padding: collapsed ? '0.6rem 0' : '0.5rem 0.6rem',
-                                            justifyContent: collapsed ? 'center' : 'flex-start',
-                                            borderRadius: 10,
-                                            textDecoration: 'none',
-                                            fontSize: '0.8rem',
-                                            fontWeight: isActive ? 700 : 500,
-                                            color: isActive ? 'var(--t-sidebar-active-text)' : 'var(--t-text-muted)',
-                                            background: isActive ? 'var(--t-sidebar-active)' : 'transparent',
-                                            border: isActive ? '1px solid rgba(245,158,11,0.2)' : '1px solid transparent',
-                                            transition: 'all 0.15s',
-                                        }}
-                                        onMouseEnter={e => { if (!isActive) { (e.currentTarget as any).style.background = 'var(--t-card-hover)'; (e.currentTarget as any).style.color = 'var(--t-text)'; } }}
-                                        onMouseLeave={e => { if (!isActive) { (e.currentTarget as any).style.background = 'transparent'; (e.currentTarget as any).style.color = 'var(--t-text-muted)'; } }}
-                                    >
-                                        <span style={{ fontSize: '1rem', flexShrink: 0 }}>{item.icon}</span>
-                                        {!collapsed && <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>}
-                                    </Link>
+                                    <div key={item.href}>
+                                        {hasSub ? (
+                                            <button
+                                                onClick={() => !collapsed && toggleSub(item.href)}
+                                                title={collapsed ? item.label : undefined}
+                                                style={{
+                                                    width: '100%', display: 'flex', alignItems: 'center', gap: 9,
+                                                    padding: collapsed ? '0.6rem 0' : '0.5rem 0.6rem',
+                                                    justifyContent: collapsed ? 'center' : 'flex-start',
+                                                    borderRadius: 10, background: isParentActive ? 'var(--t-sidebar-active)' : 'none',
+                                                    border: isParentActive ? '1px solid rgba(245,158,11,0.2)' : '1px solid transparent',
+                                                    cursor: 'pointer', fontSize: '0.8rem',
+                                                    fontWeight: isParentActive ? 700 : 500,
+                                                    color: isParentActive ? 'var(--t-sidebar-active-text)' : 'var(--t-text-muted)',
+                                                    transition: 'all 0.15s',
+                                                }}
+                                                onMouseEnter={e => { if (!isParentActive) { (e.currentTarget as any).style.background = 'var(--t-card-hover)'; (e.currentTarget as any).style.color = 'var(--t-text)'; } }}
+                                                onMouseLeave={e => { if (!isParentActive) { (e.currentTarget as any).style.background = 'none'; (e.currentTarget as any).style.color = 'var(--t-text-muted)'; } }}
+                                            >
+                                                <span style={{ fontSize: '1rem', flexShrink: 0 }}>{item.icon}</span>
+                                                {!collapsed && <>
+                                                    <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', textAlign: 'left' as const }}>{item.label}</span>
+                                                    <span style={{ fontSize: 8, flexShrink: 0, color: 'var(--t-text-dim)', display: 'inline-block', transition: 'transform 0.2s', transform: subOpen ? 'rotate(90deg)' : 'rotate(0deg)' }}>▶</span>
+                                                </>}
+                                            </button>
+                                        ) : (
+                                            <Link href={item.href} title={collapsed ? item.label : undefined}
+                                                style={{
+                                                    display: 'flex', alignItems: 'center', gap: 9,
+                                                    padding: collapsed ? '0.6rem 0' : '0.5rem 0.6rem',
+                                                    justifyContent: collapsed ? 'center' : 'flex-start',
+                                                    borderRadius: 10, textDecoration: 'none',
+                                                    fontSize: '0.8rem', fontWeight: isActive ? 700 : 500,
+                                                    color: isActive ? 'var(--t-sidebar-active-text)' : 'var(--t-text-muted)',
+                                                    background: isActive ? 'var(--t-sidebar-active)' : 'transparent',
+                                                    border: isActive ? '1px solid rgba(245,158,11,0.2)' : '1px solid transparent',
+                                                    transition: 'all 0.15s',
+                                                }}
+                                                onMouseEnter={e => { if (!isActive) { (e.currentTarget as any).style.background = 'var(--t-card-hover)'; (e.currentTarget as any).style.color = 'var(--t-text)'; } }}
+                                                onMouseLeave={e => { if (!isActive) { (e.currentTarget as any).style.background = 'transparent'; (e.currentTarget as any).style.color = 'var(--t-text-muted)'; } }}
+                                            >
+                                                <span style={{ fontSize: '1rem', flexShrink: 0 }}>{item.icon}</span>
+                                                {!collapsed && <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{item.label}</span>}
+                                            </Link>
+                                        )}
+                                        {hasSub && subOpen && !collapsed && (
+                                            <div style={{ marginLeft: 12, paddingLeft: 10, borderLeft: '2px solid var(--t-border)', marginTop: 2, marginBottom: 4, display: 'flex', flexDirection: 'column', gap: 1 }}>
+                                                {(item.sub || []).map((sub: any) => {
+                                                    const subActive = pathname === sub.href;
+                                                    return (
+                                                        <Link key={sub.href} href={sub.href}
+                                                            style={{
+                                                                display: 'flex', alignItems: 'center', gap: 7,
+                                                                padding: '0.35rem 0.5rem', borderRadius: 8,
+                                                                textDecoration: 'none', fontSize: '0.75rem',
+                                                                fontWeight: subActive ? 700 : 400,
+                                                                color: subActive ? 'var(--t-accent)' : 'var(--t-text-dim)',
+                                                                background: subActive ? 'var(--t-accent-soft)' : 'transparent',
+                                                                transition: 'all 0.12s',
+                                                            }}
+                                                            onMouseEnter={e => { if (!subActive) { (e.currentTarget as any).style.color = 'var(--t-text)'; (e.currentTarget as any).style.background = 'var(--t-surface)'; } }}
+                                                            onMouseLeave={e => { if (!subActive) { (e.currentTarget as any).style.color = 'var(--t-text-dim)'; (e.currentTarget as any).style.background = 'transparent'; } }}
+                                                        >
+                                                            <span style={{ fontSize: '0.8rem' }}>{sub.icon}</span>
+                                                            <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{sub.label}</span>
+                                                        </Link>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
+                                    </div>
                                 );
                             })}
+
                         </div>
                     ))}
                 </nav>
