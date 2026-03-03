@@ -140,6 +140,127 @@ function AssignModal({ vehicleId, dayIndex, current, onSave, onClose }:
     );
 }
 
+/* ─── Add NEW Assignment Modal ─────────────────────────── */
+function AddAssignmentModal({ onSave, onClose }: {
+    onSave: (vehicleId: string, driverId: string, days: number[]) => void;
+    onClose: () => void;
+}) {
+    const [step, setStep] = useState<1 | 2 | 3>(1);
+    const [selVehicle, setSelVehicle] = useState<string | null>(null);
+    const [selDriver, setSelDriver] = useState<string | null>(null);
+    const [selDays, setSelDays] = useState<number[]>([]);
+
+    const toggleDay = (d: number) =>
+        setSelDays(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d]);
+
+    const canNext = (step === 1 && selVehicle) || (step === 2 && selDriver) || step === 3;
+    const canSave = selVehicle && selDriver && selDays.length > 0;
+
+    const handleSave = () => {
+        if (canSave) { onSave(selVehicle!, selDriver!, selDays); onClose(); }
+    };
+
+    const STEP_LABELS = ['Select Vehicle', 'Select Operator', 'Choose Days'];
+
+    return (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.7)', zIndex: 1100, display: 'flex', alignItems: 'center', justifyContent: 'center', backdropFilter: 'blur(5px)' }}
+            onClick={e => { if (e.target === e.currentTarget) onClose(); }}>
+            <div style={{ background: 'var(--t-card)', border: '1px solid var(--t-border)', borderRadius: 20, padding: '1.75rem', width: '100%', maxWidth: 500, boxShadow: '0 32px 80px rgba(0,0,0,0.55)' }}>
+
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1.25rem' }}>
+                    <div>
+                        <h2 style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, fontSize: '1.1rem', marginBottom: 4 }}>New Assignment</h2>
+                        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.09em', color: 'var(--t-text-dim)' }}>Step {step} of 3 · {STEP_LABELS[step - 1]}</p>
+                    </div>
+                    <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--t-text-muted)', fontSize: '1.3rem', cursor: 'pointer', lineHeight: 1 }}>✕</button>
+                </div>
+
+                {/* Progress bar */}
+                <div style={{ display: 'flex', gap: 4, marginBottom: '1.5rem' }}>
+                    {[1, 2, 3].map(n => (
+                        <div key={n} style={{ flex: 1, height: 3, borderRadius: 99, background: n <= step ? 'var(--t-accent)' : 'var(--t-border)', transition: 'background 0.3s' }} />
+                    ))}
+                </div>
+
+                {/* Step 1 — Vehicle */}
+                {step === 1 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, maxHeight: 320, overflowY: 'auto' }}>
+                        {VEHICLES.map(v => (
+                            <button key={v.id} onClick={() => setSelVehicle(v.id)}
+                                style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0.7rem 0.875rem', borderRadius: 12, border: `1px solid ${selVehicle === v.id ? 'var(--t-accent)' : 'var(--t-border)'}`, background: selVehicle === v.id ? 'var(--t-accent-soft)' : 'var(--t-surface)', cursor: 'pointer', textAlign: 'left' as const, transition: 'all 0.12s' }}>
+                                <span style={{ fontSize: '1.4rem', flexShrink: 0 }}>🚗</span>
+                                <div style={{ flex: 1 }}>
+                                    <p style={{ fontWeight: 700, fontSize: '0.85rem', color: selVehicle === v.id ? 'var(--t-accent)' : 'var(--t-text)' }}>{v.label}</p>
+                                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', color: 'var(--t-text-dim)', marginTop: 2 }}>{v.plate} · {v.type}</p>
+                                </div>
+                                <div style={{ width: 8, height: 8, borderRadius: '50%', background: v.status === 'Active' ? 'var(--t-green)' : v.status === 'In Shop' ? 'var(--t-orange)' : 'var(--t-text-dim)', flexShrink: 0 }} />
+                                {selVehicle === v.id && <span style={{ fontSize: '1rem' }}>✓</span>}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
+                {/* Step 2 — Driver */}
+                {step === 2 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        {DRIVERS.map(d => (
+                            <button key={d.id} onClick={() => setSelDriver(d.id)}
+                                style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '0.65rem 0.875rem', borderRadius: 12, border: `1px solid ${selDriver === d.id ? d.color + '66' : 'var(--t-border)'}`, background: selDriver === d.id ? `${d.color}14` : 'var(--t-surface)', cursor: 'pointer', textAlign: 'left' as const, transition: 'all 0.12s' }}>
+                                <div style={{ width: 32, height: 32, borderRadius: '50%', background: `${d.color}22`, border: `2px solid ${d.color}55`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: '0.7rem', color: d.color, flexShrink: 0 }}>{d.init}</div>
+                                <span style={{ flex: 1, fontSize: '0.85rem', fontWeight: selDriver === d.id ? 700 : 400, color: selDriver === d.id ? d.color : 'var(--t-text)' }}>{d.name}</span>
+                                {selDriver === d.id && <span style={{ fontSize: '1rem', color: d.color }}>✓</span>}
+                            </button>
+                        ))}
+                    </div>
+                )}
+
+                {/* Step 3 — Days */}
+                {step === 3 && (
+                    <div>
+                        <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--t-text-muted)', marginBottom: 12 }}>Select one or more days for this week (3–9 Mar 2026):</p>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7,1fr)', gap: 6, marginBottom: 16 }}>
+                            {DAYS.map((day, i) => (
+                                <button key={i} onClick={() => toggleDay(i)}
+                                    style={{ padding: '0.6rem 0', borderRadius: 10, border: `1.5px solid ${selDays.includes(i) ? 'var(--t-accent)' : 'var(--t-border)'}`, background: selDays.includes(i) ? 'var(--t-accent-soft)' : 'var(--t-surface)', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, transition: 'all 0.12s' }}>
+                                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 700, textTransform: 'uppercase' as const, color: selDays.includes(i) ? 'var(--t-accent)' : 'var(--t-text-dim)' }}>{day}</span>
+                                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', fontWeight: 800, color: selDays.includes(i) ? 'var(--t-accent)' : 'var(--t-text)' }}>{DATES[i]}</span>
+                                    {selDays.includes(i) && <span style={{ fontSize: '0.6rem' }}>✓</span>}
+                                </button>
+                            ))}
+                        </div>
+                        {selVehicle && selDriver && (
+                            <div style={{ padding: '0.75rem', background: 'var(--t-surface)', borderRadius: 10, border: '1px solid var(--t-border)' }}>
+                                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', color: 'var(--t-text-dim)', marginBottom: 6 }}>SUMMARY</p>
+                                <p style={{ fontSize: '0.82rem', fontWeight: 600 }}>🚗 {VEHICLES.find(v => v.id === selVehicle)?.label}</p>
+                                <p style={{ fontSize: '0.82rem', marginTop: 4 }}>👤 {DRIVERS.find(d => d.id === selDriver)?.name}</p>
+                                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', color: 'var(--t-accent)', marginTop: 4 }}>
+                                    📅 {selDays.length === 0 ? 'No days selected' : selDays.map(d => DAYS[d]).join(', ')}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Footer buttons */}
+                <div style={{ display: 'flex', gap: '0.6rem', marginTop: '1.5rem' }}>
+                    {step > 1 && (
+                        <button onClick={() => setStep(s => (s - 1) as 1 | 2 | 3)}
+                            style={{ flex: 1, padding: '0.65rem', borderRadius: 10, border: '1px solid var(--t-border)', background: 'var(--t-surface)', color: 'var(--t-text-muted)', cursor: 'pointer' }}>
+                            ← Back
+                        </button>
+                    )}
+                    <button onClick={() => step < 3 ? setStep(s => (s + 1) as 1 | 2 | 3) : handleSave()}
+                        disabled={!canNext}
+                        style={{ flex: 2, padding: '0.65rem', borderRadius: 10, border: 'none', background: canNext ? 'var(--t-accent)' : 'var(--t-border)', color: canNext ? '#000' : 'var(--t-text-dim)', fontFamily: 'var(--font-heading)', fontWeight: 800, cursor: canNext ? 'pointer' : 'not-allowed', boxShadow: canNext ? '0 4px 12px rgba(245,158,11,0.25)' : 'none', transition: 'all 0.15s' }}>
+                        {step < 3 ? 'Next →' : canSave ? 'Save Assignment ✓' : 'Select days to save'}
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
 /* ─── Overview Learn Modal ──────────────────────────────── */
 function LearnModal({ onClose }: { onClose: () => void }) {
     return (
@@ -175,11 +296,20 @@ function LearnModal({ onClose }: { onClose: () => void }) {
 export default function VehicleAssignmentsPage() {
     const [assignments, setAssignments] = useState<Record<string, Record<number, string>>>(INITIAL_ASSIGNMENTS);
     const [showLearn, setShowLearn] = useState(false);
+    const [showAdd, setShowAdd] = useState(false);
     const [modal, setModal] = useState<{ vehicleId: string; dayIndex: number } | null>(null);
     const [viewMode, setViewMode] = useState<'week' | 'list'>('week');
     const [filter, setFilter] = useState('');
 
     const driverMap = Object.fromEntries(DRIVERS.map(d => [d.id, d]));
+
+    const saveMulti = (vehicleId: string, driverId: string, days: number[]) => {
+        setAssignments(prev => {
+            const next = { ...prev, [vehicleId]: { ...(prev[vehicleId] ?? {}) } };
+            days.forEach(d => { next[vehicleId][d] = driverId; });
+            return next;
+        });
+    };
 
     const save = (vehicleId: string, dayIndex: number, driverId: string | null) => {
         setAssignments(prev => {
@@ -221,7 +351,7 @@ export default function VehicleAssignmentsPage() {
                             {m === 'week' ? '📅 Week' : '📋 List'}
                         </button>
                     ))}
-                    <button
+                    <button onClick={() => setShowAdd(true)}
                         style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0.55rem 1.1rem', borderRadius: 9, border: 'none', background: 'var(--t-accent)', color: '#000', fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '0.82rem', cursor: 'pointer', boxShadow: '0 4px 12px rgba(245,158,11,0.2)' }}>
                         + Add Assignment
                     </button>
@@ -416,6 +546,7 @@ export default function VehicleAssignmentsPage() {
 
             {/* ── Modals ── */}
             {showLearn && <LearnModal onClose={() => setShowLearn(false)} />}
+            {showAdd && <AddAssignmentModal onSave={saveMulti} onClose={() => setShowAdd(false)} />}
             {modal && (
                 <AssignModal
                     vehicleId={modal.vehicleId}
