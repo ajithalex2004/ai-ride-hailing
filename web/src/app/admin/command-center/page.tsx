@@ -13,13 +13,13 @@ export default function CommandCenterPage() {
     ]);
 
     return (
-        <div className={`min-h-screen bg-[var(--t-bg)] text-white flex flex-col overflow-hidden transition-colors duration-1000 ${view === 'POLICE' ? 'border-t-4 border-blue-600' : ''}`}>
+        <div className={`min-h-screen bg-[var(--t-bg)] text-[var(--t-text)] flex flex-col overflow-hidden transition-colors duration-1000 ${view === 'POLICE' ? 'border-t-4 border-blue-600' : ''}`}>
             {/* Top Header */}
             <header className="h-20 border-b border-[var(--t-border)] flex items-center justify-between px-8 bg-[var(--t-surface)] backdrop-blur-md z-50">
                 <div className="flex items-center gap-4">
                     <div className={`w-10 h-10 rounded-lg flex items-center justify-center font-black text-xl transition-colors ${view === 'POLICE' ? 'bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.5)]' : 'bg-[var(--t-orange)] shadow-[0_0_15px_rgba(255,102,0,0.5)]'}`}>OS</div>
                     <div>
-                        <h1 className="font-black text-lg leading-none tracking-tighter">{view === 'POLICE' ? 'POLICE_COMMAND' : 'MISSION_CONTROL'}</h1>
+                        <h1 className="font-black text-lg leading-none tracking-tighter" style={{fontFamily:"var(--font-heading)",letterSpacing:"-0.02em"}}>{view === 'POLICE' ? 'POLICE_COMMAND' : 'MISSION_CONTROL'}</h1>
                         <p className="text-[10px] text-[var(--t-text-muted)] tracking-[0.3em] uppercase">AI Mobility & Emergency Operating System</p>
                     </div>
                 </div>
@@ -28,13 +28,13 @@ export default function CommandCenterPage() {
                     <div className="flex bg-white/5 rounded-lg p-1 border border-[var(--t-border)]">
                         <button
                             onClick={() => setView('FLEET')}
-                            className={`px-4 py-1.5 rounded-md text-[10px] font-black transition-all ${view === 'FLEET' ? 'bg-white text-black shadow-lg' : 'text-white/40 hover:text-white'}`}
+                            className={`px-4 py-1.5 rounded-md text-[10px] font-black transition-all ${view === 'FLEET' ? 'bg-[var(--t-accent)] text-[var(--t-accent-contrast)] shadow-lg' : 'text-white/40 hover:text-[var(--t-text)]'}`}
                         >
                             FLEET_OPS
                         </button>
                         <button
                             onClick={() => setView('POLICE')}
-                            className={`px-4 py-1.5 rounded-md text-[10px] font-black transition-all ${view === 'POLICE' ? 'bg-blue-600 text-white shadow-lg' : 'text-white/40 hover:text-white'}`}
+                            className={`px-4 py-1.5 rounded-md text-[10px] font-black transition-all ${view === 'POLICE' ? 'bg-blue-600 text-[var(--t-text)] shadow-lg' : 'text-white/40 hover:text-[var(--t-text)]'}`}
                         >
                             POLICE_OPS
                         </button>
@@ -49,7 +49,7 @@ export default function CommandCenterPage() {
             <div className="flex-1 flex overflow-hidden">
                 {/* Left Sidebar: Incident Feed */}
                 <aside className="w-85 border-r border-[var(--t-border)] bg-black/20 backdrop-blur-sm p-6 overflow-y-auto hidden lg:block">
-                    <h2 className="text-xs font-black uppercase tracking-widest text-[var(--t-text-muted)] mb-6 flex items-center gap-2">
+                    <h2 className="text-xs font-black uppercase tracking-widest text-[var(--t-text-muted)] mb-6 flex items-center gap-2" style={{fontFamily:"var(--font-heading)"}}>
                         <span className={`w-2 h-2 rounded-full animate-ping ${view === 'POLICE' ? 'bg-blue-600' : 'bg-[var(--t-orange)]'}`}></span>
                         {view === 'POLICE' ? 'Live Unit Dispatch' : 'Incident Feed'}
                     </h2>
@@ -57,19 +57,19 @@ export default function CommandCenterPage() {
                         {incidents.map((inc) => (
                             <div key={inc.id} className={`p-4 rounded-xl bg-white/5 border transition-all group cursor-pointer ${view === 'POLICE' ? 'border-blue-600/10 hover:border-blue-600/40' : 'border-[var(--t-border)] hover:border-white/20'}`}>
                                 <div className="flex justify-between items-start mb-2">
-                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${inc.severity === 'P1' ? 'bg-red-500 text-white' : 'bg-white/10 text-[var(--t-text-muted)]'}`}>
+                                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${inc.severity === 'P1' ? 'bg-red-500 text-[var(--t-text)]' : 'bg-white/10 text-[var(--t-text-muted)]'}`}>
                                         {inc.type} • {inc.severity}
                                     </span>
-                                    <span className="text-[10px] text-[var(--t-text-muted)] font-mono">{inc.time}</span>
+                                    <span className="text-[10px] text-[var(--t-text-muted)] font-mono" style={{fontFamily:"var(--font-mono)"}}>{inc.time}</span>
                                 </div>
-                                <h3 className="text-sm font-black tracking-tight">{inc.location}</h3>
+                                <h3 className="text-sm font-black tracking-tight" style={{fontFamily:"var(--font-heading)"}}>{inc.location}</h3>
                                 <div className="flex gap-1 mt-2 mb-3">
                                     {inc.units.map(u => (
                                         <span key={u} className="text-[8px] border border-[var(--t-border)] bg-white/5 px-1.5 py-0.5 rounded text-white/40 font-bold">{u}</span>
                                     ))}
                                 </div>
                                 <div className="flex items-center justify-between">
-                                    <span className="text-[10px] font-mono text-[var(--t-cyan)]">{inc.id}</span>
+                                    <span className="text-[10px] font-mono text-[var(--t-cyan)]" style={{fontFamily:"var(--font-mono)"}}>{inc.id}</span>
                                     <span className={`text-[10px] uppercase font-black ${inc.status === 'VERIFIED' ? 'text-yellow-500' : 'text-[var(--t-cyan)]'}`}>{inc.status}</span>
                                 </div>
                             </div>
@@ -78,14 +78,14 @@ export default function CommandCenterPage() {
                 </aside>
 
                 {/* Main Map View Placeholder */}
-                <main className="flex-1 relative bg-[#0a0a0c]">
+                <main className="flex-1 relative bg-[var(--t-bg)]">
                     <div className="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/55.27,25.20,11/1200x800?access_token=MOCK')] bg-cover opacity-20 mix-blend-luminosity"></div>
 
                     <LiveMapOverlay />
 
                     {/* Geofence/Heatmap Indicator */}
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-red-500/5 rounded-full border border-red-500/20 flex items-center justify-center animate-pulse pointer-events-none">
-                        <div className="text-[8px] font-black text-red-500 uppercase tracking-widest bg-black/80 px-2 py-1 rounded border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.3)]">
+                        <div className="text-[8px] font-black text-red-500 uppercase tracking-widest bg-[var(--t-surface)] px-2 py-1 rounded border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.3)]">
                             Active Incident Geofence // Rerouting Active
                         </div>
                     </div>
@@ -95,7 +95,7 @@ export default function CommandCenterPage() {
                         <div className="w-10 h-10 bg-[var(--t-orange)]/20 rounded-full flex items-center justify-center border border-[var(--t-orange)]/40 animate-bounce">
                             <span className="text-[10px] font-black">12</span>
                         </div>
-                        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none w-48 bg-black/90 border border-[var(--t-border)] p-3 rounded-lg backdrop-blur-xl z-[60]">
+                        <div className="absolute top-full left-1/2 -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none w-48 bg-[var(--t-surface)] border border-[var(--t-border)] p-3 rounded-lg backdrop-blur-xl z-[60]">
                             <h5 className="text-[9px] font-black text-[var(--t-orange)] mb-1 uppercase tracking-widest">Incident Cluster A4</h5>
                             <p className="text-[8px] text-white/60 mb-2 leading-tight">High density of reported stalls and hazards. Priority dispatch recommended.</p>
                             <div className="flex justify-between items-center text-[7px] font-bold text-[var(--t-text-muted)]">
@@ -124,8 +124,8 @@ export default function CommandCenterPage() {
                 </main>
 
                 {/* Right Sidebar: Telemetry Stream */}
-                <aside className="w-72 border-l border-[var(--t-border)] bg-[var(--t-surface)] p-6 hidden xl:block font-mono overflow-y-auto">
-                    <h2 className="text-[10px] font-black uppercase tracking-widest text-[var(--t-text-muted)] mb-6">Dispatch_Node_Alpha</h2>
+                <aside className="w-72 border-l border-[var(--t-border)] bg-[var(--t-surface)] p-6 hidden xl:block font-mono overflow-y-auto" style={{fontFamily:"var(--font-mono)"}}>
+                    <h2 className="text-[10px] font-black uppercase tracking-widest text-[var(--t-text-muted)] mb-6" style={{fontFamily:"var(--font-heading)"}}>Dispatch_Node_Alpha</h2>
                     <div className="space-y-2 text-[10px] text-white/40">
                         <p><span className="text-[var(--t-cyan)] font-bold">[INFO]</span> POLICE_NET_SYNC: OK</p>
                         <p><span className="text-[var(--t-orange)] font-bold">[ALRT]</span> CITIZEN_REPORT: STALL_ON_D71</p>
@@ -151,7 +151,7 @@ export default function CommandCenterPage() {
 function StatItem({ label, value, color }: { label: string, value: string | number, color: string }) {
     return (
         <div className="text-center group cursor-default">
-            <p className="text-[9px] text-[var(--t-text-muted)] font-black tracking-widest mb-1 group-hover:text-white transition-colors uppercase">{label}</p>
+            <p className="text-[9px] text-[var(--t-text-muted)] font-black tracking-widest mb-1 group-hover:text-[var(--t-text)] transition-colors uppercase">{label}</p>
             <p className={`text-xl font-black ${color} tracking-tighter`}>{value}</p>
         </div>
     );
@@ -159,10 +159,11 @@ function StatItem({ label, value, color }: { label: string, value: string | numb
 
 function MapButton({ label, active = false }: { label: string, active?: boolean }) {
     return (
-        <button className={`px-6 h-10 rounded-full border text-[10px] font-black tracking-[0.2em] transition-all flex items-center gap-2 ${active ? 'bg-white text-black border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'bg-black/60 border-[var(--t-border)] hover:border-white/30 text-white/60 hover:text-white backdrop-blur-md'}`}>
+        <button className={`px-6 h-10 rounded-full border text-[10px] font-black tracking-[0.2em] transition-all flex items-center gap-2 ${active ? 'bg-[var(--t-accent)] text-[var(--t-accent-contrast)] border-white shadow-[0_0_20px_rgba(255,255,255,0.2)]' : 'bg-black/60 border-[var(--t-border)] hover:border-white/30 text-white/60 hover:text-[var(--t-text)] backdrop-blur-md'}`}>
             <div className={`w-1.5 h-1.5 rounded-full ${active ? 'bg-black animate-pulse' : 'bg-white/20'}`}></div>
             {label}
         </button>
     );
 }
+
 

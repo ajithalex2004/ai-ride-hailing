@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 
 const alerts = [
     { id: 1, entity: 'USR-8821', type: 'Velocity Anomaly', score: 0.92, status: 'BLOCKED', time: '2 mins ago' },
@@ -51,7 +51,7 @@ export default function SecurityDashboard() {
                         <tbody>
                             {alerts.map((alert) => (
                                 <tr key={alert.id}>
-                                    <td className="font-mono text-sm">{alert.entity}</td>
+                                    <td className="font-mono text-sm" style={{fontFamily:"var(--font-mono)"}}>{alert.entity}</td>
                                     <td>{alert.type}</td>
                                     <td>
                                         <div className="risk-bar-bg">
@@ -120,3 +120,4 @@ export default function SecurityDashboard() {
         </div>
     );
 }
+

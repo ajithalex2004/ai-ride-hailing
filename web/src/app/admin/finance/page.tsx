@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from 'react';
 import {
@@ -20,7 +20,7 @@ export default function FinancialAdminPage() {
     const [currency, setCurrency] = useState('AED');
 
     return (
-        <div className="min-h-screen bg-[#060608] text-white p-8 font-sans selection:bg-neon-blue/30">
+        <div className="min-h-screen bg-[var(--t-bg)] text-[var(--t-text)] p-6 font-sans selection:bg-neon-blue/30">
             {/* Header */}
             <div className="flex justify-between items-end mb-12">
                 <div>
@@ -28,18 +28,18 @@ export default function FinancialAdminPage() {
                         <div className="w-2 h-2 rounded-full bg-pulse-orange animate-pulse" />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-grey">Financial_ERP_Intelligence</span>
                     </div>
-                    <h1 className="text-4xl font-black tracking-tighter italic uppercase">REVENUE_CORE_SIMULATOR</h1>
+                    <h1 className="text-4xl font-black tracking-tighter italic uppercase" style={{fontFamily:"var(--font-heading)",letterSpacing:"-0.02em"}}>REVENUE_CORE_SIMULATOR</h1>
                 </div>
 
                 <div className="flex gap-4">
-                    <div className="bg-white/[0.03] border border-white/5 px-6 py-4 rounded-2xl flex items-center gap-3">
+                    <div className="bg-[var(--t-card)] border border-white/5 px-6 py-4 rounded-2xl flex items-center gap-3">
                         <div className="text-right">
                             <div className="text-[8px] font-bold text-muted-grey uppercase">Daily_Volume</div>
-                            <div className="text-xl font-mono font-black text-neon-blue">14,802.40</div>
+                            <div className="text-xl font-mono font-black text-neon-blue" style={{fontFamily:"var(--font-mono)"}}>14,802.40</div>
                         </div>
                         <DollarSign size={24} className="text-neon-blue" />
                     </div>
-                    <button className="bg-white text-black px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-tighter flex items-center gap-2 hover:bg-neon-blue transition-all">
+                    <button className="bg-[var(--t-accent)] text-black hover:bg-[var(--t-accent-hover)]-blue transition-all">
                         <Download size={18} strokeWidth={3} />
                         EXPORT_LEDGER
                     </button>
@@ -58,10 +58,10 @@ export default function FinancialAdminPage() {
 
                 {/* Left: AI Forecasting Panel */}
                 <div className="col-span-8 space-y-6">
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 h-[400px] flex flex-col">
+                    <div className="bg-[var(--t-card)] border border-white/5 rounded-2xl p-6 h-[400px] flex flex-col">
                         <div className="flex justify-between items-center mb-10">
                             <div>
-                                <h3 className="text-[10px] font-black uppercase text-muted-grey tracking-[0.3em] mb-1">Financial_Projection_Model</h3>
+                                <h3 className="text-[10px] font-black uppercase text-muted-grey tracking-[0.3em] mb-1" style={{fontFamily:"var(--font-heading)"}}>Financial_Projection_Model</h3>
                                 <div className="text-xs font-black italic text-white/40 italic tracking-widest">30-DAY_REVENUE_HORIZON_SIMULATION</div>
                             </div>
                             <div className="flex gap-2">
@@ -82,13 +82,13 @@ export default function FinancialAdminPage() {
                         </div>
                     </div>
 
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden">
-                        <div className="p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
-                            <h2 className="text-xl font-black italic tracking-tight uppercase">Cross_Border_Multi_Currency</h2>
+                    <div className="bg-[var(--t-card)] border border-white/5 rounded-2xl overflow-hidden">
+                        <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[var(--t-card)]">
+                            <h2 className="text-xl font-black italic tracking-tight uppercase" style={{fontFamily:"var(--font-heading)"}}>Cross_Border_Multi_Currency</h2>
                             <div className="flex gap-4">
                                 <div className="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-xl border border-white/10">
                                     <Globe size={14} className="text-muted-grey" />
-                                    <span className="text-[9px] font-bold text-white uppercase">System_Base: AED</span>
+                                    <span className="text-[9px] font-bold text-[var(--t-text)] uppercase">System_Base: AED</span>
                                 </div>
                             </div>
                         </div>
@@ -103,8 +103,8 @@ export default function FinancialAdminPage() {
 
                 {/* Right: Revenue Splits & Rules */}
                 <div className="col-span-4 space-y-6">
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8">
-                        <h3 className="text-[10px] font-black uppercase text-muted-grey mb-8 tracking-[0.3em]">Revenue_Split_Models</h3>
+                    <div className="bg-[var(--t-card)] border border-white/5 rounded-2xl p-6">
+                        <h3 className="text-[10px] font-black uppercase text-muted-grey mb-8 tracking-[0.3em]" style={{fontFamily:"var(--font-heading)"}}>Revenue_Split_Models</h3>
 
                         <div className="space-y-4">
                             <SplitModel label="Standard Fleet (80/20)" type="PLATFORM" val="20%" />
@@ -115,24 +115,24 @@ export default function FinancialAdminPage() {
                         <button className="w-full mt-10 py-4 bg-white/5 border border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">CONFIGURE_NEW_MODEL</button>
                     </div>
 
-                    <div className="bg-pulse-orange/5 border border-pulse-orange/20 p-8 rounded-3xl">
+                    <div className="bg-pulse-orange/5 border border-pulse-orange/20 p-6 rounded-2xl">
                         <div className="flex items-center gap-3 mb-4">
                             <div className="p-2 bg-pulse-orange/10 rounded-lg text-pulse-orange">
                                 <Zap size={18} />
                             </div>
                             <h4 className="text-sm font-black italic tracking-tight">PROFITABILITY_SIMULATOR</h4>
                         </div>
-                        <p className="text-[10px] text-muted-grey leading-relaxed mb-6 italic"> Simulating <span className="text-white font-bold">15% commission reduction</span> in SAUDI sector will increase transaction volume by <span className="text-green-400 font-bold underline">22.4%</span> over 90 days.</p>
+                        <p className="text-[10px] text-muted-grey leading-relaxed mb-6 italic"> Simulating <span className="text-[var(--t-text)] font-bold">15% commission reduction</span> in SAUDI sector will increase transaction volume by <span className="text-green-400 font-bold underline">22.4%</span> over 90 days.</p>
                         <button className="w-full py-4 bg-pulse-orange text-black rounded-2xl font-black text-[10px] uppercase tracking-tighter hover:scale-[1.02] active:scale-[0.98] transition-all">RUN_FULL_SIMULATION</button>
                     </div>
 
-                    <div className="bg-white/[0.02] border border-white/10 rounded-3xl p-8">
+                    <div className="bg-[var(--t-card)] border border-white/10 rounded-2xl p-6">
                         <div className="flex justify-between items-center mb-6">
                             <span className="text-[9px] font-black text-muted-grey uppercase">Commission_Alerts</span>
                             <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                         </div>
-                        <div className="text-[11px] font-bold text-white mb-2 italic">Low_Margin_Overlap Detected</div>
-                        <div className="text-[9px] text-muted-grey leading-relaxed">Fleet Operator <span className="text-white font-mono">#FO_441</span> is operating under 4.2% margin in Dammam sector. Higher risk of churn.</div>
+                        <div className="text-[11px] font-bold text-[var(--t-text)] mb-2 italic">Low_Margin_Overlap Detected</div>
+                        <div className="text-[9px] text-muted-grey leading-relaxed">Fleet Operator <span className="text-[var(--t-text)] font-mono" style={{fontFamily:"var(--font-mono)"}}>#FO_441</span> is operating under 4.2% margin in Dammam sector. Higher risk of churn.</div>
                     </div>
                 </div>
 
@@ -141,11 +141,11 @@ export default function FinancialAdminPage() {
     );
 }
 
-function FinanceStat({ label, value, trend, positive, icon: Icon, color = "text-white" }: any) {
+function FinanceStat({ label, value, trend, positive, icon: Icon, color = "text-[var(--t-text)]" }: any) {
     return (
-        <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 group hover:border-white/10 transition-all">
+        <div className="bg-[var(--t-card)] border border-white/5 rounded-2xl p-6 group hover:border-white/10 transition-all">
             <div className="flex justify-between items-start mb-6">
-                <div className={`p-3 bg-white/[0.03] rounded-xl group-hover:bg-white/5 transition-colors ${color}`}>
+                <div className={`p-3 bg-[var(--t-card)] rounded-xl group-hover:bg-white/5 transition-colors ${color}`}>
                     <Icon size={20} />
                 </div>
                 {trend && (
@@ -156,18 +156,18 @@ function FinanceStat({ label, value, trend, positive, icon: Icon, color = "text-
                 )}
             </div>
             <div className="text-[9px] font-bold text-muted-grey uppercase mb-1 tracking-widest">{label}</div>
-            <div className="text-2xl font-black font-mono tracking-tighter italic">{value}</div>
+            <div className="text-2xl font-black font-mono tracking-tighter italic" style={{fontFamily:"var(--font-mono)"}}>{value}</div>
         </div>
     );
 }
 
 function SplitModel({ label, type, val }: any) {
     return (
-        <div className="flex justify-between items-center bg-white/[0.03] p-4 rounded-2xl border border-white/5">
-            <div className="text-[10px] font-black text-white italic tracking-tight uppercase">{label}</div>
+        <div className="flex justify-between items-center bg-[var(--t-card)] p-4 rounded-2xl border border-white/5">
+            <div className="text-[10px] font-black text-[var(--t-text)] italic tracking-tight uppercase">{label}</div>
             <div className="flex items-center gap-3">
                 <span className="text-[8px] font-bold text-muted-grey uppercase">{type}</span>
-                <span className="text-xs font-black text-neon-blue font-mono">{val}</span>
+                <span className="text-xs font-black text-neon-blue font-mono" style={{fontFamily:"var(--font-mono)"}}>{val}</span>
             </div>
         </div>
     );
@@ -177,22 +177,23 @@ function CurrencyItem({ code, rate, status }: any) {
     return (
         <div className="p-6 bg-black/40 rounded-2xl border border-white/5 group hover:border-neon-blue/40 transition-all cursor-pointer">
             <div className="flex justify-between items-center mb-4">
-                <div className="text-lg font-black font-mono text-white">{code}</div>
+                <div className="text-lg font-black font-mono text-[var(--t-text)]" style={{fontFamily:"var(--font-mono)"}}>{code}</div>
                 <div className={`text-[8px] font-black px-2 py-0.5 rounded-md ${status === 'STABLE' ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-500'}`}>
                     {status}
                 </div>
             </div>
             <div className="text-[9px] font-bold text-muted-grey uppercase mb-1">Exchange_Rate (Base)</div>
-            <div className="text-xl font-black font-mono italic text-neon-blue group-hover:scale-105 transition-transform origin-left">{rate}</div>
+            <div className="text-xl font-black font-mono italic text-neon-blue group-hover:scale-105 transition-transform origin-left" style={{fontFamily:"var(--font-mono)"}}>{rate}</div>
         </div>
     );
 }
 
 function TabButton({ active, label }: any) {
     return (
-        <button className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase transition-all ${active ? 'bg-white/10 text-white' : 'text-muted-grey hover:bg-white/5'
+        <button className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase transition-all ${active ? 'bg-white/10 text-[var(--t-text)]' : 'text-muted-grey hover:bg-white/5'
             }`}>
             {label}
         </button>
     );
 }
+

@@ -19,7 +19,7 @@ export default function TrafficImpactDashboard() {
     const [activeLayer, setActiveLayer] = useState('HEATMAP');
 
     return (
-        <div className="min-h-screen bg-[var(--t-bg)] text-white p-8 selection:bg-[var(--t-orange)]/30" style={{fontFamily:"var(--font-sans)"}}>
+        <div className="min-h-screen bg-[var(--t-bg)] text-[var(--t-text)] p-6 selection:bg-[var(--t-orange)]/30" style={{fontFamily:"var(--font-sans)"}}>
             {/* Header */}
             <div className="flex justify-between items-end mb-12">
                 <div>
@@ -27,7 +27,7 @@ export default function TrafficImpactDashboard() {
                         <div className="w-2 h-2 rounded-full bg-[var(--t-orange)] animate-pulse" />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--t-text-muted)]">Traffic_Recovery_OS</span>
                     </div>
-                    <h1 className="text-4xl font-black tracking-tighter italic uppercase">TRAFFIC_RECOVERY_HUB</h1>
+                    <h1 className="text-4xl font-black tracking-tighter italic uppercase" style={{fontFamily:"var(--font-heading)",letterSpacing:"-0.02em"}}>TRAFFIC_RECOVERY_HUB</h1>
                 </div>
 
                 <div className="flex gap-4">
@@ -41,7 +41,7 @@ export default function TrafficImpactDashboard() {
 
                 {/* Left: Interactive Map Layer */}
                 <div className="col-span-8 space-y-6">
-                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8 h-[650px] relative overflow-hidden group">
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-2xl p-6 h-[650px] relative overflow-hidden group">
                         {/* Map Mask Mockup */}
                         <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/55.3,25.2,12/1000x800?access_token=mock')] bg-cover filter saturate-0" />
 
@@ -62,24 +62,24 @@ export default function TrafficImpactDashboard() {
                         </div>
 
                         <div className="absolute bottom-8 left-8">
-                            <div className="bg-black/80 backdrop-blur-xl border border-[var(--t-border)] p-6 rounded-2xl flex items-center gap-6">
+                            <div className="bg-[var(--t-surface)] backdrop-blur-xl border border-[var(--t-border)] p-6 rounded-2xl flex items-center gap-6">
                                 <div>
                                     <div className="text-[8px] font-black uppercase text-[var(--t-text-muted)] tracking-widest mb-1">Impact_Radius</div>
-                                    <div className="text-xl font-black font-mono tracking-tighter">4.2km</div>
+                                    <div className="text-xl font-black font-mono tracking-tighter" style={{fontFamily:"var(--font-mono)"}}>4.2km</div>
                                 </div>
                                 <div className="w-[1px] h-8 bg-white/10" />
                                 <div>
                                     <div className="text-[8px] font-black uppercase text-[var(--t-text-muted)] tracking-widest mb-1">Avg_Delay</div>
-                                    <div className="text-xl font-black font-mono tracking-tighter text-[var(--t-orange)]">+24m</div>
+                                    <div className="text-xl font-black font-mono tracking-tighter text-[var(--t-orange)]" style={{fontFamily:"var(--font-mono)"}}>+24m</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">
-                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
+                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-2xl p-6">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]">AI_Clearance_Estimation</h3>
+                                <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]" style={{fontFamily:"var(--font-heading)"}}>AI_Clearance_Estimation</h3>
                                 <Clock size={16} className="text-[var(--t-orange)]" />
                             </div>
                             <div className="space-y-4">
@@ -88,14 +88,14 @@ export default function TrafficImpactDashboard() {
                                 <EstimationItem label="Final Recovery" time="18m" status="PENDING" />
                                 <div className="pt-4 border-t border-[var(--t-border)] flex justify-between items-end">
                                     <div className="text-[10px] font-black uppercase italic">Total_Clearance_ETA</div>
-                                    <div className="text-3xl font-black font-mono italic text-[var(--t-orange)]">38m</div>
+                                    <div className="text-3xl font-black font-mono italic text-[var(--t-orange)]" style={{fontFamily:"var(--font-mono)"}}>38m</div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
+                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-2xl p-6">
                             <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]">Suggested_Diversions</h3>
+                                <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]" style={{fontFamily:"var(--font-heading)"}}>Suggested_Diversions</h3>
                                 <Navigation size={16} className="text-[var(--t-cyan)]" />
                             </div>
                             <div className="space-y-3">
@@ -109,9 +109,9 @@ export default function TrafficImpactDashboard() {
 
                 {/* Right: Blackspot Analysis & Safety Index */}
                 <div className="col-span-4 space-y-6">
-                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-2xl p-6">
                         <div className="flex justify-between items-center mb-12">
-                            <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]">Safety_Blackspot_AI</h3>
+                            <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]" style={{fontFamily:"var(--font-heading)"}}>Safety_Blackspot_AI</h3>
                             <ShieldAlert size={16} className="text-red-500" />
                         </div>
                         <div className="space-y-6">
@@ -121,13 +121,13 @@ export default function TrafficImpactDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-[var(--t-orange)]/5 border border-[var(--t-orange)]/20 p-8 rounded-3xl">
+                    <div className="bg-[var(--t-orange)]/5 border border-[var(--t-orange)]/20 p-6 rounded-2xl">
                         <div className="flex items-center gap-4 mb-6">
                             <div className="p-3 bg-[var(--t-orange)]/10 rounded-2xl text-[var(--t-orange)]">
                                 <TrendingDown size={24} />
                             </div>
                             <div>
-                                <div className="text-[10px] font-black uppercase tracking-tight text-white mb-1">Recovery_Impact</div>
+                                <div className="text-[10px] font-black uppercase tracking-tight text-[var(--t-text)] mb-1">Recovery_Impact</div>
                                 <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase tracking-wider italic">Congestion Shielded: 2.1k Cars</div>
                             </div>
                         </div>
@@ -136,8 +136,8 @@ export default function TrafficImpactDashboard() {
                         </p>
                     </div>
 
-                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
-                        <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] mb-8 tracking-[0.3em]">Live_Recovery_Status</h3>
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-2xl p-6">
+                        <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] mb-8 tracking-[0.3em]" style={{fontFamily:"var(--font-heading)"}}>Live_Recovery_Status</h3>
                         <div className="space-y-4">
                             <div className="flex justify-between items-center">
                                 <span className="text-[10px] font-black italic uppercase">Lane 1 & 2 Blocked</span>
@@ -167,7 +167,7 @@ function EstimationItem({ label, time, status }: any) {
                     }`} />
                 <span className="text-[10px] font-bold text-[var(--t-text-muted)] uppercase tracking-tight">{label}</span>
             </div>
-            <span className="text-[10px] font-mono font-black">{time}</span>
+            <span className="text-[10px] font-mono font-black" style={{fontFamily:"var(--font-mono)"}}>{time}</span>
         </div>
     );
 }
@@ -183,7 +183,7 @@ function DiversionItem({ route, impact, gain, active, warning }: any) {
             </div>
             <div className="flex justify-between items-center text-[9px] font-bold">
                 <span className="text-[var(--t-text-muted)] uppercase">Est. Saving</span>
-                <span className="text-green-400 font-black font-mono">{gain}</span>
+                <span className="text-green-400 font-black font-mono" style={{fontFamily:"var(--font-mono)"}}>{gain}</span>
             </div>
         </div>
     );
@@ -203,7 +203,7 @@ function BlackspotCard({ location, risk, count, trend }: any) {
                 <div className="flex-1 bg-white/5 h-1.5 rounded-full overflow-hidden">
                     <div className="h-full bg-red-500" style={{ width: `${risk * 100}%` }} />
                 </div>
-                <div className="text-[10px] font-black font-mono">{Math.round(risk * 100)}%</div>
+                <div className="text-[10px] font-black font-mono" style={{fontFamily:"var(--font-mono)"}}>{Math.round(risk * 100)}%</div>
             </div>
         </div>
     );
@@ -211,7 +211,7 @@ function BlackspotCard({ location, risk, count, trend }: any) {
 
 function LayerToggle({ label, active }: any) {
     return (
-        <div className={`px-4 py-2 rounded-xl border flex items-center gap-3 cursor-pointer transition-all ${active ? 'bg-white text-black border-white' : 'bg-black/60 backdrop-blur-md border-[var(--t-border)] text-[var(--t-text-muted)]'
+        <div className={`px-4 py-2 rounded-xl border flex items-center gap-3 cursor-pointer transition-all ${active ? 'bg-[var(--t-accent)] text-[var(--t-accent-contrast)] border-white' : 'bg-black/60 backdrop-blur-md border-[var(--t-border)] text-[var(--t-text-muted)]'
             }`}>
             <Layers size={14} />
             <span className="text-[9px] font-black uppercase tracking-widest">{label}</span>
@@ -229,4 +229,5 @@ function TabButton({ active, label, onClick }: any) {
         </button>
     );
 }
+
 

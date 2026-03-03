@@ -18,7 +18,7 @@ export default function CorporateAdminPage() {
     const [activeTab, setActiveTab] = useState('schedules');
 
     return (
-        <div className="min-h-screen bg-[#08080A] text-white p-8" style={{fontFamily:"var(--font-sans)"}}>
+        <div className="min-h-screen bg-[var(--t-bg)] text-[var(--t-text)] p-6" style={{fontFamily:"var(--font-sans)"}}>
             {/* Header */}
             <div className="flex justify-between items-end mb-12">
                 <div>
@@ -26,14 +26,14 @@ export default function CorporateAdminPage() {
                         <div className="w-2 h-2 rounded-full bg-[var(--t-accent)] animate-pulse" />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--t-text-muted)]">Corporate_Command</span>
                     </div>
-                    <h1 className="text-4xl font-black tracking-tighter italic">AL_GHURAIR_OPERATIONS</h1>
+                    <h1 className="text-4xl font-black tracking-tighter italic" style={{fontFamily:"var(--font-heading)",letterSpacing:"-0.02em"}}>AL_GHURAIR_OPERATIONS</h1>
                 </div>
 
                 <div className="flex gap-4">
                     <div className="bg-[var(--t-surface)] border border-[var(--t-border)] p-4 rounded-2xl flex items-center gap-4">
                         <div className="text-right">
                             <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase">Reliability_Index</div>
-                            <div className="text-xl font-mono font-black text-[var(--t-cyan)]">0.98</div>
+                            <div className="text-xl font-mono font-black text-[var(--t-cyan)]" style={{fontFamily:"var(--font-mono)"}}>0.98</div>
                         </div>
                         <TrendingUp size={24} className="text-[var(--t-cyan)]" />
                     </div>
@@ -59,7 +59,7 @@ export default function CorporateAdminPage() {
                             <AlertTriangle size={16} />
                             <span className="text-[10px] font-black uppercase">Penalty_Forecast</span>
                         </div>
-                        <div className="text-2xl font-mono font-black">$1,420.00</div>
+                        <div className="text-2xl font-mono font-black" style={{fontFamily:"var(--font-mono)"}}>$1,420.00</div>
                         <div className="text-[9px] text-[var(--t-text-muted)] mt-1 tracking-wider uppercase">Projected SLA Breach Penalty (Next 30 Days)</div>
                     </div>
                 </div>
@@ -69,9 +69,9 @@ export default function CorporateAdminPage() {
 
                     {/* Dashboard Summary Cards */}
                     <div className="grid grid-cols-3 gap-6">
-                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] p-6 rounded-3xl">
+                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] p-6 rounded-2xl">
                             <div className="text-[9px] font-bold text-[var(--t-text-muted)] mb-4 uppercase">Total_Budget_Allocation</div>
-                            <div className="text-3xl font-black font-mono">$450,000</div>
+                            <div className="text-3xl font-black font-mono" style={{fontFamily:"var(--font-mono)"}}>$450,000</div>
                             <div className="mt-4 h-1 bg-white/5 rounded-full overflow-hidden">
                                 <div className="h-full bg-[var(--t-accent)] w-[45%]" />
                             </div>
@@ -81,9 +81,9 @@ export default function CorporateAdminPage() {
                             </div>
                         </div>
 
-                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] p-6 rounded-3xl">
+                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] p-6 rounded-2xl">
                             <div className="text-[9px] font-bold text-[var(--t-text-muted)] mb-4 uppercase">Reserved_Vessel_Status</div>
-                            <div className="text-3xl font-black font-mono">12 <span className="text-sm text-[var(--t-text-muted)] italic">/ 15</span></div>
+                            <div className="text-3xl font-black font-mono" style={{fontFamily:"var(--font-mono)"}}>12 <span className="text-sm text-[var(--t-text-muted)] italic">/ 15</span></div>
                             <div className="mt-4 flex gap-1">
                                 {[...Array(15)].map((_, i) => (
                                     <div key={i} className={`h-1 flex-1 rounded-full ${i < 12 ? 'bg-[var(--t-orange)]' : 'bg-white/10'}`} />
@@ -92,10 +92,10 @@ export default function CorporateAdminPage() {
                             <div className="mt-2 text-[9px] text-[var(--t-text-muted)] font-bold uppercase">80% Fleet Utilization</div>
                         </div>
 
-                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] p-6 rounded-3xl flex flex-col justify-between">
+                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] p-6 rounded-2xl flex flex-col justify-between">
                             <div>
                                 <div className="text-[9px] font-bold text-[var(--t-text-muted)] mb-1 uppercase">Active_Missions</div>
-                                <div className="text-3xl font-black font-mono">142</div>
+                                <div className="text-3xl font-black font-mono" style={{fontFamily:"var(--font-mono)"}}>142</div>
                             </div>
                             <div className="flex items-center gap-2 text-green-400">
                                 <ArrowUpRight size={14} />
@@ -105,9 +105,9 @@ export default function CorporateAdminPage() {
                     </div>
 
                     {/* Tab Content Placeholder */}
-                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl overflow-hidden">
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-2xl overflow-hidden">
                         <div className="p-8 border-b border-[var(--t-border)] flex justify-between items-center">
-                            <h2 className="text-xl font-black tracking-tight italic uppercase">{activeTab.replace('_', ' ')}</h2>
+                            <h2 className="text-xl font-black tracking-tight italic uppercase" style={{fontFamily:"var(--font-heading)"}}>{activeTab.replace('_', ' ')}</h2>
                             <div className="flex gap-2">
                                 <button className="px-4 py-2 rounded-xl bg-white/5 text-[10px] font-black uppercase text-[var(--t-text-muted)] hover:bg-white/10">Filter</button>
                                 <button className="px-4 py-2 rounded-xl bg-white/5 text-[10px] font-black uppercase text-[var(--t-text-muted)] hover:bg-white/10">Export CSV</button>
@@ -147,7 +147,7 @@ function NavButton({ active, icon: Icon, label, onClick }: any) {
         <button
             onClick={onClick}
             className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl transition-all ${active
-                    ? 'bg-white/10 text-white border border-[var(--t-border)]'
+                    ? 'bg-white/10 text-[var(--t-text)] border border-[var(--t-border)]'
                     : 'text-[var(--t-text-muted)] hover:bg-white/5'
                 }`}
         >
@@ -160,10 +160,10 @@ function NavButton({ active, icon: Icon, label, onClick }: any) {
 function TableRow({ center, type, freq, sla, status }: any) {
     return (
         <tr className="border-t border-[var(--t-border)]">
-            <td className="py-6 font-mono text-[var(--t-cyan)]">{center}</td>
-            <td className="py-6 italic font-black text-white">{type}</td>
+            <td className="py-6 font-mono text-[var(--t-cyan)]" style={{fontFamily:"var(--font-mono)"}}>{center}</td>
+            <td className="py-6 italic font-black text-[var(--t-text)]">{type}</td>
             <td className="py-6 text-[var(--t-text-muted)]">{freq}</td>
-            <td className="py-6 font-mono">{sla}</td>
+            <td className="py-6 font-mono" style={{fontFamily:"var(--font-mono)"}}>{sla}</td>
             <td className="py-6">
                 <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase ${status === 'Active' ? 'bg-green-500/10 text-green-400' : 'bg-[var(--t-orange)]/10 text-[var(--t-orange)]'
                     }`}>
@@ -171,11 +171,12 @@ function TableRow({ center, type, freq, sla, status }: any) {
                 </span>
             </td>
             <td className="py-6 text-right">
-                <button className="text-[var(--t-text-muted)] hover:text-white transition-colors">
+                <button className="text-[var(--t-text-muted)] hover:text-[var(--t-text)] transition-colors">
                     <Settings size={16} />
                 </button>
             </td>
         </tr>
     );
 }
+
 

@@ -20,7 +20,7 @@ export default function PredictiveEmergencyDashboard() {
     const [riskLevel, setRiskLevel] = useState('HIGH');
 
     return (
-        <div className="min-h-screen bg-[var(--t-bg)] text-white p-8 selection:bg-[var(--t-accent)]/30" style={{fontFamily:"var(--font-sans)"}}>
+        <div className="min-h-screen bg-[var(--t-bg)] text-[var(--t-text)] p-6 selection:bg-[var(--t-accent)]/30" style={{fontFamily:"var(--font-sans)"}}>
             {/* Header */}
             <div className="flex justify-between items-end mb-12">
                 <div>
@@ -28,7 +28,7 @@ export default function PredictiveEmergencyDashboard() {
                         <div className="w-2 h-2 rounded-full bg-[var(--t-accent)] animate-pulse" />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--t-text-muted)]">AI_Predictive_Oracle_V2</span>
                     </div>
-                    <h1 className="text-4xl font-black tracking-tighter italic uppercase text-transparent bg-clip-text bg-gradient-to-r from-white via-white/40 to-white">PREDICTIVE_EMERGENCY_HQ</h1>
+                    <h1 className="text-4xl font-black tracking-tighter italic uppercase text-transparent bg-clip-text bg-gradient-to-r from-white via-white/40 to-white" style={{fontFamily:"var(--font-heading)",letterSpacing:"-0.02em"}}>PREDICTIVE_EMERGENCY_HQ</h1>
                 </div>
 
                 <div className="flex gap-4">
@@ -40,7 +40,7 @@ export default function PredictiveEmergencyDashboard() {
 
                 {/* Left: Predictive Risk Map */}
                 <div className="col-span-8 space-y-6">
-                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-[40px] p-2 h-[600px] relative overflow-hidden group shadow-2xl">
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-[20px] p-2 h-[600px] relative overflow-hidden group shadow-2xl">
                         {/* Map Render Mock */}
                         <div className="absolute inset-0 opacity-20 bg-[url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/55.3,25.2,12/1000x800?access_token=mock')] bg-cover grayscale" />
 
@@ -51,25 +51,25 @@ export default function PredictiveEmergencyDashboard() {
 
                         {/* Repositioning HUD */}
                         <div className="absolute bottom-8 left-8 right-8">
-                            <div className="bg-black/90 backdrop-blur-3xl border border-[var(--t-border)] p-8 rounded-[32px] flex items-center justify-between">
+                            <div className="bg-[var(--t-surface)] backdrop-blur-3xl border border-[var(--t-border)] p-6 rounded-[16px] flex items-center justify-between">
                                 <div className="flex items-center gap-6">
                                     <div className="p-4 bg-[var(--t-accent)]/10 rounded-2xl text-[var(--t-cyan)]">
                                         <Brain size={32} />
                                     </div>
                                     <div>
-                                        <div className="text-[10px] font-black uppercase text-white tracking-widest mb-1">Ambulance_Repositioning_AI</div>
+                                        <div className="text-[10px] font-black uppercase text-[var(--t-text)] tracking-widest mb-1">Ambulance_Repositioning_AI</div>
                                         <div className="text-sm font-bold text-[var(--t-text-muted)] uppercase italic">3 Idle Units → High-Risk Move-Up Suggested</div>
                                     </div>
                                 </div>
-                                <button className="px-8 py-4 bg-[var(--t-accent)] text-black text-[12px] font-black uppercase italic rounded-2xl hover:scale-105 transition-all shadow-lg shadow-neon-blue/20">Execute_Shift_Strategy</button>
+                                <button className="px-8 py-4 bg-[var(--t-accent)] text-black text-[12px] font-black uppercase italic rounded-2xl hover:scale-105 transition-all shadow-lg shadow-[var(--t-accent)]/20">Execute_Shift_Strategy</button>
                             </div>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-6">
-                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
+                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-2xl p-6">
                             <div className="flex justify-between items-center mb-10">
-                                <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]">Demand_Forecast_Next_4H</h3>
+                                <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]" style={{fontFamily:"var(--font-heading)"}}>Demand_Forecast_Next_4H</h3>
                                 <TrendingUp size={16} className="text-green-400" />
                             </div>
                             <div className="space-y-6">
@@ -79,9 +79,9 @@ export default function PredictiveEmergencyDashboard() {
                             </div>
                         </div>
 
-                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
+                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-2xl p-6">
                             <div className="flex justify-between items-center mb-10">
-                                <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]">Move-Up_Strategy</h3>
+                                <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]" style={{fontFamily:"var(--font-heading)"}}>Move-Up_Strategy</h3>
                                 <Navigation size={16} className="text-[var(--t-cyan)]" />
                             </div>
                             <div className="space-y-4">
@@ -95,9 +95,9 @@ export default function PredictiveEmergencyDashboard() {
 
                 {/* Right: Weather & City Preparedness */}
                 <div className="col-span-4 space-y-6">
-                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-[40px] p-8">
+                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-[20px] p-6">
                         <div className="flex justify-between items-center mb-12">
-                            <h3 className="text-[12px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.4em]">WEATHER_RISK_MATIX</h3>
+                            <h3 className="text-[12px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.4em]" style={{fontFamily:"var(--font-heading)"}}>WEATHER_RISK_MATIX</h3>
                             <CloudRain size={20} className="text-[var(--t-cyan)]" />
                         </div>
                         <div className="space-y-8">
@@ -114,15 +114,15 @@ export default function PredictiveEmergencyDashboard() {
                         </div>
                     </div>
 
-                    <div className="bg-[var(--t-accent)]/5 border border-[var(--t-cyan)]/20 p-8 rounded-[40px]">
-                        <div className="text-[10px] font-black uppercase text-white tracking-[0.2em] mb-6">City_Preparedness_Index</div>
+                    <div className="bg-[var(--t-accent)]/5 border border-[var(--t-cyan)]/20 p-6 rounded-[20px]">
+                        <div className="text-[10px] font-black uppercase text-[var(--t-text)] tracking-[0.2em] mb-6">City_Preparedness_Index</div>
                         <div className="text-6xl font-black italic tracking-tighter text-[var(--t-cyan)] mb-4">88%</div>
                         <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden">
                             <div className="h-full bg-[var(--t-accent)] shadow-[0_0_20px_rgba(0,163,255,0.6)]" style={{ width: '88%' }} />
                         </div>
                         <div className="mt-6 flex justify-between items-center text-[10px] font-bold text-[var(--t-text-muted)] uppercase italic">
                             <span>Operational Reach</span>
-                            <span className="text-white">+12% vs Manual</span>
+                            <span className="text-[var(--t-text)]">+12% vs Manual</span>
                         </div>
                     </div>
                 </div>
@@ -134,15 +134,15 @@ export default function PredictiveEmergencyDashboard() {
 
 function WeatherWidget({ temp, condition, risk }: any) {
     return (
-        <div className="bg-[var(--t-surface)] border border-[var(--t-border)] px-6 py-4 rounded-3xl flex items-center gap-6">
+        <div className="bg-[var(--t-surface)] border border-[var(--t-border)] px-6 py-4 rounded-2xl flex items-center gap-6">
             <div className="flex items-center gap-3">
                 <CloudRain size={18} className="text-[var(--t-cyan)]" />
-                <div className="text-xl font-black font-mono tracking-tighter">{temp}°C</div>
+                <div className="text-xl font-black font-mono tracking-tighter" style={{fontFamily:"var(--font-mono)"}}>{temp}°C</div>
             </div>
             <div className="w-[1px] h-6 bg-white/10" />
             <div>
                 <div className="text-[8px] font-black uppercase text-[var(--t-text-muted)] tracking-widest mb-0.5">Risk_Multiplier</div>
-                <div className="text-sm font-black text-red-500 font-mono tracking-tighter">{risk}x</div>
+                <div className="text-sm font-black text-red-500 font-mono tracking-tighter" style={{fontFamily:"var(--font-mono)"}}>{risk}x</div>
             </div>
         </div>
     );
@@ -153,7 +153,7 @@ function ForecastBar({ label, current, predicted, peak, warn }: any) {
         <div className="space-y-3">
             <div className="flex justify-between items-end">
                 <span className="text-[10px] font-black uppercase tracking-tight italic">{label}</span>
-                <span className="text-[10px] font-mono font-black text-white/40">INC: {current} → <span className={warn ? 'text-red-500' : 'text-[var(--t-cyan)]'}>{predicted}</span></span>
+                <span className="text-[10px] font-mono font-black text-white/40" style={{fontFamily:"var(--font-mono)"}}>INC: {current} → <span className={warn ? 'text-red-500' : 'text-[var(--t-cyan)]'}>{predicted}</span></span>
             </div>
             <div className="relative w-full bg-white/5 h-1.5 rounded-full overflow-hidden">
                 <div className="absolute left-0 top-0 h-full bg-white/20" style={{ width: `${(current / 10) * 100}%` }} />
@@ -173,7 +173,7 @@ function MoveUpItem({ unit, current, target, eta }: any) {
                 <div className="text-[10px] font-black uppercase italic tracking-tighter mb-0.5">{unit}</div>
                 <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase tracking-widest">{current} → {target}</div>
             </div>
-            <div className="text-[10px] font-black font-mono italic text-[var(--t-cyan)]">{eta}</div>
+            <div className="text-[10px] font-black font-mono italic text-[var(--t-cyan)]" style={{fontFamily:"var(--font-mono)"}}>{eta}</div>
         </div>
     );
 }
@@ -185,13 +185,14 @@ function WeatherStat({ icon, label, value, stat }: any) {
                 <div className="p-2 bg-white/5 rounded-lg text-[var(--t-text-muted)]">
                     {icon}
                 </div>
-                <span className="text-[10px] font-black uppercase text-white tracking-widest">{label}</span>
+                <span className="text-[10px] font-black uppercase text-[var(--t-text)] tracking-widest">{label}</span>
             </div>
             <div className="flex items-center gap-3">
-                <span className="text-[10px] font-mono font-black">{value}</span>
+                <span className="text-[10px] font-mono font-black" style={{fontFamily:"var(--font-mono)"}}>{value}</span>
                 <div className={`w-1.5 h-1.5 rounded-full ${stat === 'CRITICAL' ? 'bg-red-500 animate-pulse' : 'bg-green-400'}`} />
             </div>
         </div>
     );
 }
+
 

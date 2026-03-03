@@ -1,212 +1,176 @@
-﻿"use client";
+﻿'use client';
 
-import React, { useState } from 'react';
-import {
-    Ambulance,
-    Hospital,
-    Activity,
-    Map as MapIcon,
-    AlertTriangle,
-    Search,
-    ChevronRight,
-    Clock,
-    Users,
-    Wind,
-    PlusCircle,
-    Truck,
-    HeartPulse,
-    Route
-} from 'lucide-react';
+import React, { useState, useEffect } from 'react';
 
-export default function EmergencyCommandPage() {
-    const [activeIncident, setActiveIncident] = useState('P1_882');
+const S = {
+    page: { minHeight: '100vh', background: 'var(--t-bg)', color: 'var(--t-text)', fontFamily: 'var(--font-sans)', padding: '2rem' } as React.CSSProperties,
+    card: { background: 'var(--t-card)', border: '1px solid var(--t-border)', borderRadius: 16, padding: '1.5rem' } as React.CSSProperties,
+    surface: { background: 'var(--t-surface)', border: '1px solid var(--t-border)', borderRadius: 12, padding: '1rem' } as React.CSSProperties,
+    h1: { fontFamily: 'var(--font-heading)', fontWeight: 900, letterSpacing: '-0.02em' } as React.CSSProperties,
+    h2: { fontFamily: 'var(--font-heading)', fontWeight: 800 } as React.CSSProperties,
+    label: { fontSize: '0.62rem', fontWeight: 700, color: 'var(--t-text-dim)', textTransform: 'uppercase' as const, letterSpacing: '0.09em', fontFamily: 'var(--font-mono)' },
+    mono: { fontFamily: 'var(--font-mono)', fontSize: '0.8rem' } as React.CSSProperties,
+    muted: { color: 'var(--t-text-muted)', fontSize: '0.85rem' } as React.CSSProperties,
+};
+
+const INCIDENTS = [
+    { id: 'INC-2401', type: '🚗 Road Accident', location: 'Sheikh Zayed Rd, J12', severity: 'P1', status: 'Active', units: 3, eta: '4 min' },
+    { id: 'INC-2399', type: '🔥 Vehicle Fire', location: 'Al Khail Rd, Near Mall', severity: 'P1', status: 'Contained', units: 5, eta: 'On-site' },
+    { id: 'INC-2397', type: '⚠️ Road Hazard', location: 'E311, Km 24', severity: 'P2', status: 'Resolved', units: 1, eta: 'Done' },
+    { id: 'INC-2395', type: '🚑 Medical Emergency', location: 'DIFC Towers, G Floor', severity: 'P2', status: 'En Route', units: 2, eta: '6 min' },
+];
+
+const LIVE_STATS = [
+    { label: 'Active Incidents', value: '7', color: 'var(--t-red)', icon: '🚨' },
+    { label: 'Units Deployed', value: '23', color: 'var(--t-orange)', icon: '🚒' },
+    { label: 'Avg Response Time', value: '8.4 min', color: 'var(--t-accent)', icon: '⏱️' },
+    { label: 'SLA Compliance', value: '97.3%', color: 'var(--t-green)', icon: '✅' },
+];
+
+const SEV_COLOUR: Record<string, string> = {
+    P1: 'var(--t-red)', P2: 'var(--t-orange)', P3: 'var(--t-accent)',
+};
+
+const STATUS_BADGE: Record<string, { bg: string; color: string }> = {
+    'Active': { bg: 'var(--t-red-soft)', color: 'var(--t-red)' },
+    'En Route': { bg: 'var(--t-orange-soft)', color: 'var(--t-orange)' },
+    'Contained': { bg: 'var(--t-accent-soft)', color: 'var(--t-accent)' },
+    'Resolved': { bg: 'var(--t-green-soft)', color: 'var(--t-green)' },
+};
+
+function Tick({ value }: { value: string }) {
+    const [display, setDisplay] = useState(value);
+    useEffect(() => {
+        const id = setInterval(() => setDisplay(new Date().toLocaleTimeString()), 1000);
+        return () => clearInterval(id);
+    }, []);
+    return <span style={{ ...S.mono, fontSize: '0.85rem', color: 'var(--t-accent)' }}>{display}</span>;
+}
+
+export default function EmergencyResponsePage() {
+    const [filter, setFilter] = useState<'ALL' | 'P1' | 'P2'>('ALL');
+
+    const filtered = filter === 'ALL' ? INCIDENTS : INCIDENTS.filter(i => i.severity === filter);
 
     return (
-        <div className="min-h-screen bg-[var(--t-bg)] text-white p-8 selection:bg-red-500/30" style={{fontFamily:"var(--font-sans)"}}>
+        <div style={S.page}>
             {/* Header */}
-            <div className="flex justify-between items-end mb-12">
-                <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--t-text-muted)]">Emergency_Response_OS</span>
-                    </div>
-                    <h1 className="text-4xl font-black tracking-tighter italic uppercase">COMMAND_CENTER_DELTA</h1>
+            <header style={{ marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '0.5rem' }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--t-red)', boxShadow: '0 0 8px var(--t-red)', animation: 'pulse 2s infinite' }} />
+                    <span style={S.label}>Emergency_Response_OS</span>
+                    <span style={{ marginLeft: 'auto' }}><Tick value="" /></span>
                 </div>
-
-                <div className="flex gap-4">
-                    <div className="bg-[var(--t-surface)] border border-[var(--t-border)] px-6 py-4 rounded-2xl flex items-center gap-3">
-                        <div className="text-right">
-                            <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase">Ambulance_Availability</div>
-                            <div className="text-xl font-mono font-black text-green-400">84%</div>
-                        </div>
-                        <Ambulance size={24} className="text-green-400" />
+                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div>
+                        <h1 style={{ ...S.h1, fontSize: '2.25rem', marginBottom: '0.25rem' }}>Emergency Response</h1>
+                        <p style={S.muted}>Real-time incident orchestration &amp; unit dispatch</p>
                     </div>
-                    <button className="bg-red-600 text-white px-8 py-4 rounded-2xl font-black text-sm uppercase tracking-tighter flex items-center gap-2 hover:bg-red-500 transition-all shadow-lg shadow-red-600/20">
-                        <PlusCircle size={18} strokeWidth={3} />
-                        INITIATE_P1_DISPATCH
-                    </button>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-12 gap-8">
-
-                {/* Left: Live Map & Fleet Status */}
-                <div className="col-span-8 space-y-6">
-                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8 h-[550px] relative overflow-hidden group">
-                        {/* Map Mockup Background */}
-                        <div className="absolute inset-0 opacity-20 pointer-events-none bg-[url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/55.3,25.2,12/800x600?access_token=mock')] bg-cover" />
-                        <div className="absolute top-8 left-8 z-10">
-                            <div className="bg-black/60 backdrop-blur-md border border-[var(--t-border)] p-4 rounded-2xl inline-block">
-                                <div className="text-[8px] font-black uppercase text-[var(--t-text-muted)] mb-2 tracking-widest italic">Live_Unit_Display</div>
-                                <div className="flex gap-4">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-green-500" />
-                                        <span className="text-[10px] font-black uppercase tracking-tight">ALS_Active (12)</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full bg-[var(--t-orange)]" />
-                                        <span className="text-[10px] font-black uppercase tracking-tight">En_Route (4)</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div className="absolute bottom-8 right-8 z-10 flex gap-4">
-                            <button className="bg-black/80 hover:bg-white/10 border border-[var(--t-border)] p-4 rounded-2xl active:scale-95 transition-all">
-                                <MapIcon size={20} className="text-[var(--t-cyan)]" />
+                    <div style={{ display: 'flex', gap: '0.5rem' }}>
+                        {(['ALL', 'P1', 'P2'] as const).map(f => (
+                            <button key={f} onClick={() => setFilter(f)}
+                                style={{ padding: '0.5rem 1rem', borderRadius: 8, border: `1px solid ${filter === f ? 'var(--t-red)' : 'var(--t-border)'}`, background: filter === f ? 'var(--t-red-soft)' : 'var(--t-surface)', color: filter === f ? 'var(--t-red)' : 'var(--t-text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.72rem', fontWeight: 700, cursor: 'pointer', transition: 'all 0.15s' }}>
+                                {f}
                             </button>
-                            <button className="bg-black/80 hover:bg-white/10 border border-[var(--t-border)] p-4 rounded-2xl active:scale-95 transition-all">
-                                <Users size={20} className="text-white" />
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-6">
-                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
-                            <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]">Hospital_Capacity_AI</h3>
-                                <Clock size={16} className="text-[var(--t-orange)] animate-pulse" />
-                            </div>
-                            <div className="space-y-4">
-                                <HospitalItem name="Rashid Hospital" capacity="92%" wait="45m" status="FULL" />
-                                <HospitalItem name="Dubai Hospital" capacity="64%" wait="12m" status="OPT" />
-                                <HospitalItem name="Zulekha Med" capacity="42%" wait="8m" status="OPT" />
-                            </div>
-                        </div>
-                        <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
-                            <div className="flex justify-between items-center mb-6">
-                                <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-[0.3em]">Traffic_Impact_Overlay</h3>
-                                <Route size={16} className="text-[var(--t-cyan)]" />
-                            </div>
-                            <div className="space-y-4 text-center py-6">
-                                <div className="text-3xl font-black font-mono italic tracking-tighter">+14m</div>
-                                <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase leading-relaxed tracking-widest">Congestion Delay on E11 North<br />Rerouting Incident #P1_882</div>
-                            </div>
-                        </div>
+                        ))}
                     </div>
                 </div>
+            </header>
 
-                {/* Right: Active Incidents & Transfers */}
-                <div className="col-span-4 space-y-6">
-                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8">
-                        <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] mb-8 tracking-[0.3em]">Priority_Incident_Stream</h3>
-                        <div className="space-y-4">
-                            <IncidentCard id="P1_882" type="Cardiac Arrest" eta="4m" priority="P1" status="DISPATCHED" />
-                            <IncidentCard id="P2_901" type="Severe Trauma" eta="12m" priority="P2" status="PENDING" />
-                            <IncidentCard id="P3_844" type="Stable Transfer" eta="28m" priority="P3" status="SCHEDULED" />
-                        </div>
+            {/* KPI Strip */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px,1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                {LIVE_STATS.map(s => (
+                    <div key={s.label} style={S.card}>
+                        <div style={{ fontSize: '1.4rem', marginBottom: 8 }}>{s.icon}</div>
+                        <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, fontSize: '1.6rem', color: s.color }}>{s.value}</p>
+                        <p style={S.label}>{s.label}</p>
+                    </div>
+                ))}
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.25rem' }}>
+                {/* Incident Table */}
+                <div style={{ ...S.card, padding: 0, overflow: 'hidden' }}>
+                    <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--t-border)', display: 'flex', alignItems: 'center', gap: 12 }}>
+                        <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--t-red)', animation: 'pulse 1s infinite' }} />
+                        <h2 style={{ ...S.h2, fontSize: '1rem' }}>Live Incident Feed</h2>
+                        <span style={{ marginLeft: 'auto', ...S.label, background: 'var(--t-red-soft)', color: 'var(--t-red)', padding: '0.2rem 0.6rem', borderRadius: 999, border: '1px solid rgba(239,68,68,0.25)' }}>
+                            {filtered.length} incidents
+                        </span>
+                    </div>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                            <tr style={{ background: 'var(--t-surface)' }}>
+                                {['Incident ID', 'Type', 'Location', 'Sev', 'Units', 'ETA', 'Status'].map(col => (
+                                    <th key={col} style={{ ...S.label, padding: '0.75rem 1rem', textAlign: 'left' }}>{col}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {filtered.map((inc, i) => {
+                                const badge = STATUS_BADGE[inc.status] ?? { bg: 'var(--t-surface)', color: 'var(--t-text-muted)' };
+                                return (
+                                    <tr key={inc.id} style={{ borderBottom: '1px solid var(--t-border-subtle)', transition: 'background 0.1s' }}
+                                        onMouseEnter={e => (e.currentTarget as any).style.background = 'var(--t-row-hover)'}
+                                        onMouseLeave={e => (e.currentTarget as any).style.background = 'transparent'}>
+                                        <td style={{ padding: '0.875rem 1rem', ...S.mono, color: 'var(--t-text-dim)', fontSize: '0.72rem' }}>{inc.id}</td>
+                                        <td style={{ padding: '0.875rem 1rem', fontWeight: 600, fontSize: '0.85rem' }}>{inc.type}</td>
+                                        <td style={{ padding: '0.875rem 1rem', ...S.muted, fontSize: '0.78rem' }}>{inc.location}</td>
+                                        <td style={{ padding: '0.875rem 1rem' }}>
+                                            <span style={{ ...S.mono, fontWeight: 900, fontSize: '0.72rem', color: SEV_COLOUR[inc.severity] ?? 'var(--t-text)' }}>{inc.severity}</span>
+                                        </td>
+                                        <td style={{ padding: '0.875rem 1rem', ...S.mono, color: 'var(--t-text)' }}>{inc.units}</td>
+                                        <td style={{ padding: '0.875rem 1rem', ...S.mono, color: 'var(--t-accent)', fontWeight: 700 }}>{inc.eta}</td>
+                                        <td style={{ padding: '0.875rem 1rem' }}>
+                                            <span style={{ padding: '0.2rem 0.6rem', borderRadius: 999, fontSize: '0.62rem', fontWeight: 800, background: badge.bg, color: badge.color, border: `1px solid ${badge.color}44`, whiteSpace: 'nowrap' as const }}>
+                                                {inc.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+
+                {/* Right panel */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                    {/* AI Dispatch */}
+                    <div style={{ ...S.card, background: 'var(--t-red-soft)', border: '1px solid rgba(239,68,68,0.2)' }}>
+                        <p style={{ ...S.h2, fontSize: '0.9rem', color: 'var(--t-red)', marginBottom: 8 }}>🤖 AI Dispatch Recommendation</p>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--t-text-muted)', lineHeight: 1.6, marginBottom: '1rem' }}>
+                            Ambulance <strong style={{ color: 'var(--t-text)' }}>AMB-007</strong> is 2.1 km from INC-2401. Rerouting via E44 saves <strong style={{ color: 'var(--t-red)' }}>2.3 minutes</strong>.
+                        </p>
+                        <button style={{ width: '100%', padding: '0.6rem', borderRadius: 10, border: 'none', background: 'var(--t-red)', color: '#fff', fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '0.85rem', cursor: 'pointer' }}>
+                            Dispatch Now →
+                        </button>
                     </div>
 
-                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8 h-[350px] flex flex-col justify-between">
-                        <div>
-                            <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] mb-8 tracking-[0.3em]">Medical_Transfer_Pulse</h3>
-                            <div className="space-y-4">
-                                <div className="flex justify-between items-center p-4 bg-[var(--t-surface)] rounded-xl border border-[var(--t-border)] group hover:border-white/20 transition-all cursor-pointer">
-                                    <div className="flex items-center gap-3">
-                                        <HeartPulse size={18} className="text-[var(--t-orange)]" />
-                                        <div>
-                                            <div className="text-[10px] font-black uppercase italic">Dialysis_Routine</div>
-                                            <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase">12 Trips Processed Today</div>
-                                        </div>
+                    {/* Unit status */}
+                    <div style={S.card}>
+                        <p style={{ ...S.h2, fontSize: '0.85rem', marginBottom: '1rem' }}>Unit Availability</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                            {[
+                                { id: 'AMB-007', type: '🚑 Ambulance', status: 'Available', dist: '2.1 km' },
+                                { id: 'FTK-002', type: '🚒 Fire Truck', status: 'On Site', dist: 'Active' },
+                                { id: 'AMB-012', type: '🚑 Ambulance', status: 'En Route', dist: '5.4 km' },
+                                { id: 'TOW-004', type: '🏗️ Tow Truck', status: 'Available', dist: '3.8 km' },
+                            ].map(u => (
+                                <div key={u.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0.65rem 0.875rem', background: 'var(--t-surface)', borderRadius: 10 }}>
+                                    <div>
+                                        <p style={{ fontSize: '0.8rem', fontWeight: 700 }}>{u.type}</p>
+                                        <p style={{ ...S.mono, color: 'var(--t-text-dim)', fontSize: '0.68rem' }}>{u.id}</p>
                                     </div>
-                                    <ChevronRight size={14} className="text-[var(--t-text-muted)]" />
-                                </div>
-                                <div className="flex justify-between items-center p-4 bg-[var(--t-surface)] border border-[var(--t-border)] rounded-xl">
-                                    <div className="flex items-center gap-3 text-[var(--t-cyan)]">
-                                        <Truck size={18} />
-                                        <div>
-                                            <div className="text-[10px] font-black uppercase italic">Inter-Hospital</div>
-                                            <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase">4 Moves in Progress</div>
-                                        </div>
+                                    <div style={{ textAlign: 'right' as const }}>
+                                        <p style={{ fontSize: '0.68rem', fontWeight: 700, color: u.status === 'Available' ? 'var(--t-green)' : u.status === 'On Site' ? 'var(--t-red)' : 'var(--t-orange)' }}>{u.status}</p>
+                                        <p style={{ ...S.mono, color: 'var(--t-text-dim)', fontSize: '0.65rem' }}>{u.dist}</p>
                                     </div>
                                 </div>
-                            </div>
+                            ))}
                         </div>
-                        <button className="w-full mt-6 py-4 bg-white/5 border border-[var(--t-border)] rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all italic">Transfer_Optimizations_View</button>
-                    </div>
-
-                    <div className="bg-[var(--t-orange)]/5 border border-[var(--t-orange)]/20 p-6 rounded-3xl flex items-center justify-between group cursor-pointer hover:bg-[var(--t-orange)]/10 transition-colors">
-                        <div className="flex items-center gap-4">
-                            <div className="p-3 bg-red-500/10 rounded-xl text-red-500">
-                                <AlertTriangle size={20} className="animate-bounce" />
-                            </div>
-                            <div>
-                                <div className="text-[10px] font-black uppercase tracking-tight">Hospital_Reroute_Alert</div>
-                                <div className="text-[8px] text-[var(--t-text-muted)] uppercase">Rashid ER Full - AI Rerouting Enabled</div>
-                            </div>
-                        </div>
-                        <ChevronRight size={16} className="text-[var(--t-text-muted)] group-hover:text-red-500 transition-all" />
                     </div>
                 </div>
-
             </div>
         </div>
     );
 }
-
-function HospitalItem({ name, capacity, wait, status }: any) {
-    return (
-        <div className="flex justify-between items-center p-4 bg-[var(--t-surface)] rounded-xl border border-[var(--t-border)]">
-            <div>
-                <div className="text-[10px] font-black text-white italic tracking-tight uppercase mb-1">{name}</div>
-                <div className="text-[8px] font-black text-[var(--t-text-muted)] uppercase">Wait Time: <span className="text-white">{wait}</span></div>
-            </div>
-            <div className="text-right">
-                <div className="text-xs font-black font-mono text-white leading-none mb-1">{capacity}</div>
-                <div className={`text-[7px] font-black px-1.5 py-0.5 rounded-sm border ${status === 'FULL' ? 'bg-red-500/10 border-red-500/40 text-red-500' : 'bg-green-500/10 border-green-500/40 text-green-400'
-                    }`}>{status}</div>
-            </div>
-        </div>
-    );
-}
-
-function IncidentCard({ id, type, eta, priority, status }: any) {
-    return (
-        <div className={`p-5 rounded-2xl border ${priority === 'P1' ? 'bg-red-500/5 border-red-500/20' : 'bg-[var(--t-surface)] border-[var(--t-border)]'
-            } group hover:border-white/30 transition-all cursor-pointer relative overflow-hidden`}>
-            {priority === 'P1' && <div className="absolute top-0 right-0 w-24 h-24 bg-red-500/5 blur-3xl pointer-events-none" />}
-            <div className="flex justify-between items-start mb-4">
-                <div className={`text-[10px] font-black uppercase tracking-widest ${priority === 'P1' ? 'text-red-500' : 'text-[var(--t-cyan)]'}`}>{priority} INCIDENT</div>
-                <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase">{id}</div>
-            </div>
-            <div className="text-lg font-black italic uppercase tracking-tighter mb-4">{type}</div>
-            <div className="flex justify-between items-center">
-                <div className="flex items-center gap-2">
-                    <Clock size={12} className="text-[var(--t-text-muted)]" />
-                    <span className="text-xs font-mono font-black">{eta}</span>
-                </div>
-                <div className="text-[8px] font-black px-2 py-0.5 border border-white/20 rounded-md uppercase tracking-widest">{status}</div>
-            </div>
-        </div>
-    );
-}
-
-function TabButton({ active, label }: any) {
-    return (
-        <button className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase transition-all ${active ? 'bg-white/10 text-white' : 'text-[var(--t-text-muted)] hover:bg-white/5'
-            }`}>
-            {label}
-        </button>
-    );
-}
-

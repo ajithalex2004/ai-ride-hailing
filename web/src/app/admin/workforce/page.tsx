@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React, { useState } from 'react';
 import {
@@ -20,7 +20,7 @@ export default function WorkforceAdminPage() {
     const [selectedZone, setSelectedZone] = useState('Central');
 
     return (
-        <div className="min-h-screen bg-[#060608] text-white p-8 font-sans selection:bg-neon-blue/30">
+        <div className="min-h-screen bg-[var(--t-bg)] text-[var(--t-text)] p-6 font-sans selection:bg-neon-blue/30">
             {/* Header */}
             <div className="flex justify-between items-end mb-12">
                 <div>
@@ -28,14 +28,14 @@ export default function WorkforceAdminPage() {
                         <div className="w-2 h-2 rounded-full bg-neon-blue animate-pulse" />
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-grey">Workforce_Intelligence_OS</span>
                     </div>
-                    <h1 className="text-4xl font-black tracking-tighter italic">DRIVER_FORCE_COMMAND</h1>
+                    <h1 className="text-4xl font-black tracking-tighter italic" style={{fontFamily:"var(--font-heading)",letterSpacing:"-0.02em"}}>DRIVER_FORCE_COMMAND</h1>
                 </div>
 
                 <div className="flex gap-4">
-                    <div className="bg-white/[0.03] border border-white/5 px-6 py-4 rounded-2xl flex items-center gap-3">
+                    <div className="bg-[var(--t-card)] border border-white/5 px-6 py-4 rounded-2xl flex items-center gap-3">
                         <div className="text-right">
                             <div className="text-[8px] font-bold text-muted-grey uppercase">Safety_Aggregate</div>
-                            <div className="text-xl font-mono font-black text-neon-blue">A-</div>
+                            <div className="text-xl font-mono font-black text-neon-blue" style={{fontFamily:"var(--font-mono)"}}>A-</div>
                         </div>
                         <ShieldCheck size={24} className="text-neon-blue" />
                     </div>
@@ -51,8 +51,8 @@ export default function WorkforceAdminPage() {
 
                 {/* Left Column: Workforce Pulse */}
                 <div className="col-span-4 space-y-6">
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8">
-                        <h3 className="text-[10px] font-black uppercase text-muted-grey mb-8 tracking-[0.3em]">Workforce_Status</h3>
+                    <div className="bg-[var(--t-card)] border border-white/5 rounded-2xl p-6">
+                        <h3 className="text-[10px] font-black uppercase text-muted-grey mb-8 tracking-[0.3em]" style={{fontFamily:"var(--font-heading)"}}>Workforce_Status</h3>
 
                         <div className="space-y-8">
                             <StatItem label="Active_Drivers" value="1,240" sub="84% of total force" icon={Users} />
@@ -66,19 +66,19 @@ export default function WorkforceAdminPage() {
                                 <span className="text-[9px] font-black uppercase">Mandatory_ReCertification_Due</span>
                             </div>
                             <div className="text-xs text-muted-grey leading-relaxed">
-                                <span className="text-white font-bold">12 Responder Drivers</span> have pending Emergency Ops renewal. Blocking active status in <span className="text-white font-bold">48 hours</span>.
+                                <span className="text-[var(--t-text)] font-bold">12 Responder Drivers</span> have pending Emergency Ops renewal. Blocking active status in <span className="text-[var(--t-text)] font-bold">48 hours</span>.
                             </div>
                         </div>
                     </div>
 
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8">
-                        <h3 className="text-[10px] font-black uppercase text-muted-grey mb-8 tracking-[0.3em]">Safety_Leaderboard</h3>
+                    <div className="bg-[var(--t-card)] border border-white/5 rounded-2xl p-6">
+                        <h3 className="text-[10px] font-black uppercase text-muted-grey mb-8 tracking-[0.3em]" style={{fontFamily:"var(--font-heading)"}}>Safety_Leaderboard</h3>
                         <div className="space-y-4">
                             <DriverRank name="Khalid I." score={98.4} grade="A+" />
                             <DriverRank name="Sarah M." score={96.1} grade="A" />
                             <DriverRank name="Omar A." score={95.5} grade="A" />
                             <div className="pt-4 flex justify-center">
-                                <button className="text-[9px] font-black uppercase text-muted-grey hover:text-white transition-colors">View All 1,240 Drivers</button>
+                                <button className="text-[9px] font-black uppercase text-muted-grey hover:text-[var(--t-text)] transition-colors">View All 1,240 Drivers</button>
                             </div>
                         </div>
                     </div>
@@ -88,9 +88,9 @@ export default function WorkforceAdminPage() {
                 <div className="col-span-8 space-y-6">
 
                     {/* Behavioral Heatmap Placeholder */}
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl p-8 h-[320px] flex flex-col">
+                    <div className="bg-[var(--t-card)] border border-white/5 rounded-2xl p-6 h-[320px] flex flex-col">
                         <div className="flex justify-between items-center mb-8">
-                            <h3 className="text-[10px] font-black uppercase text-muted-grey tracking-[0.3em]">Behavioral_Risk_Analytics</h3>
+                            <h3 className="text-[10px] font-black uppercase text-muted-grey tracking-[0.3em]" style={{fontFamily:"var(--font-heading)"}}>Behavioral_Risk_Analytics</h3>
                             <div className="flex gap-2">
                                 <TabButton active label="Harsh Braking" />
                                 <TabButton label="Overspeed" />
@@ -103,9 +103,9 @@ export default function WorkforceAdminPage() {
                     </div>
 
                     {/* Workforce List */}
-                    <div className="bg-white/[0.02] border border-white/5 rounded-3xl overflow-hidden">
-                        <div className="p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.01]">
-                            <h2 className="text-xl font-black italic tracking-tight uppercase">Fleet_Workforce_Roster</h2>
+                    <div className="bg-[var(--t-card)] border border-white/5 rounded-2xl overflow-hidden">
+                        <div className="p-8 border-b border-white/5 flex justify-between items-center bg-[var(--t-card)]">
+                            <h2 className="text-xl font-black italic tracking-tight uppercase" style={{fontFamily:"var(--font-heading)"}}>Fleet_Workforce_Roster</h2>
                             <div className="flex gap-4">
                                 <div className="relative">
                                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-grey" size={14} />
@@ -142,15 +142,15 @@ export default function WorkforceAdminPage() {
     );
 }
 
-function StatItem({ label, value, sub, icon: Icon, color = "text-white" }: any) {
+function StatItem({ label, value, sub, icon: Icon, color = "text-[var(--t-text)]" }: any) {
     return (
         <div className="flex items-center gap-5">
-            <div className={`p-4 bg-white/[0.03] rounded-2xl ${color}`}>
+            <div className={`p-4 bg-[var(--t-card)] rounded-2xl ${color}`}>
                 <Icon size={24} />
             </div>
             <div>
                 <div className="text-[9px] font-bold text-muted-grey uppercase mb-1">{label}</div>
-                <div className="text-2xl font-black font-mono leading-none mb-1">{value}</div>
+                <div className="text-2xl font-black font-mono leading-none mb-1" style={{fontFamily:"var(--font-mono)"}}>{value}</div>
                 <div className="text-[9px] font-medium text-muted-grey tracking-wider uppercase">{sub}</div>
             </div>
         </div>
@@ -159,14 +159,14 @@ function StatItem({ label, value, sub, icon: Icon, color = "text-white" }: any) 
 
 function DriverRank({ name, score, grade }: any) {
     return (
-        <div className="flex justify-between items-center p-4 bg-white/[0.02] border border-white/5 rounded-2xl group hover:border-neon-blue/40 transition-all">
+        <div className="flex justify-between items-center p-4 bg-[var(--t-card)] border border-white/5 rounded-2xl group hover:border-neon-blue/40 transition-all">
             <div className="flex items-center gap-3">
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-neon-blue to-neon-blue/20 flex items-center justify-center text-[10px] font-black text-black">
                     {name[0]}
                 </div>
                 <div>
                     <div className="text-[11px] font-black tracking-tight">{name}</div>
-                    <div className="text-[8px] text-muted-grey font-mono">{score}% Compliance</div>
+                    <div className="text-[8px] text-muted-grey font-mono" style={{fontFamily:"var(--font-mono)"}}>{score}% Compliance</div>
                 </div>
             </div>
             <div className="text-xs font-black text-neon-blue italic">{grade}</div>
@@ -176,7 +176,7 @@ function DriverRank({ name, score, grade }: any) {
 
 function TabButton({ active, label }: any) {
     return (
-        <button className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase transition-all ${active ? 'bg-white/10 text-white' : 'text-muted-grey hover:bg-white/5'
+        <button className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase transition-all ${active ? 'bg-white/10 text-[var(--t-text)]' : 'text-muted-grey hover:bg-white/5'
             }`}>
             {label}
         </button>
@@ -185,10 +185,10 @@ function TabButton({ active, label }: any) {
 
 function DriverRow({ name, id, shift, risk, grade, fatigue, alert = false, certExp = false }: any) {
     return (
-        <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-all group">
+        <tr className="border-b border-white/5 hover:bg-[var(--t-card)] transition-all group">
             <td className="p-8">
-                <div className="text-xs font-black text-white italic tracking-tighter mb-1">{name}</div>
-                <div className="text-[10px] font-mono text-muted-grey">{id}</div>
+                <div className="text-xs font-black text-[var(--t-text)] italic tracking-tighter mb-1">{name}</div>
+                <div className="text-[10px] font-mono text-muted-grey" style={{fontFamily:"var(--font-mono)"}}>{id}</div>
             </td>
             <td className="p-8">
                 <div className={`text-[10px] font-black uppercase ${alert ? 'text-pulse-orange' : 'text-green-400'}`}>
@@ -220,7 +220,7 @@ function DriverRow({ name, id, shift, risk, grade, fatigue, alert = false, certE
                     <div className="w-16 h-1 bg-white/5 rounded-full overflow-hidden">
                         <div className={`h-full ${fatigue > 0.4 ? 'bg-pulse-orange' : 'bg-neon-blue'}`} style={{ width: `${fatigue * 100}%` }} />
                     </div>
-                    <span className="text-[9px] font-mono font-bold text-muted-grey">{Math.round(fatigue * 100)}%</span>
+                    <span className="text-[9px] font-mono font-bold text-muted-grey" style={{fontFamily:"var(--font-mono)"}}>{Math.round(fatigue * 100)}%</span>
                 </div>
             </td>
             <td className="p-8 text-right">
@@ -229,3 +229,4 @@ function DriverRow({ name, id, shift, risk, grade, fatigue, alert = false, certE
         </tr>
     );
 }
+

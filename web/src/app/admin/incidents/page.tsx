@@ -1,149 +1,157 @@
-﻿"use client";
+﻿'use client';
 
 import React, { useState } from 'react';
-import {
-    AlertTriangle,
-    Truck,
-    Map as MapIcon,
-    Upload,
-    Activity,
-    Clock,
-    ChevronRight,
-    ShieldAlert,
-    Fuel,
-    Zap,
-    Search,
-    Filter
-} from 'lucide-react';
 
-export default function IncidentCommandPage() {
-    const [activeTab, setActiveTab] = useState('FEED');
+const S = {
+    page: { minHeight: '100vh', background: 'var(--t-bg)', color: 'var(--t-text)', fontFamily: 'var(--font-sans)', padding: '2rem' } as React.CSSProperties,
+    card: { background: 'var(--t-card)', border: '1px solid var(--t-border)', borderRadius: 16, padding: '1.5rem' } as React.CSSProperties,
+    h1: { fontFamily: 'var(--font-heading)', fontWeight: 900, letterSpacing: '-0.02em' } as React.CSSProperties,
+    h2: { fontFamily: 'var(--font-heading)', fontWeight: 800 } as React.CSSProperties,
+    label: { fontSize: '0.62rem', fontWeight: 700, color: 'var(--t-text-dim)', textTransform: 'uppercase' as const, letterSpacing: '0.09em', fontFamily: 'var(--font-mono)' },
+    mono: { fontFamily: 'var(--font-mono)', fontSize: '0.8rem' } as React.CSSProperties,
+    muted: { color: 'var(--t-text-muted)', fontSize: '0.85rem' } as React.CSSProperties,
+};
+
+const INCIDENTS = [
+    { id: 'INC-2401', type: '🚗 Road Accident', location: 'Sheikh Zayed Rd, J12', sev: 'P1', status: 'Open', loss: 'AED 120K', recovery: 32 },
+    { id: 'INC-2399', type: '🔥 Vehicle Fire', location: 'Al Khail Rd, Near Mall', sev: 'P1', status: 'Recovery', loss: 'AED 85K', recovery: 68 },
+    { id: 'INC-2397', type: '⚠️ Road Hazard', location: 'E311, Km 24', sev: 'P2', status: 'Resolved', loss: 'AED 12K', recovery: 100 },
+    { id: 'INC-2395', type: '🌊 Flash Flood', location: 'Deira, Creek Area', sev: 'P1', status: 'Open', loss: 'AED 340K', recovery: 15 },
+    { id: 'INC-2390', type: '💥 Pile-up', location: 'Abu Dhabi Hwy, Km 8', sev: 'P1', status: 'Recovery', loss: 'AED 210K', recovery: 55 },
+];
+
+const RECOVERY_KPI = [
+    { label: 'Open Incidents', value: '3', color: 'var(--t-red)', icon: '🚨' },
+    { label: 'Recovery in Progress', value: '2', color: 'var(--t-orange)', icon: '🔧' },
+    { label: 'Total Liability', value: 'AED 767K', color: 'var(--t-accent)', icon: '💰' },
+    { label: 'Resolved (30d)', value: '47', color: 'var(--t-green)', icon: '✅' },
+];
+
+export default function IncidentsPage() {
+    const [selected, setSelected] = useState('INC-2401');
+
+    const sel = INCIDENTS.find(i => i.id === selected)!;
+
+    const severityColor = (s: string) => s === 'P1' ? 'var(--t-red)' : s === 'P2' ? 'var(--t-orange)' : 'var(--t-accent)';
+    const statusStyle = (s: string) => ({
+        'Open': { bg: 'var(--t-red-soft)', color: 'var(--t-red)' },
+        'Recovery': { bg: 'var(--t-orange-soft)', color: 'var(--t-orange)' },
+        'Resolved': { bg: 'var(--t-green-soft)', color: 'var(--t-green)' },
+    }[s] ?? { bg: 'var(--t-surface)', color: 'var(--t-text-muted)' });
 
     return (
-        <div className="min-h-screen bg-[var(--t-bg)] text-white p-8 selection:bg-red-500/30" style={{fontFamily:"var(--font-sans)"}}>
+        <div style={S.page}>
             {/* Header */}
-            <div className="flex justify-between items-end mb-12">
-                <div>
-                    <div className="flex items-center gap-2 mb-2">
-                        <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-[var(--t-text-muted)]">Road_Safety_OS</span>
-                    </div>
-                    <h1 className="text-4xl font-black tracking-tighter italic uppercase">INCIDENT_COMMAND_HQ</h1>
+            <header style={{ marginBottom: '2rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '0.5rem' }}>
+                    <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--t-red)', boxShadow: '0 0 6px var(--t-red)' }} />
+                    <span style={S.label}>Incident_Management_OS</span>
                 </div>
+                <h1 style={{ ...S.h1, fontSize: '2.25rem', marginBottom: '0.25rem' }}>Incidents &amp; Recovery</h1>
+                <p style={S.muted}>Track, manage and close incidents with AI-assisted recovery routing</p>
+            </header>
 
-                <div className="flex gap-4">
-                    <TabButton active={activeTab === 'FEED'} onClick={() => setActiveTab('FEED')} label="LIVE_INCIDENTS" />
-                    <TabButton active={activeTab === 'TOW'} onClick={() => setActiveTab('TOW')} label="TOW_FLEET" />
-                    <TabButton active={activeTab === 'ASSIST'} onClick={() => setActiveTab('ASSIST')} label="ROADSIDE_ASSIST" />
-                </div>
+            {/* KPI Row */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(175px,1fr))', gap: '0.75rem', marginBottom: '1.5rem' }}>
+                {RECOVERY_KPI.map(k => (
+                    <div key={k.label} style={S.card}>
+                        <div style={{ fontSize: '1.3rem', marginBottom: 8 }}>{k.icon}</div>
+                        <p style={{ fontFamily: 'var(--font-heading)', fontWeight: 900, fontSize: '1.5rem', color: k.color }}>{k.value}</p>
+                        <p style={S.label}>{k.label}</p>
+                    </div>
+                ))}
             </div>
 
-            <div className="grid grid-cols-12 gap-8">
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '1.25rem' }}>
+                {/* Table */}
+                <div style={{ ...S.card, padding: 0, overflow: 'hidden' }}>
+                    <div style={{ padding: '1.25rem 1.5rem', borderBottom: '1px solid var(--t-border)' }}>
+                        <h2 style={{ ...S.h2, fontSize: '1rem' }}>Incident Register</h2>
+                    </div>
+                    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                        <thead>
+                            <tr style={{ background: 'var(--t-surface)' }}>
+                                {['Incident', 'Type', 'Location', 'Sev', 'Recovery', 'Status'].map(col => (
+                                    <th key={col} style={{ ...S.label, padding: '0.75rem 1rem', textAlign: 'left' }}>{col}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {INCIDENTS.map(inc => {
+                                const badge = statusStyle(inc.status);
+                                return (
+                                    <tr key={inc.id} onClick={() => setSelected(inc.id)}
+                                        style={{ borderBottom: '1px solid var(--t-border-subtle)', cursor: 'pointer', background: inc.id === selected ? 'var(--t-row-selected)' : 'transparent', transition: 'background 0.1s' }}>
+                                        <td style={{ padding: '0.875rem 1rem', ...S.mono, color: 'var(--t-text-dim)', fontSize: '0.72rem' }}>{inc.id}</td>
+                                        <td style={{ padding: '0.875rem 1rem', fontSize: '0.85rem', fontWeight: 600 }}>{inc.type}</td>
+                                        <td style={{ padding: '0.875rem 1rem', ...S.muted, fontSize: '0.78rem' }}>{inc.location}</td>
+                                        <td style={{ padding: '0.875rem 1rem' }}>
+                                            <span style={{ ...S.mono, fontWeight: 900, fontSize: '0.72rem', color: severityColor(inc.sev) }}>{inc.sev}</span>
+                                        </td>
+                                        <td style={{ padding: '0.875rem 1rem' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                <div style={{ flex: 1, maxWidth: 60, height: 4, background: 'var(--t-border)', borderRadius: 99, overflow: 'hidden' }}>
+                                                    <div style={{ height: '100%', width: `${inc.recovery}%`, background: inc.recovery === 100 ? 'var(--t-green)' : inc.recovery > 50 ? 'var(--t-accent)' : 'var(--t-red)', borderRadius: 99 }} />
+                                                </div>
+                                                <span style={{ ...S.mono, color: 'var(--t-text-dim)', fontSize: '0.68rem' }}>{inc.recovery}%</span>
+                                            </div>
+                                        </td>
+                                        <td style={{ padding: '0.875rem 1rem' }}>
+                                            <span style={{ padding: '0.2rem 0.6rem', borderRadius: 999, fontSize: '0.62rem', fontWeight: 800, background: badge.bg, color: badge.color, border: `1px solid ${badge.color}44` }}>
+                                                {inc.status}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
+                </div>
 
-                {/* Left: Interactive Feed & Map */}
-                <div className="col-span-8 space-y-6">
-                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8 h-[600px] relative overflow-hidden group">
-                        {/* Map Background Mockup */}
-                        <div className="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/55.3,25.2,12/1000x800?access_token=mock')] bg-cover" />
+                {/* Detail panel */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                    <div style={S.card}>
+                        <div style={{ display: 'flex', alignItems: 'center', justify: 'space-between', marginBottom: '1.25rem', gap: 10 } as any}>
+                            <div>
+                                <p style={{ ...S.mono, color: 'var(--t-text-dim)', fontSize: '0.7rem', marginBottom: 4 }}>{sel.id}</p>
+                                <h2 style={{ ...S.h2, fontSize: '1rem' }}>{sel.type}</h2>
+                            </div>
+                            <span style={{ padding: '0.25rem 0.75rem', borderRadius: 999, fontSize: '0.62rem', fontWeight: 900, background: statusStyle(sel.status).bg, color: statusStyle(sel.status).color, border: `1px solid ${statusStyle(sel.status).color}44`, whiteSpace: 'nowrap' as const }}>
+                                {sel.status}
+                            </span>
+                        </div>
 
-                        <div className="absolute top-8 left-8 flex gap-4">
-                            <div className="bg-black/60 backdrop-blur-md border border-[var(--t-border)] p-4 rounded-2xl">
-                                <div className="text-[8px] font-black uppercase text-[var(--t-text-muted)] mb-2 tracking-widest">Active_Clusters</div>
-                                <div className="flex gap-6">
-                                    <div className="text-center">
-                                        <div className="text-lg font-black font-mono text-red-500">12</div>
-                                        <div className="text-[7px] font-bold uppercase">Accidents</div>
-                                    </div>
-                                    <div className="text-center border-l border-[var(--t-border)] pl-6">
-                                        <div className="text-lg font-black font-mono text-[var(--t-orange)]">34</div>
-                                        <div className="text-[7px] font-bold uppercase">Breakdowns</div>
-                                    </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                            {[
+                                { label: 'Location', value: sel.location },
+                                { label: 'Severity', value: sel.sev, mono: true, color: severityColor(sel.sev) },
+                                { label: 'Estimated Loss', value: sel.loss, mono: true, color: 'var(--t-orange)' },
+                            ].map(row => (
+                                <div key={row.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '0.6rem 0.875rem', background: 'var(--t-surface)', borderRadius: 10 }}>
+                                    <span style={S.label}>{row.label}</span>
+                                    <span style={{ ...((row.mono ? S.mono : {}) as React.CSSProperties), fontWeight: 700, color: row.color ?? 'var(--t-text)', fontSize: '0.85rem' }}>{row.value}</span>
                                 </div>
+                            ))}
+
+                            <div style={{ padding: '0.75rem', background: 'var(--t-surface)', borderRadius: 10 }}>
+                                <p style={{ ...S.label, marginBottom: 6 }}>Recovery Progress</p>
+                                <div style={{ height: 8, background: 'var(--t-border)', borderRadius: 99, overflow: 'hidden', marginBottom: 6 }}>
+                                    <div style={{ height: '100%', width: `${sel.recovery}%`, background: sel.recovery === 100 ? 'var(--t-green)' : sel.recovery > 50 ? 'var(--t-accent)' : 'var(--t-red)', borderRadius: 99, transition: 'width 0.5s ease' }} />
+                                </div>
+                                <p style={{ ...S.mono, color: 'var(--t-accent)', fontSize: '0.72rem', textAlign: 'right' as const }}>{sel.recovery}% complete</p>
                             </div>
                         </div>
-
-                        <div className="absolute bottom-8 right-8 flex gap-4">
-                            <button className="bg-red-600 px-8 py-4 rounded-2xl font-black text-xs uppercase tracking-tighter shadow-lg shadow-red-600/20 hover:scale-105 transition-all">
-                                INITIATE_ESCALATION
-                            </button>
-                        </div>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-6">
-                        <MetricCard label="Avg Clearance" value="28m" trend="-4m" up />
-                        <MetricCard label="Tow Utilization" value="92%" trend="+8%" up />
-                        <MetricCard label="Assistance CSAT" value="4.8/5" trend="Stable" />
+                    {/* AI recommendation */}
+                    <div style={{ ...S.card, background: 'var(--t-accent-soft)', border: '1px solid rgba(245,158,11,0.2)' }}>
+                        <p style={{ ...S.h2, fontSize: '0.85rem', color: 'var(--t-accent)', marginBottom: 8 }}>⚡ AI Recovery Insight</p>
+                        <p style={{ fontSize: '0.78rem', color: 'var(--t-text-muted)', lineHeight: 1.6 }}>
+                            Coordinating with Dubai Police &amp; RTA for {sel.id} — estimated clearance in <strong style={{ color: 'var(--t-text)' }}>22 minutes</strong> based on traffic model.
+                        </p>
                     </div>
                 </div>
-
-                {/* Right: Detailed List & AI Scores */}
-                <div className="col-span-4 space-y-6">
-                    <div className="bg-[var(--t-card)] border border-[var(--t-border)] rounded-3xl p-8 h-[750px] flex flex-col">
-                        <h3 className="text-[10px] font-black uppercase text-[var(--t-text-muted)] mb-8 tracking-[0.3em]">Critical_Incident_Queue</h3>
-                        <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar">
-                            <IncidentItem id="INC-882" type="Multi-Vehicle Collision" severity="CRITICAL" score={0.94} eta="4m" />
-                            <IncidentItem id="INC-901" type="Heay Vehicle Breakdown" severity="MODERATE" score={0.58} eta="14m" />
-                            <IncidentItem id="INC-844" type="Low Battery Stall" severity="MINOR" score={0.22} eta="22m" />
-                            <IncidentItem id="INC-889" type="Fuel Depletion" severity="MINOR" score={0.18} eta="18m" />
-                        </div>
-
-                        <div className="mt-auto pt-8 border-t border-[var(--t-border)] space-y-4">
-                            <div className="bg-red-500/10 border border-red-500/20 p-6 rounded-2xl flex items-center gap-4 group cursor-pointer hover:bg-red-500/15 transition-all">
-                                <ShieldAlert size={24} className="text-red-500 animate-pulse" />
-                                <div>
-                                    <div className="text-[10px] font-black uppercase tracking-tight text-red-500">AI_Escalation_Trigger</div>
-                                    <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase">INC-882 flagged as high-fire risk. Police notified.</div>
-                                </div>
-                            </div>
-                            <button className="w-full py-4 bg-white/5 border border-[var(--t-border)] rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-white/10 transition-all italic">Generate_Clearance_Report</button>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
     );
 }
-
-function IncidentItem({ id, type, severity, score, eta }: any) {
-    return (
-        <div className={`p-4 rounded-xl border ${severity === 'CRITICAL' ? 'bg-red-500/5 border-red-500/20' : 'bg-[var(--t-surface)] border-[var(--t-border)]'
-            } group hover:border-white/20 transition-all cursor-pointer`}>
-            <div className="flex justify-between items-start mb-3">
-                <div className={`text-[9px] font-black ${severity === 'CRITICAL' ? 'text-red-500' : 'text-[var(--t-cyan)]'
-                    } uppercase tracking-widest`}>{severity}</div>
-                <div className="text-[8px] font-bold text-[var(--t-text-muted)] uppercase">{id}</div>
-            </div>
-            <div className="text-[12px] font-black italic uppercase tracking-tight mb-4">{type}</div>
-            <div className="flex justify-between items-center text-[10px] font-mono">
-                <div className="flex items-center gap-2">
-                    <Clock size={12} className="text-[var(--t-text-muted)]" />
-                    <span className="font-black">{eta}</span>
-                </div>
-                <div className="text-[8px] font-black text-[var(--t-text-muted)] uppercase">AI_Score: <span className="text-white">{score}</span></div>
-            </div>
-        </div>
-    );
-}
-
-function MetricCard({ label, value, trend, up }: any) {
-    return (
-        <div className="bg-[var(--t-card)] border border-[var(--t-border)] p-6 rounded-3xl">
-            <div className="text-[8px] font-black text-[var(--t-text-muted)] uppercase tracking-[0.2em] mb-4">{label}</div>
-            <div className="text-2xl font-black font-mono tracking-tighter italic mb-1">{value}</div>
-            <div className={`text-[8px] font-black uppercase ${up ? 'text-green-400' : 'text-[var(--t-text-muted)]'}`}>{trend} VS LW</div>
-        </div>
-    );
-}
-
-function TabButton({ active, label, onClick }: any) {
-    return (
-        <button
-            onClick={onClick}
-            className={`px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${active ? 'bg-red-600 text-white italic shadow-lg shadow-red-600/10' : 'bg-[var(--t-surface)] text-[var(--t-text-muted)] hover:bg-white/[0.06]'
-                }`}>
-            {label}
-        </button>
-    );
-}
-
