@@ -1,6 +1,20 @@
-"use client";
+'use client';
 
 import React, { useState } from 'react';
+import MidnightSelect from '@/components/ui/MidnightSelect';
+
+const INCIDENT_TYPE_OPTIONS = [
+    { value: 'CRASH', label: '🚗 Major Accident' },
+    { value: 'STALL', label: '🔧 Vehicle Stall' },
+    { value: 'HAZARD', label: '⚠️ Road Hazard' },
+    { value: 'FIRE', label: '🔥 Fire Emergency' },
+];
+
+const SEVERITY_OPTIONS = [
+    { value: 'P1_CRITICAL', label: '🔴 P1 – Life Critical' },
+    { value: 'P2_URGENT', label: '🟠 P2 – Serious' },
+    { value: 'P3_MINIMUM', label: '🟡 P3 – Minor' },
+];
 
 export default function CitizenReportForm() {
     const [type, setType] = useState('CRASH');
@@ -12,84 +26,87 @@ export default function CitizenReportForm() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        // Simulate API call to Emergency Monolith
-        setTimeout(() => {
-            setIsSubmitting(false);
-            setSubmitted(true);
-        }, 1500);
+        setTimeout(() => { setIsSubmitting(false); setSubmitted(true); }, 1500);
     };
 
     if (submitted) {
         return (
-            <div className="p-8 glass-panel rounded-2xl border border-green-500/50 text-center animate-in zoom-in duration-500">
-                <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(34,197,94,0.4)]">
-                    <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7"></path></svg>
+            <div style={{ padding: '2rem', background: 'var(--t-card)', border: '1px solid rgba(16,185,129,0.35)', borderRadius: 16, textAlign: 'center' }}>
+                <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'var(--t-green)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem', boxShadow: '0 0 20px rgba(16,185,129,0.4)' }}>
+                    <svg width="24" height="24" fill="none" stroke="white" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M5 13l4 4L19 7" /></svg>
                 </div>
-                <h3 className="text-xl font-bold mb-2">Report Received</h3>
-                <p className="text-xs text-muted-grey uppercase tracking-widest">Emergency units are being orchestrated. Geo-tag: DUBAI_MARINA_COORD</p>
-                <button onClick={() => setSubmitted(false)} className="mt-6 text-[10px] font-bold text-neon-blue uppercase tracking-widest hover:underline">File Another Report</button>
+                <h3 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.1rem', fontWeight: 800, marginBottom: '0.5rem' }}>Report Received</h3>
+                <p style={{ fontSize: '0.7rem', color: 'var(--t-text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', fontFamily: 'var(--font-mono)' }}>
+                    Emergency units are being orchestrated · Geo-tag: DUBAI_MARINA_COORD
+                </p>
+                <button onClick={() => setSubmitted(false)}
+                    style={{ marginTop: '1rem', fontSize: '0.7rem', fontWeight: 700, color: 'var(--t-accent)', background: 'none', border: 'none', cursor: 'pointer', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                    ← File Another Report
+                </button>
             </div>
         );
     }
 
     return (
-        <div className="glass-panel p-8 rounded-2xl border border-white/10 shadow-2xl relative overflow-hidden group">
-            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                <svg className="w-24 h-24" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg>
+        <div style={{ background: 'var(--t-card)', border: '1px solid var(--t-border)', borderRadius: 16, padding: '1.75rem', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'absolute', top: 0, right: 0, padding: 16, opacity: 0.06 }}>
+                <svg width="80" height="80" fill="var(--t-orange)" viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" /></svg>
             </div>
 
-            <h2 className="text-2xl font-black italic tracking-tighter text-pulse-orange mb-1">CITIZEN_REPORT</h2>
-            <p className="text-[10px] text-muted-grey uppercase tracking-[0.3em] mb-8">Geo-Tagged Incident Injection</p>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', fontWeight: 900, color: 'var(--t-orange)', marginBottom: '0.25rem', letterSpacing: '-0.02em' }}>
+                CITIZEN_REPORT
+            </h2>
+            <p style={{ fontSize: '0.67rem', color: 'var(--t-text-muted)', textTransform: 'uppercase', letterSpacing: '0.2em', fontFamily: 'var(--font-mono)', marginBottom: '1.5rem' }}>
+                Geo-Tagged Incident Injection
+            </p>
 
-            <form onSubmit={handleSubmit} className="space-y-6 relative z-10">
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <label className="text-[9px] font-bold text-muted-grey uppercase tracking-widest mb-2 block">Incident Type</label>
-                        <select
-                            value={type}
-                            onChange={(e) => setType(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm font-bold focus:border-pulse-orange outline-none transition-all appearance-none"
-                        >
-                            <option value="CRASH">Major Accident</option>
-                            <option value="STALL">Vehicle Stall</option>
-                            <option value="HAZARD">Road Hazard</option>
-                            <option value="FIRE">Fire Emergency</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label className="text-[9px] font-bold text-muted-grey uppercase tracking-widest mb-2 block">Severity</label>
-                        <select
-                            value={severity}
-                            onChange={(e) => setSeverity(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm font-bold focus:border-pulse-orange outline-none transition-all appearance-none"
-                        >
-                            <option value="P1_CRITICAL">P1 - Life Critical</option>
-                            <option value="P2_URGENT">P2 - Serious</option>
-                            <option value="P3_MINIMUM">P3 - Minor</option>
-                        </select>
-                    </div>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', position: 'relative', zIndex: 1 }}>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                    <MidnightSelect
+                        label="Incident Type"
+                        value={type}
+                        onChange={setType}
+                        options={INCIDENT_TYPE_OPTIONS}
+                        accent="var(--t-orange)"
+                    />
+                    <MidnightSelect
+                        label="Severity Level"
+                        value={severity}
+                        onChange={setSeverity}
+                        options={SEVERITY_OPTIONS}
+                        accent="var(--t-orange)"
+                    />
                 </div>
 
                 <div>
-                    <label className="text-[9px] font-bold text-muted-grey uppercase tracking-widest mb-2 block">Description</label>
+                    <label style={{ display: 'block', fontSize: '0.62rem', fontWeight: 700, color: 'var(--t-text-dim)', textTransform: 'uppercase', letterSpacing: '0.09em', fontFamily: 'var(--font-sans)', marginBottom: 6 }}>
+                        Description
+                    </label>
                     <textarea
                         rows={3}
                         value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-sm focus:border-pulse-orange outline-none transition-all placeholder:text-white/20"
-                        placeholder="Provide details about the scene (e.g., number of vehicles, smoke)..."
+                        onChange={e => setDescription(e.target.value)}
+                        placeholder="Describe the scene (number of vehicles, smoke, injuries)…"
+                        style={{ width: '100%', padding: '0.7rem 0.875rem', borderRadius: 10, background: 'var(--t-surface)', border: '1px solid var(--t-border)', color: 'var(--t-text)', fontFamily: 'var(--font-sans)', fontSize: '0.875rem', outline: 'none', resize: 'vertical', boxSizing: 'border-box' }}
                     />
                 </div>
 
                 <button
+                    type="submit"
                     disabled={isSubmitting}
-                    className="w-full h-14 bg-pulse-orange hover:bg-orange-600 disabled:opacity-50 text-white font-black rounded-xl transition-all shadow-[0_10px_30px_rgba(255,102,0,0.3)] flex items-center justify-center gap-3 active:scale-95"
+                    style={{
+                        width: '100%', padding: '0.9rem', borderRadius: 12, border: 'none', cursor: isSubmitting ? 'not-allowed' : 'pointer', opacity: isSubmitting ? 0.7 : 1,
+                        background: 'var(--t-orange)', color: '#fff',
+                        fontFamily: 'var(--font-heading)', fontWeight: 900, fontSize: '0.95rem',
+                        transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+                        boxShadow: '0 4px 20px rgba(249,115,22,0.3)',
+                    }}
                 >
                     {isSubmitting ? (
-                        <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                        <span style={{ width: 18, height: 18, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', display: 'inline-block', animation: 'spin 0.7s linear infinite' }} />
                     ) : (
                         <>
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
                             SUBMIT_GEO_REPORT
                         </>
                     )}

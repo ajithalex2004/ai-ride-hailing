@@ -1,71 +1,84 @@
+'use client';
+
 import React, { useState } from 'react';
+import MidnightSelect from '@/components/ui/MidnightSelect';
+
+const DEPT_OPTIONS = [
+    { value: 'Engineering', label: '💻 Engineering' },
+    { value: 'Sales & Marketing', label: '📣 Sales & Marketing' },
+    { value: 'Human Resources', label: '👥 Human Resources' },
+    { value: 'Executive', label: '🏛️ Executive' },
+];
 
 const initialEmployees = [
     { id: 1, name: 'Zayed bin Rashid', email: 'zayed@exlsolutions.com', dept: 'Engineering', status: 'Active' },
-    { id: 2, name: 'Sara Al-Hamer', email: 'sara@exlsolutions.com', dept: 'Marketing', status: 'Pending Invite' },
+    { id: 2, name: 'Sara Al-Hamer', email: 'sara@exlsolutions.com', dept: 'Sales & Marketing', status: 'Pending Invite' },
 ];
 
 export default function EmployeeOnboardingPage() {
     const [showAdd, setShowAdd] = useState(false);
     const [employees, setEmployees] = useState(initialEmployees);
+    const [newName, setNewName] = useState('');
+    const [newEmail, setNewEmail] = useState('');
+    const [newDept, setNewDept] = useState('Engineering');
 
-    const handleAdd = (e: any) => {
+    const handleAdd = (e: React.FormEvent) => {
         e.preventDefault();
-        const name = e.target.name.value;
-        const email = e.target.email.value;
-        const dept = e.target.dept.value;
-
-        setEmployees([...employees, { id: Date.now(), name, email, dept, status: 'Onboarding' }]);
-        setShowAdd(false);
+        setEmployees(prev => [...prev, { id: Date.now(), name: newName, email: newEmail, dept: newDept, status: 'Onboarding' }]);
+        setNewName(''); setNewEmail(''); setNewDept('Engineering'); setShowAdd(false);
     };
 
     return (
-        <div className="onboarding-container">
-            <div className="portal-card flex-between">
+        <div style={{ maxWidth: 1100, margin: '0 auto', fontFamily: 'var(--font-sans)', color: 'var(--t-text)' }}>
+            {/* Header row */}
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
                 <div>
-                    <h3>Employee Directory</h3>
-                    <p className="description">Manage access and ride subsidies for your global workforce.</p>
+                    <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.75rem', fontWeight: 900, marginBottom: '0.35rem' }}>Employee Directory</h1>
+                    <p style={{ color: 'var(--t-text-muted)', fontSize: '0.9rem' }}>Manage access and ride subsidies for your global workforce.</p>
                 </div>
-                <button className="btn-primary" onClick={() => setShowAdd(true)}>+ Onboard Employee</button>
+                <button className="btn-primary" onClick={() => setShowAdd(v => !v)}>
+                    {showAdd ? '✕ Cancel' : '+ Onboard Employee'}
+                </button>
             </div>
 
+            {/* Add form */}
             {showAdd && (
-                <div className="portal-card modal-like mt-6">
-                    <h3>Add New Employee</h3>
-                    <form className="mt-4 onboarding-form" onSubmit={handleAdd}>
-                        <div className="form-group">
-                            <label>Full Name</label>
-                            <input name="name" placeholder="e.g. Ahmed Sulaiman" required />
+                <div style={{ background: 'var(--t-card)', border: '1px solid var(--t-border)', borderRadius: 16, padding: '1.5rem', marginBottom: '1.5rem' }} className="animate-fade-in">
+                    <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, marginBottom: '1.25rem' }}>Add New Employee</h3>
+                    <form onSubmit={handleAdd}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', maxWidth: 640, marginBottom: '1rem' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.62rem', fontWeight: 700, color: 'var(--t-text-dim)', textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: 6 }}>Full Name</label>
+                                <input className="input" value={newName} onChange={e => setNewName(e.target.value)} placeholder="e.g. Ahmed Sulaiman" required />
+                            </div>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '0.62rem', fontWeight: 700, color: 'var(--t-text-dim)', textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: 6 }}>Work Email</label>
+                                <input className="input" type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} placeholder="ahmed@exlsolutions.com" required />
+                            </div>
+                            <MidnightSelect
+                                label="Department"
+                                value={newDept}
+                                onChange={setNewDept}
+                                options={DEPT_OPTIONS}
+                            />
                         </div>
-                        <div className="form-group">
-                            <label>Work Email</label>
-                            <input name="email" type="email" placeholder="ahmed@exlsolutions.com" required />
-                        </div>
-                        <div className="form-group">
-                            <label>Department</label>
-                            <select name="dept">
-                                <option>Engineering</option>
-                                <option>Sales & Marketing</option>
-                                <option>Human Resources</option>
-                                <option>Executive</option>
-                            </select>
-                        </div>
-                        <div className="form-actions mt-4">
-                            <button type="button" className="btn-sec" onClick={() => setShowAdd(false)}>Cancel</button>
-                            <button type="submit" className="btn-primary">Send Invite & Onboard</button>
+                        <div style={{ display: 'flex', gap: '0.75rem' }}>
+                            <button type="button" className="btn-ghost" onClick={() => setShowAdd(false)}>Cancel</button>
+                            <button type="submit" className="btn-primary">Send Invite &amp; Onboard →</button>
                         </div>
                     </form>
                 </div>
             )}
 
-            <div className="portal-card mt-6">
-                <table className="portal-table">
+            {/* Table */}
+            <div style={{ background: 'var(--t-card)', border: '1px solid var(--t-border)', borderRadius: 16, overflow: 'hidden' }}>
+                <table className="data-table">
                     <thead>
                         <tr>
                             <th>Employee Name</th>
                             <th>Corporate Email</th>
                             <th>Department</th>
-                            <th>Billing Status</th>
+                            <th>Status</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -73,45 +86,28 @@ export default function EmployeeOnboardingPage() {
                         {employees.map(emp => (
                             <tr key={emp.id}>
                                 <td>
-                                    <div className="emp-info">
-                                        <div className="avatar-mini">{emp.name[0]}</div>
-                                        <span className="font-bold">{emp.name}</span>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                        <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--t-accent-soft)', border: '1px solid rgba(245,158,11,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, fontSize: '0.75rem', color: 'var(--t-accent)' }}>
+                                            {emp.name[0]}
+                                        </div>
+                                        <span style={{ fontWeight: 700 }}>{emp.name}</span>
                                     </div>
                                 </td>
-                                <td className="text-muted">{emp.email}</td>
+                                <td style={{ color: 'var(--t-text-muted)', fontFamily: 'var(--font-mono)', fontSize: '0.8rem' }}>{emp.email}</td>
                                 <td>{emp.dept}</td>
                                 <td>
-                                    <span className={`status-tag ${emp.status === 'Active' ? 'tag-success' : 'tag-warning'}`}>
+                                    <span className={`badge ${emp.status === 'Active' ? 'badge-green' : emp.status === 'Onboarding' ? 'badge-blue' : 'badge-amber'}`}>
                                         {emp.status}
                                     </span>
                                 </td>
                                 <td>
-                                    <button className="btn-sm">Edit</button>
+                                    <button className="btn-ghost" style={{ padding: '0.3rem 0.75rem', fontSize: '0.75rem' }}>Edit</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
             </div>
-
-            <style jsx>{`
-        .onboarding-container { padding: 20px 0; }
-        .flex-between { display: flex; justify-content: space-between; align-items: start; }
-        .mt-4 { margin-top: 16px; }
-        .mt-6 { margin-top: 32px; }
-        .onboarding-form { display: grid; gap: 16px; max-width: 500px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; }
-        .form-group label { font-size: 13px; font-weight: 700; color: #1e293b; }
-        .form-group input, .form-group select { padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; }
-        .form-actions { display: flex; gap: 12px; }
-        
-        .emp-info { display: flex; align-items: center; gap: 10px; }
-        .avatar-mini { width: 28px; height: 28px; background: #e2e8f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; }
-        .status-tag { padding: 4px 10px; border-radius: 99px; font-size: 10px; font-weight: 800; }
-        .tag-success { background: rgba(16, 185, 129, 0.1); color: #10b981; }
-        .tag-warning { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
-        .btn-sm { background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; }
-      `}</style>
         </div>
     );
 }

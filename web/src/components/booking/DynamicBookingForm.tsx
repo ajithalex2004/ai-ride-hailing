@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from 'react';
 import { BOOKING_METADATA, FormField, ROLE_DOMAIN_ACCESS } from './metadata';
 import { useAuth } from '@/context/AuthContext';
+import MidnightSelect from '@/components/ui/MidnightSelect';
+
 
 interface DispatchResult { trip_id: string; status: string; domain: string; eta_minutes: number; message: string;[key: string]: any; }
 
@@ -171,9 +173,12 @@ export default function DynamicBookingForm() {
 function renderField(field: FormField, value: any, onChange: (val: any) => void, accentColor: string, accentSoft: string) {
     const base: React.CSSProperties = { width: '100%', background: 'var(--t-surface)', border: '1px solid var(--t-border)', borderRadius: 10, padding: '0.65rem 0.85rem', color: 'var(--t-text)', fontFamily: 'var(--font-sans)', fontSize: '0.85rem', outline: 'none', transition: 'border-color 0.15s', boxSizing: 'border-box' };
     if (field.type === 'select') return (
-        <select value={value || ''} onChange={e => onChange(e.target.value)} style={base}>
-            {field.options?.map(opt => <option key={opt} value={opt}>{opt}</option>)}
-        </select>
+        <MidnightSelect
+            value={value || (field.options?.[0] ?? '')}
+            onChange={onChange}
+            accent={accentColor}
+            options={(field.options ?? []).map((opt: string) => ({ value: opt, label: opt }))}
+        />
     );
     if (field.type === 'number') return <input type="number" value={value ?? ''} onChange={e => onChange(e.target.value)} style={base} />;
     if (field.type === 'checkbox') return (

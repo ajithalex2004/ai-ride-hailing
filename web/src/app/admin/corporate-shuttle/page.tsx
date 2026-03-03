@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import React, { useState } from 'react';
+import MidnightSelect from '@/components/ui/MidnightSelect';
 import {
     Bus,
     Briefcase,
@@ -21,7 +22,7 @@ export default function CorporateShuttleDashboard() {
     const [activeTab, setActiveTab] = useState('COMMAND');
 
     return (
-        <div className="min-h-screen bg-[#050507] text-white p-8 selection:bg-[var(--t-accent)]/30 selection:text-white" style={{fontFamily:"var(--font-sans)"}}>
+        <div className="min-h-screen bg-[#050507] text-white p-8 selection:bg-[var(--t-accent)]/30 selection:text-white" style={{ fontFamily: "var(--font-sans)" }}>
             {/* City-Scale Header */}
             <div className="flex justify-between items-end mb-16">
                 <div>
@@ -226,19 +227,24 @@ function StatBox({ title, value, trend }: any) {
 }
 
 function EnrollmentField({ label, placeholder, value, disabled, type, options }: any) {
+    const [sel, setSel] = useState(options?.[0] ?? '');
     return (
-        <div className="space-y-4">
-            <label className="text-[10px] font-black uppercase text-[var(--t-text-muted)] tracking-widest pl-2">{label}</label>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <label style={{ fontSize: '0.62rem', fontWeight: 700, color: 'var(--t-text-dim)', textTransform: 'uppercase', letterSpacing: '0.09em', fontFamily: 'var(--font-sans)' }}>{label}</label>
             {type === 'select' ? (
-                <select className="w-full bg-white/5 border border-[var(--t-border)] rounded-2xl px-6 py-5 text-sm font-bold focus:outline-none focus:border-[var(--t-cyan)] transition-all appearance-none cursor-pointer">
-                    {options.map((o: any) => <option key={o} value={o}>{o}</option>)}
-                </select>
+                <MidnightSelect
+                    value={sel}
+                    onChange={setSel}
+                    size="lg"
+                    options={(options as string[]).map((o: string) => ({ value: o, label: o }))}
+                />
             ) : (
                 <input
                     disabled={disabled}
                     defaultValue={value}
                     placeholder={placeholder}
-                    className="w-full bg-white/5 border border-[var(--t-border)] rounded-2xl px-6 py-5 text-sm font-bold focus:outline-none focus:border-[var(--t-cyan)] transition-all disabled:opacity-40" />
+                    style={{ width: '100%', padding: '0.9rem 1.1rem', borderRadius: 12, background: 'var(--t-surface)', border: '1px solid var(--t-border)', color: 'var(--t-text)', fontFamily: 'var(--font-sans)', fontSize: '0.875rem', outline: 'none', opacity: disabled ? 0.4 : 1, boxSizing: 'border-box' }}
+                />
             )}
         </div>
     );
