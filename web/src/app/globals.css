@@ -105,6 +105,27 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── Force dark theme on ALL native select elements ──────────── */
+/* Prevents white OS-default dropdown popup on Windows/Chrome    */
+select {
+  background-color: var(--t-surface) !important;
+  color: var(--t-text) !important;
+  border-color: var(--t-border) !important;
+  color-scheme: dark;
+}
+
+select option {
+  background-color: var(--t-card) !important;
+  color: var(--t-text) !important;
+}
+
+select option:checked,
+select option:hover {
+  background-color: var(--t-row-selected) !important;
+  color: var(--t-accent) !important;
+}
+
+
 h1,
 h2,
 h3,
