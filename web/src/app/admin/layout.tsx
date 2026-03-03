@@ -24,6 +24,7 @@ const NAV_GROUPS = [
                 sub: [
                     { href: '/admin/fleet', label: 'Dashboard', icon: '📊' },
                     { href: '/admin/fleet/vehicles', label: 'Vehicle Master', icon: '🚙' },
+                    { href: '/admin/fleet/assignments', label: 'Vehicle Assignments', icon: '📅' },
                     { href: '/admin/fleet/drivers', label: 'Drivers', icon: '👤' },
                     { href: '/admin/fleet/maintenance', label: 'Maintenance', icon: '🔧' },
                     { href: '/admin/fleet/fuel', label: 'Fuel Logs', icon: '⛽' },
