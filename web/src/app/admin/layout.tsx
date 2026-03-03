@@ -28,6 +28,7 @@ const NAV_GROUPS = [
                     { href: '/admin/fleet/drivers', label: 'Drivers', icon: '👤' },
                     { href: '/admin/fleet/maintenance', label: 'Maintenance', icon: '🔧' },
                     { href: '/admin/fleet/fuel', label: 'Fuel Logs', icon: '⛽' },
+                    { href: '/admin/fleet/expenses', label: 'Expense History', icon: '💰' },
                 ],
             },
             { href: '/admin/corporate', label: 'Corporate Accounts', icon: '🏢' },
